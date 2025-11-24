@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useActionState } from 'react';
 import { useFirestore } from '@/firebase';
 import { collection, query, where, orderBy, getDocs, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader, Star, User } from 'lucide-react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import type { Review } from '@/lib/definitions';
 import { ReviewSchema, type ReviewFormState } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -104,7 +104,7 @@ export default function ReviewsPage() {
   const [rating, setRating] = useState(0);
 
   const initialState: ReviewFormState = null;
-  const [state, dispatch] = useFormState(submitReview, initialState);
+  const [state, dispatch] = useActionState(submitReview, initialState);
   
   useEffect(() => {
     if (state?.message) {
