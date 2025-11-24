@@ -5,6 +5,7 @@ import { useAuth, useUser } from "@/firebase";
 import { signOut } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowRight } from "lucide-react";
 
 export default function AdminDashboardPage() {
     const { user } = useUser();
@@ -32,33 +33,48 @@ export default function AdminDashboardPage() {
                 <Button onClick={handleLogout} variant="outline">Logout</Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Kelola Paket</CardTitle>
-                        <CardDescription>Ubah detail paket internet yang ditawarkan.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p>Segera hadir: Fitur untuk menambah, mengedit, dan menghapus paket internet.</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Buat Konten Blog</CardTitle>
-                        <CardDescription>Gunakan AI untuk membuat artikel blog baru.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p>Segera hadir: Generator artikel blog berbasis AI untuk strategi konten Anda.</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Lihat Pendaftar</CardTitle>
-                        <CardDescription>Tinjau daftar pendaftar baru.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                       <p>Segera hadir: Tampilan daftar prospek yang mendaftar melalui website.</p>
-                    </CardContent>
-                </Card>
+                <Link href="/admin/packages" passHref>
+                    <Card className="h-full hover:border-primary transition-colors">
+                        <CardHeader>
+                            <CardTitle>Kelola Paket</CardTitle>
+                            <CardDescription>Ubah detail paket internet yang ditawarkan.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                             <div className="flex items-center text-sm text-primary">
+                                Pergi ke Pengelola Paket
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </Link>
+                <Link href="/admin/blog" passHref>
+                    <Card className="h-full hover:border-primary transition-colors">
+                        <CardHeader>
+                            <CardTitle>Buat Konten Blog</CardTitle>
+                            <CardDescription>Gunakan AI untuk membuat artikel blog baru.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center text-sm text-primary">
+                                Pergi ke Penulis Blog AI
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </Link>
+                <Link href="/admin/leads" passHref>
+                    <Card className="h-full hover:border-primary transition-colors">
+                        <CardHeader>
+                            <CardTitle>Lihat Pendaftar</CardTitle>
+                            <CardDescription>Tinjau daftar pendaftar baru.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                           <div className="flex items-center text-sm text-primary">
+                                Lihat Daftar Pendaftar
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </Link>
             </div>
         </div>
     );
