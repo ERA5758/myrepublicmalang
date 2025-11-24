@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth, useUser } from "@/firebase";
 import { signOut } from "firebase/auth";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function AdminDashboardPage() {
@@ -56,6 +57,17 @@ export default function AdminDashboardPage() {
                     </CardHeader>
                     <CardContent>
                        <p>Segera hadir: Tampilan daftar prospek yang mendaftar melalui website.</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Seed Database</CardTitle>
+                        <CardDescription>Isi database dengan data awal (mock data).</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                       <Button asChild>
+                        <Link href="/admin/seed">Buka Halaman Seeding</Link>
+                       </Button>
                     </CardContent>
                 </Card>
             </div>

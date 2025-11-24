@@ -37,6 +37,66 @@
       },
       "required": ["id", "title", "price", "speed", "features"]
     },
+     "OfferTV": {
+      "title": "OfferTV",
+      "description": "Represents an internet + TV plan offer.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "price": { "type": "string" },
+        "speed": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "promo": { "type": "string" },
+        "image": {
+          "type": "object",
+          "properties": {
+            "imageUrl": { "type": "string" },
+            "imageHint": { "type": "string" },
+            "description": { "type": "string" }
+          }
+        },
+        "channels": { "type": "string" },
+        "stb": { "type": "string" }
+      },
+      "required": ["id", "title", "price", "speed", "features", "channels", "stb"]
+    },
+    "AddOn": {
+        "title": "AddOn",
+        "description": "Represents an add-on product or service.",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "category": { "type": "string", "enum": ["perangkat", "tv", "smart-home", "speed-booster"] },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "price": { "type": "string" },
+          "oldPrice": { "type": "string" },
+          "discount": { "type": "string" },
+          "features": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        },
+        "required": ["id", "category", "title", "price"]
+    },
+    "CarouselSlide": {
+      "title": "CarouselSlide",
+      "description": "Represents a slide in the hero carousel.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "image": {
+          "type": "object",
+          "properties": {
+            "imageUrl": { "type": "string" },
+            "imageHint": { "type": "string" },
+            "description": { "type": "string" }
+          }
+        }
+      },
+      "required": ["id", "title", "description", "image"]
+    },
     "Article": {
       "title": "Article",
       "description": "Represents a blog article.",
@@ -83,6 +143,18 @@
     "/offers/{offerId}": {
       "schema": { "$ref": "#/entities/Offer" },
       "description": "Collection of internet plan offers."
+    },
+     "/offersTV/{offerTVId}": {
+      "schema": { "$ref": "#/entities/OfferTV" },
+      "description": "Collection of internet + TV plan offers."
+    },
+    "/addOns/{addOnId}": {
+      "schema": { "$ref": "#/entities/AddOn" },
+      "description": "Collection of add-on products and services."
+    },
+    "/carouselSlides/{carouselSlideId}": {
+      "schema": { "$ref": "#/entities/CarouselSlide" },
+      "description": "Collection of slides for the hero carousel."
     },
     "/articles/{articleId}": {
       "schema": { "$ref": "#/entities/Article" },
