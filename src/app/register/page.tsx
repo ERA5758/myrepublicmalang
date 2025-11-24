@@ -2,14 +2,14 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { ArrowRight, Globe, Loader, Mail, MapPin, Phone, User } from 'lucide-react';
+import { ArrowRight, Globe, Loader, Mail, MapPin, Phone, User, LocateFixed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { captureLead } from '@/lib/actions';
 import { type LeadCaptureFormState } from '@/lib/definitions';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import {
@@ -40,6 +40,10 @@ export default function RegisterPage() {
   const [state, dispatch] = useActionState(captureLead, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
+  
+  const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
 
   useEffect(() => {
     if (state?.message && !state.fields) {
@@ -50,9 +54,51 @@ export default function RegisterPage() {
       });
       if(state.message.startsWith('Terima kasih')) {
         formRef.current?.reset();
+        setLocation(null);
+        setLocationError(null);
       }
     }
   }, [state, toast]);
+  
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      setIsLocating(true);
+      setLocationError(null);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          });
+          setIsLocating(false);
+          toast({
+            title: 'Lokasi Ditemukan!',
+            description: 'Koordinat GPS Anda telah dicatat.',
+          });
+        },
+        (error) => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              setLocationError("Anda menolak permintaan untuk Geolokasi.");
+              break;
+            case error.POSITION_UNAVAILABLE:
+              setLocationError("Informasi lokasi tidak tersedia.");
+              break;
+            case error.TIMEOUT:
+              setLocationError("Permintaan untuk mendapatkan lokasi pengguna timed out.");
+              break;
+            default:
+              setLocationError("Terjadi kesalahan yang tidak diketahui.");
+              break;
+          }
+          setIsLocating(false);
+        }
+      );
+    } else {
+      setLocationError("Geolokasi tidak didukung oleh browser ini.");
+    }
+  };
+
 
   return (
     <div className="container mx-auto max-w-7xl py-12 sm:py-16">
@@ -127,14 +173,27 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="locationPin">Pin Lokasi/Koordinat GPS (Opsional)</Label>
-                <div className="relative">
-                  <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="locationPin" name="locationPin" placeholder="cth. -7.9839, 112.6209" className="pl-10" />
+                <Label>Pin Lokasi/Koordinat GPS</Label>
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant="outline" onClick={handleGetLocation} disabled={isLocating} className="w-full">
+                    {isLocating ? (
+                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <LocateFixed className="mr-2 h-4 w-4" />
+                    )}
+                    Dapatkan Lokasi Saya
+                  </Button>
                 </div>
-                {state?.fields?.locationPin && <p className="text-sm text-destructive">{state.fields.locationPin}</p>}
+                {location && (
+                  <p className="text-sm text-muted-foreground">
+                    Koordinat: {location.lat.toFixed(6)}, {location.lon.toFixed(6)}
+                  </p>
+                )}
+                {locationError && <p className="text-sm text-destructive">{locationError}</p>}
               </div>
 
+              <input type="hidden" name="locationPin" value={location ? `${location.lat},${location.lon}`: ''} />
+              
               {state?.issues && state.issues.map(issue => <p key={issue} className="text-sm text-destructive">{issue}</p>)}
               
               <SubmitButton />
