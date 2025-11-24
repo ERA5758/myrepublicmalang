@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Wifi } from 'lucide-react';
+import { ArrowLeft, CircleCheckBig, Wifi } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +28,8 @@ async function getArticle(slug: string): Promise<Article | null> {
     let publishedAt: string;
     if (data.publishedAt instanceof Timestamp) {
         publishedAt = data.publishedAt.toDate().toISOString();
+    } else if (typeof data.publishedAt === 'string') {
+        publishedAt = data.publishedAt;
     } else {
         publishedAt = new Date().toISOString(); // Fallback
     }
@@ -176,31 +178,52 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           <h2 className="font-headline text-2xl font-bold mb-6 text-center">
             Lihat Paket Kami
           </h2>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {offers.slice(0, 3).map((offer) => (
-              <Card key={offer.id} className="flex flex-col text-center">
-                <CardHeader>
-                    <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
-                         <Wifi className="h-6 w-6 text-primary"/>
-                    </div>
-                  <CardTitle className="font-headline text-xl mt-2">{offer.title}</CardTitle>
-                   <p className="font-semibold text-primary text-lg pt-2">{offer.price}</p>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    {offer.features.map((feature) => (
-                        <li key={feature} className="flex items-center justify-center">
-                            <span>{feature}</span>
-                        </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <div className="p-6 pt-0">
-                    <Button asChild className="w-full">
-                        <Link href={`/register?plan=${offer.id}`}>Pilih Paket</Link>
-                    </Button>
-                </div>
-              </Card>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {offers.slice(0, 3).map((offer, index) => (
+              <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                    <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
+                      {offer.image && (
+                        <>
+                           <Image
+                              src={offer.image.imageUrl}
+                              alt={offer.image.description}
+                              fill
+                              className="object-cover"
+                              data-ai-hint={offer.image.imageHint}
+                           />
+                           <div className="absolute inset-0 bg-black/50"></div>
+                        </>
+                      )}
+                      <div className="relative z-10">
+                         <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
+                         <p className="text-sm text-white/80">{offer.speed}</p>
+                         <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
+                         <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="flex flex-1 flex-col justify-between p-6">
+                      <div>
+                        {offer.promo && <p className="text-sm font-bold text-destructive mb-4 text-center">{offer.promo}</p>}
+                        <h4 className="font-semibold mb-2">Fitur dan Benefit</h4>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          {offer.features.map((feature) => (
+                            <li key={feature} className="flex items-center">
+                              <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="mt-6 space-y-2">
+                        <Button className="w-full" asChild>
+                          <Link href={`/register?plan=${offer.id}`}>Pilih Paket</Link>
+                        </Button>
+                         <Button className="w-full" variant="outline" asChild>
+                          <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
             ))}
           </div>
         </aside>
