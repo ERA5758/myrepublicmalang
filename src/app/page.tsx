@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -155,7 +156,7 @@ export default function Home() {
                         </Link>
                       </Button>
                       <Button size="lg" variant="outline" asChild>
-                        <Link href="/coverage-areas">Cek Jangkauan</Link>
+                        <Link href="/cek-area">Cek Jangkauan</Link>
                       </Button>
                     </div>
                   </div>

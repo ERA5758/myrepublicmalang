@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Facebook, Instagram, Phone, Twitter } from 'lucide-react';
 import Image from 'next/image';
@@ -28,7 +29,7 @@ export function Footer() {
               <h3 className="font-semibold tracking-wider uppercase">Tautan Cepat</h3>
               <ul className="mt-4 space-y-2 text-sm">
                 <li><Link href="/register" className="text-muted-foreground hover:text-primary">Daftar</Link></li>
-                <li><Link href="/coverage-areas" className="text-muted-foreground hover:text-primary">Area Jangkauan</Link></li>
+                <li><Link href="/cek-area" className="text-muted-foreground hover:text-primary">Cek Area</Link></li>
                 <li><Link href="/blog" className="text-muted-foreground hover:text-primary">Blog</Link></li>
                  <li><Link href="/payment-methods" className="text-muted-foreground hover:text-primary">Cara Bayar</Link></li>
               </ul>
@@ -58,7 +59,7 @@ export function Footer() {
         
         <div className="border-t border-border/40 py-6">
           <p className="text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} MyRepublic Malang. Sales Executive khusus pasang baru
+            © {new Date().getFullYear()} MyRepublic Malang. Sales Executive khusus pasang baru.
           </p>
         </div>
       </div>

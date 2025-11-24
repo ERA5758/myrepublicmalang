@@ -13,7 +13,7 @@ export const navLinks: NavLink[] = [
   { href: "/reviews", label: "Ulasan" },
   { href: "/blog", label: "Blog"},
   { href: "/register", label: "Daftar" },
-  { href: "/coverage-areas", label: "Area Jangkauan" },
+  { href: "/cek-area", label: "Cek Area" },
   { href: "/payment-methods", label: "Cara Bayar"},
   { href: "/personalized-offers", label: "Rekomendasi" },
 ];
@@ -182,7 +182,7 @@ export const faqs: Faq[] = [
   },
   {
     question: "Bagaimana cara memeriksa jangkauan di area saya di Malang?",
-    answer: "Anda dapat mengunjungi halaman 'Area Jangkauan' kami untuk melihat daftar lengkap semua area yang telah tercover jaringan MyRepublic. Cukup cari nama kelurahan atau area Anda untuk memeriksa ketersediaan.",
+    answer: "Anda dapat mengunjungi halaman 'Cek Area' kami untuk melihat daftar lengkap semua area yang telah tercover jaringan MyRepublic. Cukup cari nama kelurahan atau area Anda untuk memeriksa ketersediaan.",
   },
   {
     question: "Paket apa saja yang tersedia?",

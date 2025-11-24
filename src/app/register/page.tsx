@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useActionState } from 'react';
@@ -140,7 +141,7 @@ function RegisterForm() {
            <div className="space-y-4">
             <h2 className="font-headline text-2xl font-semibold">Belum Yakin?</h2>
             <p className="text-muted-foreground">
-              Lihat daftar lengkap <Link href="/coverage-areas" className="text-primary hover:underline">area jangkauan</Link> kami atau lihat pertanyaan yang sering diajukan di bawah ini.
+              Lihat daftar lengkap <Link href="/cek-area" className="text-primary hover:underline">area jangkauan</Link> kami atau lihat pertanyaan yang sering diajukan di bawah ini.
             </p>
              <Accordion type="single" collapsible className="w-full">
               {faqs.slice(0,3).map((faq, index) => (

@@ -1,3 +1,4 @@
+
 import type { ImagePlaceholder } from './placeholder-images';
 import { PlaceHolderImages } from './placeholder-images';
 
@@ -138,7 +139,7 @@ export const articles: Article[] = [
         <p>MyRepublic berkomitmen untuk membawa internet super cepat ke seluruh penjuru Malang. Jaringan fiber optik kami berkembang setiap hari, menjangkau lebih banyak lingkungan dan kompleks perumahan. Kami sangat antusias untuk mengumumkan pembaruan terbaru pada daftar jangkauan kami.</p>
 
         <h3 class="font-bold text-xl mt-6 mb-4">Bagaimana Cara Mengecek Jangkauan?</h3>
-        <p>Cara termudah untuk mengetahui apakah layanan kami tersedia di lokasi Anda adalah dengan mengunjungi halaman <a href="/coverage-areas" class="text-primary hover:underline">Area Jangkauan</a> kami. Anda dapat mencari nama kelurahan atau area Anda untuk memeriksa ketersediaan layanan.</p>
+        <p>Cara termudah untuk mengetahui apakah layanan kami tersedia di lokasi Anda adalah dengan mengunjungi halaman <a href="/cek-area" class="text-primary hover:underline">Cek Area</a> kami. Anda dapat mencari nama kelurahan atau area Anda untuk memeriksa ketersediaan layanan.</p>
         
         <h3 class="font-bold text-xl mt-6 mb-4">Area Anda Belum Terjangkau?</h3>
         <p>Jika alamat Anda saat ini berada di luar area layanan kami, jangan berkecil hati! Anda masih dapat mendaftarkan minat Anda melalui halaman <a href="/register" class="text-primary hover:underline">Pendaftaran</a>. Dengan mendaftarkan minat, Anda membantu kami memprioritaskan area untuk ekspansi di masa depan. Semakin banyak permintaan di suatu area, semakin cepat kami akan hadir di sana!</p>

@@ -1,3 +1,4 @@
+
 import type { MetadataRoute } from 'next';
 import { articles } from '@/lib/blog-data';
 
@@ -9,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/',
     '/blog',
     '/register',
-    '/coverage-areas',
+    '/cek-area',
     '/personalized-offers',
     '/payment-methods',
   ].map((route) => ({
