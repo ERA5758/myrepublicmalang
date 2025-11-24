@@ -17,36 +17,57 @@ export const navLinks: NavLink[] = [
 type Offer = {
   id: string;
   title: string;
-  description: string;
+  price: string;
   speed: string;
   features: string[];
   image: ImagePlaceholder | undefined;
+  promo?: string;
 };
 
 export const offers: Offer[] = [
   {
-    id: "gamer-pro",
-    title: "Gamer Pro",
-    speed: "500 Mbps",
-    description: "Dirancang untuk kemenangan dengan latensi sangat rendah dan bandwidth maksimum untuk bermain game dan streaming tanpa hambatan.",
-    features: ["Latensi Terendah", "Unggah/Unduh Simetris", "Router Gaming Gratis"],
-    image: PlaceHolderImages.find(img => img.id === 'gamer-pro'),
+    id: "value",
+    title: "VALUE",
+    speed: "30 Mbps",
+    price: "Rp 227.550/bln",
+    promo: "Free Upgrade 3 Bulan 50 Mbps",
+    features: ["Internet Simetris 1:1", "Unlimited Kuota", "Tahan Cuaca Ekstrim"],
+    image: PlaceHolderImages.find(img => img.id === 'basic-connect'),
   },
   {
-    id: "family-stream",
-    title: "Family Stream",
-    speed: "300 Mbps",
-    description: "Keseimbangan sempurna antara kecepatan dan keandalan untuk seluruh keluarga. Streaming, belajar, dan berselancar di banyak perangkat tanpa lag.",
-    features: ["Kuota Tanpa Batas", "Koneksi Stabil", "Hubungkan hingga 15 perangkat"],
+    id: "fast",
+    title: "FAST",
+    speed: "100 Mbps",
+    price: "Rp 260.850/bln",
+    promo: "Upgrade dari 50 Mbps",
+    features: ["Internet Stabil", "Unlimited Kuota", "100% Full Fiber Optic"],
     image: PlaceHolderImages.find(img => img.id === 'family-stream'),
   },
   {
-    id: "basic-connect",
-    title: "Basic Connect",
+    id: "nova",
+    title: "NOVA",
     speed: "100 Mbps",
-    description: "Internet berkecepatan tinggi yang terjangkau untuk kebutuhan harian Anda. Ideal untuk browsing, media sosial, dan streaming dalam HD.",
-    features: ["Harga Terbaik", "Fiber Optik Andal", "Dukungan Pelanggan 24/7"],
-    image: PlaceHolderImages.find(img => img.id === 'basic-connect'),
+    price: "Rp 333.000/bln",
+    promo: "Free Upgrade 3 Bulan 249 Mbps",
+    features: ["Cocok untuk streaming & kerja", "Unlimited Kuota", "Kecepatan Simetris"],
+    image: PlaceHolderImages.find(img => img.id === 'hero-bg'),
+  },
+  {
+    id: "mygamer",
+    title: "MYGAMER",
+    speed: "250 Mbps",
+    price: "Rp 444.000/bln",
+    promo: "Free Upgrade 3 Bulan 399 Mbps",
+    features: ["Latensi Terendah untuk Gaming", "Prioritas Jaringan Game", "Internet Super Cepat"],
+    image: PlaceHolderImages.find(img => img.id === 'gamer-pro'),
+  },
+  {
+    id: "prime",
+    title: "PRIME",
+    speed: "500 Mbps",
+    price: "Rp 555.000/bln",
+    features: ["Kecepatan Maksimal", "Untuk Kebutuhan Profesional", "Performa Terbaik"],
+    image: PlaceHolderImages.find(img => img.id === 'blog-1'),
   },
 ];
 

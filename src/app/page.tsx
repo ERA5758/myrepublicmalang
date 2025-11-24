@@ -40,7 +40,7 @@ export default function Home() {
             Rasakan <span className="text-primary">Masa Depan Internet</span>
           </h1>
           <p className="mx-auto mt-6 max-w-3xl text-lg text-muted-foreground md:text-xl">
-            Kecepatan super cepat, data tanpa batas, dan keandalan tak tertandingi. Bergabunglah dengan jaringan MyRepublic dan tingkatkan kehidupan digital Anda.
+            Kecepatan super cepat, data tanpa batas, dan keandalan tak tertandingi. Bergabunglah dengan jaringan MyRepublic dan tingkatkan kehidupan digital Anda. GRATIS INSTALASI!
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button size="lg" asChild>
@@ -73,7 +73,7 @@ export default function Home() {
                   <div className="relative h-48 w-full">
                     <Image
                       src={offer.image.imageUrl}
-                      alt={offer.image.description}
+                      alt={offer.title}
                       fill
                       className="object-cover"
                       data-ai-hint={offer.image.imageHint}
@@ -85,10 +85,11 @@ export default function Home() {
                     <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
                     <Badge variant="default" className="bg-accent text-accent-foreground">{offer.speed}</Badge>
                   </div>
+                  <p className="font-semibold text-primary text-lg">{offer.price}</p>
                 </CardHeader>
                 <CardContent className="flex flex-1 flex-col justify-between">
                   <div>
-                    <p className="text-muted-foreground mb-4">{offer.description}</p>
+                    {offer.promo && <p className="text-sm font-bold text-destructive mb-2">{offer.promo}</p>}
                     <ul className="space-y-2 text-sm">
                       {offer.features.map((feature) => (
                         <li key={feature} className="flex items-center">
