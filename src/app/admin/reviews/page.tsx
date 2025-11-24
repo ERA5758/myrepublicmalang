@@ -3,10 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useFirestore } from '@/firebase';
-import { collection, onSnapshot, doc, updateDoc, query, orderBy, Timestamp, where } from 'firebase/firestore';
+import { collection, onSnapshot, doc, updateDoc, query, orderBy, Timestamp } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Loader, Check, X, Star, User } from 'lucide-react';
 import type { Review } from '@/lib/definitions';
@@ -32,7 +31,7 @@ function StarRating({ rating }: { rating: number }) {
 
 
 export default function ManageReviewsPage() {
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [allReviews, setAllReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ReviewStatus>('pending');
   const firestore = useFirestore();
@@ -45,7 +44,6 @@ export default function ManageReviewsPage() {
     const reviewsCollection = collection(firestore, 'reviews');
     const reviewsQuery = query(
       reviewsCollection, 
-      where('status', '==', activeTab), 
       orderBy('createdAt', 'desc')
     );
 
@@ -58,12 +56,12 @@ export default function ManageReviewsPage() {
             createdAt: (data.createdAt as Timestamp)?.toDate().toISOString() || new Date().toISOString()
         } as Review
       });
-      setReviews(fetchedReviews);
+      setAllReviews(fetchedReviews);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [firestore, activeTab]);
+  }, [firestore]);
 
   const handleUpdateStatus = async (id: string, status: ReviewStatus) => {
     if (!firestore) return;
@@ -82,6 +80,8 @@ export default function ManageReviewsPage() {
       });
     }
   };
+  
+  const filteredReviews = allReviews.filter(review => review.status === activeTab);
 
   return (
     <div className="container mx-auto max-w-7xl py-12 sm:py-16">
@@ -111,7 +111,7 @@ export default function ManageReviewsPage() {
                 </div>
             ) : (
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {reviews.length > 0 ? reviews.map(review => (
+                    {filteredReviews.length > 0 ? filteredReviews.map(review => (
                         <Card key={review.id} className="flex flex-col">
                             <CardHeader>
                                 <div className="flex justify-between items-start">
