@@ -130,9 +130,16 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                          <Wifi className="h-6 w-6 text-primary"/>
                     </div>
                   <CardTitle className="font-headline text-xl mt-2">{offer.title}</CardTitle>
+                   <p className="font-semibold text-primary text-lg pt-2">{offer.price}</p>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  <p className="text-muted-foreground text-sm">{offer.description}</p>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    {offer.features.map((feature) => (
+                        <li key={feature} className="flex items-center justify-center">
+                            <span>{feature}</span>
+                        </li>
+                    ))}
+                  </ul>
                 </CardContent>
                 <div className="p-6 pt-0">
                     <Button asChild className="w-full">
