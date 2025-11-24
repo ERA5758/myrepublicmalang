@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, Wifi } from 'lucide-react';
+import { ArrowRight, CheckCircle, Wifi, Zap, Shield, Infinity } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -13,50 +13,98 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { faqs, offers } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
+const features = [
+    {
+        icon: <Zap className="h-8 w-8 text-primary" />,
+        title: 'Kecepatan Simetris',
+        description: 'Kecepatan upload dan download sama cepatnya, ideal untuk streaming, game, dan video call.',
+    },
+    {
+        icon: <Infinity className="h-8 w-8 text-primary" />,
+        title: 'Unlimited Kuota',
+        description: 'Nikmati internet tanpa batas kuota. Tidak ada lagi kekhawatiran tentang kehabisan data di tengah bulan.',
+    },
+    {
+        icon: <Shield className="h-8 w-8 text-primary" />,
+        title: 'Tahan Cuaca',
+        description: 'Dengan 100% jaringan fiber optic, koneksi Anda tetap stabil dan andal bahkan saat cuaca buruk sekalipun.',
+    },
+];
+
+
 export default function Home() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-bg');
 
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative w-full py-24 md:py-32 lg:py-40">
-        {heroImage && (
-             <Image
-                src={heroImage.imageUrl}
-                alt={heroImage.description}
-                fill
-                className="object-cover"
-                priority
-                data-ai-hint={heroImage.imageHint}
-             />
+      <section className="relative w-full overflow-hidden">
+         <div className="container relative z-10 mx-auto max-w-7xl px-4 py-24 text-center md:py-32 lg:py-40">
+           <Badge variant="secondary" className="mb-4 shadow-md">
+             <Wifi className="mr-2 h-4 w-4 text-primary" />
+             Internet Fiber Tercepat di Malang
+           </Badge>
+           <h1 className="font-headline text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+             Rasakan <span className="text-primary">Masa Depan Internet</span>
+           </h1>
+           <p className="mx-auto mt-6 max-w-3xl text-lg text-muted-foreground md:text-xl">
+             Kecepatan super cepat, data tanpa batas, dan keandalan tak tertandingi. Bergabunglah dengan jaringan MyRepublic dan tingkatkan kehidupan digital Anda. GRATIS INSTALASI!
+           </p>
+           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+             <Button size="lg" asChild>
+               <Link href="/register">
+                 Mulai Sekarang <ArrowRight className="ml-2 h-5 w-5" />
+               </Link>
+             </Button>
+             <Button size="lg" variant="outline" asChild>
+               <Link href="/coverage-areas">Cek Jangkauan</Link>
+             </Button>
+           </div>
+         </div>
+          {heroImage && (
+             <div className="absolute inset-0 z-0">
+                <Image
+                    src={heroImage.imageUrl}
+                    alt={heroImage.description}
+                    fill
+                    className="object-cover"
+                    priority
+                    data-ai-hint={heroImage.imageHint}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/60 to-background/20"></div>
+                <div className="absolute inset-0 bg-background/50"></div>
+             </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
-        <div className="container relative mx-auto max-w-7xl px-4 text-center">
-          <Badge variant="secondary" className="mb-4">
-            <Wifi className="mr-2 h-4 w-4 text-primary" />
-            Internet Fiber Tercepat di Malang
-          </Badge>
-          <h1 className="font-headline text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-            Rasakan <span className="text-primary">Masa Depan Internet</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-3xl text-lg text-muted-foreground md:text-xl">
-            Kecepatan super cepat, data tanpa batas, dan keandalan tak tertandingi. Bergabunglah dengan jaringan MyRepublic dan tingkatkan kehidupan digital Anda. GRATIS INSTALASI!
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg" asChild>
-              <Link href="/register">
-                Mulai Sekarang <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/coverage-areas">Cek Jangkauan</Link>
-            </Button>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="w-full bg-background py-16 sm:py-24">
+        <div className="container mx-auto max-w-7xl px-4">
+          <div className="mb-12 text-center">
+            <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
+              Mengapa Memilih MyRepublic?
+            </h2>
+            <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+              Kami memberikan Anda koneksi internet terbaik dengan berbagai keunggulan.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+             {features.map((feature) => (
+                <div key={feature.title} className="text-center">
+                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                      {feature.icon}
+                   </div>
+                   <h3 className="font-headline text-xl font-bold">{feature.title}</h3>
+                   <p className="mt-2 text-muted-foreground">{feature.description}</p>
+                </div>
+             ))}
           </div>
         </div>
       </section>
 
+
       {/* Offers Section */}
-      <section id="offers" className="w-full bg-background py-16 sm:py-24">
+      <section id="offers" className="w-full bg-secondary/50 py-16 sm:py-24">
         <div className="container mx-auto max-w-7xl px-4">
           <div className="mb-12 text-center">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
@@ -68,7 +116,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {offers.map((offer) => (
-              <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+              <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
                 {offer.image && (
                   <div className="relative h-48 w-full">
                     <Image
@@ -85,11 +133,11 @@ export default function Home() {
                     <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
                     <Badge variant="default" className="bg-accent text-accent-foreground">{offer.speed}</Badge>
                   </div>
-                  <p className="font-semibold text-primary text-lg">{offer.price}</p>
+                  <p className="font-semibold text-primary text-2xl">{offer.price}</p>
                 </CardHeader>
                 <CardContent className="flex flex-1 flex-col justify-between">
                   <div>
-                    {offer.promo && <p className="text-sm font-bold text-destructive mb-2">{offer.promo}</p>}
+                    {offer.promo && <p className="text-sm font-bold text-destructive mb-3">{offer.promo}</p>}
                     <ul className="space-y-2 text-sm">
                       {offer.features.map((feature) => (
                         <li key={feature} className="flex items-center">
@@ -100,7 +148,7 @@ export default function Home() {
                     </ul>
                   </div>
                   <Button className="mt-6 w-full" asChild>
-                    <Link href="/register">Pilih Paket</Link>
+                    <Link href={`/register?plan=${offer.id}`}>Pilih Paket</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -110,7 +158,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="w-full bg-secondary/50 py-16 sm:py-24">
+      <section id="faq" className="w-full bg-background py-16 sm:py-24">
         <div className="container mx-auto max-w-4xl px-4">
           <div className="mb-12 text-center">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
