@@ -4,9 +4,9 @@ import { z } from 'zod';
 import { personalizedOfferRecommendations } from '@/ai/flows/personalized-offer-recommendations';
 import { LeadCaptureSchema, PersonalizedOfferSchema, type LeadCaptureFormState, type PersonalizedOfferFormState } from './definitions';
 import { sendLeadNotification } from './whatsapp';
-import { offers as mockOffers } from './data';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
+import { offers as mockOffers } from './data';
 
 
 export async function captureLead(

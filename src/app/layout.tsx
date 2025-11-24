@@ -6,7 +6,6 @@ import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { FloatingWhatsApp } from '@/components/floating-whatsapp';
 import { FirebaseProvider } from '@/firebase/provider';
-import { initializeFirebase } from '@/firebase';
 
 const siteUrl = 'https://myrepublicmalang.net';
 
@@ -58,7 +57,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { firebaseApp, firestore, auth } = initializeFirebase();
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
@@ -74,7 +72,7 @@ export default function RootLayout({
           'min-h-screen bg-background font-body antialiased'
         )}
       >
-        <FirebaseProvider firebaseApp={firebaseApp} firestore={firestore} auth={auth}>
+        <FirebaseProvider>
           <div className="relative flex min-h-dvh flex-col bg-background">
             <Header />
             <main className="flex-1">{children}</main>
