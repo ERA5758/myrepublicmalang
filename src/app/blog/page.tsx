@@ -71,7 +71,7 @@ export default function BlogIndexPage() {
             Array.from({ length: 3 }).map((_, i) => <ArticleSkeleton key={i} />)
         ) : (
             articles.map((article) => (
-            <Link key={article.slug} href={`/blog/${article.slug}`} passHref>
+            <Link key={article.id} href={`/blog/${article.slug}`} passHref>
                 <Card className="flex flex-col h-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                 <div className="relative h-48 w-full">
                     <Image
