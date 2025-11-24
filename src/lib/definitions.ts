@@ -5,6 +5,7 @@ export const LeadCaptureSchema = z.object({
   email: z.string().email({ message: "Silakan masukkan alamat email yang valid." }),
   phone: z.string().min(10, { message: "Silakan masukkan nomor telepon yang valid." }),
   address: z.string().min(10, { message: "Silakan masukkan alamat lengkap." }),
+  locationPin: z.string().optional(),
 });
 
 export type LeadCaptureFormState = {
