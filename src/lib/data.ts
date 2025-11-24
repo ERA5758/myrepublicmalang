@@ -7,10 +7,10 @@ type NavLink = {
 };
 
 export const navLinks: NavLink[] = [
-  { href: "/", label: "Home" },
-  { href: "/register", label: "Register" },
-  { href: "/coverage-check", label: "Coverage" },
-  { href: "/personalized-offers", label: "Get Recommendation" },
+  { href: "/", label: "Beranda" },
+  { href: "/register", label: "Daftar" },
+  { href: "/coverage-check", label: "Jangkauan" },
+  { href: "/personalized-offers", label: "Rekomendasi" },
 ];
 
 type Offer = {
@@ -27,24 +27,24 @@ export const offers: Offer[] = [
     id: "gamer-pro",
     title: "Gamer Pro",
     speed: "500 Mbps",
-    description: "Engineered for victory with ultra-low latency and maximum bandwidth for seamless gaming and streaming.",
-    features: ["Lowest Latency", "Symmetrical Upload/Download", "Free Gaming Router"],
+    description: "Dirancang untuk kemenangan dengan latensi sangat rendah dan bandwidth maksimum untuk bermain game dan streaming tanpa hambatan.",
+    features: ["Latensi Terendah", "Unggah/Unduh Simetris", "Router Gaming Gratis"],
     image: PlaceHolderImages.find(img => img.id === 'gamer-pro'),
   },
   {
     id: "family-stream",
     title: "Family Stream",
     speed: "300 Mbps",
-    description: "The perfect balance of speed and reliability for the whole family. Stream, study, and surf on multiple devices without lag.",
-    features: ["Unlimited Quota", "Stable Connection", "Connects up to 15 devices"],
+    description: "Keseimbangan sempurna antara kecepatan dan keandalan untuk seluruh keluarga. Streaming, belajar, dan berselancar di banyak perangkat tanpa lag.",
+    features: ["Kuota Tanpa Batas", "Koneksi Stabil", "Hubungkan hingga 15 perangkat"],
     image: PlaceHolderImages.find(img => img.id === 'family-stream'),
   },
   {
     id: "basic-connect",
     title: "Basic Connect",
     speed: "100 Mbps",
-    description: "Affordable, high-speed internet for your daily needs. Ideal for browsing, social media, and streaming in HD.",
-    features: ["Best Value", "Reliable Fiber Optic", "24/7 Customer Support"],
+    description: "Internet berkecepatan tinggi yang terjangkau untuk kebutuhan harian Anda. Ideal untuk browsing, media sosial, dan streaming dalam HD.",
+    features: ["Harga Terbaik", "Fiber Optik Andal", "Dukungan Pelanggan 24/7"],
     image: PlaceHolderImages.find(img => img.id === 'basic-connect'),
   },
 ];
@@ -56,23 +56,23 @@ type Faq = {
 
 export const faqs: Faq[] = [
   {
-    question: "What is MyRepublic?",
-    answer: "MyRepublic is a fiber optic internet provider offering high-speed broadband services. We are dedicated to providing fast, reliable, and affordable internet to residents of Malang.",
+    question: "Apa itu MyRepublic?",
+    answer: "MyRepublic adalah penyedia internet fiber optik yang menawarkan layanan broadband berkecepatan tinggi. Kami berdedikasi untuk menyediakan internet yang cepat, andal, dan terjangkau bagi penduduk Malang.",
   },
   {
-    question: "What are the benefits of MyRepublic fiber internet?",
-    answer: "Our fiber optic network provides symmetrical upload and download speeds, lower latency, and a more stable connection compared to traditional cable internet. This is ideal for gaming, streaming 4K content, video conferencing, and supporting multiple connected devices.",
+    question: "Apa saja keuntungan internet fiber MyRepublic?",
+    answer: "Jaringan fiber optik kami menyediakan kecepatan unggah dan unduh yang simetris, latensi lebih rendah, dan koneksi yang lebih stabil dibandingkan dengan internet kabel tradisional. Ini ideal untuk bermain game, streaming konten 4K, konferensi video, dan mendukung banyak perangkat yang terhubung.",
   },
   {
-    question: "How do I check for coverage in my area in Malang?",
-    answer: "You can use our Coverage Check tool on our website. Simply enter your full address to see if our service is available at your location and explore the available plans.",
+    question: "Bagaimana cara memeriksa jangkauan di area saya di Malang?",
+    answer: "Anda dapat menggunakan alat Cek Jangkauan kami di situs web kami. Cukup masukkan alamat lengkap Anda untuk melihat apakah layanan kami tersedia di lokasi Anda dan jelajahi paket yang tersedia.",
   },
   {
-    question: "What plans are available?",
-    answer: "We offer a variety of plans to suit different needs and budgets, from our Basic Connect plan for everyday browsing to our Gamer Pro plan for competitive online gaming. You can see our featured offers on the homepage.",
+    question: "Paket apa saja yang tersedia?",
+    answer: "Kami menawarkan berbagai paket untuk memenuhi kebutuhan dan anggaran yang berbeda, dari paket Basic Connect kami untuk browsing sehari-hari hingga paket Gamer Pro kami untuk game online kompetitif. Anda dapat melihat penawaran unggulan kami di beranda.",
   },
   {
-    question: "How do I get a personalized recommendation?",
-    answer: "Use our AI-Powered Offer Customization Tool! By providing your address and describing your internet usage, our AI will suggest the best plan tailored specifically for you.",
+    question: "Bagaimana cara mendapatkan rekomendasi yang dipersonalisasi?",
+    answer: "Gunakan Alat Kustomisasi Penawaran Berbasis AI kami! Dengan memberikan alamat Anda dan menjelaskan penggunaan internet Anda, AI kami akan menyarankan paket terbaik yang disesuaikan khusus untuk Anda.",
   }
 ];

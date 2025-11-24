@@ -21,7 +21,7 @@ function SubmitButton() {
       ) : (
         <ArrowRight className="mr-2 h-4 w-4" />
       )}
-      Submit Application
+      Kirim Pendaftaran
     </Button>
   );
 }
@@ -35,11 +35,11 @@ export default function RegisterPage() {
   useEffect(() => {
     if (state?.message && !state.fields) {
       toast({
-        title: state.message.startsWith('Thank you') ? 'Success!' : 'Uh oh!',
+        title: state.message.startsWith('Terima kasih') ? 'Sukses!' : 'Uh oh!',
         description: state.message,
-        variant: state.message.startsWith('Thank you') ? 'default' : 'destructive',
+        variant: state.message.startsWith('Terima kasih') ? 'default' : 'destructive',
       });
-      if(state.message.startsWith('Thank you')) {
+      if(state.message.startsWith('Terima kasih')) {
         formRef.current?.reset();
       }
     }
@@ -49,47 +49,47 @@ export default function RegisterPage() {
     <div className="container mx-auto max-w-7xl py-12 sm:py-16">
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
         <div className="space-y-6">
-          <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">Join the Revolution</h1>
+          <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">Bergabunglah dengan Revolusi</h1>
           <p className="text-xl text-muted-foreground">
-            You're one step away from experiencing the fastest internet in Malang. Fill out the form to get started, and we'll handle the rest.
+            Anda selangkah lagi untuk merasakan internet tercepat di Malang. Isi formulir untuk memulai, dan kami akan menangani sisanya.
           </p>
           <div className="space-y-4">
-            <h2 className="font-headline text-2xl font-semibold">Our Coverage Area</h2>
+            <h2 className="font-headline text-2xl font-semibold">Area Jangkauan Kami</h2>
             <p className="text-muted-foreground">
-              Check out our current service area in Malang. We are expanding rapidly, so check back often if your area isn't covered yet!
+              Lihat area layanan kami saat ini di Malang. Kami berkembang pesat, jadi sering-seringlah memeriksa kembali jika area Anda belum terjangkau!
             </p>
             <CoverageMap />
           </div>
         </div>
         <Card className="w-full max-w-lg justify-self-center lg:justify-self-end">
           <CardHeader>
-            <CardTitle>Register Your Interest</CardTitle>
+            <CardTitle>Daftarkan Minat Anda</CardTitle>
             <CardDescription>
-              Submit your details, and our team will contact you for installation.
+              Kirim detail Anda, dan tim kami akan menghubungi Anda untuk instalasi.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form ref={formRef} action={dispatch} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">Nama Lengkap</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="name" name="name" placeholder="e.g. Budi Santoso" required className="pl-10" />
+                  <Input id="name" name="name" placeholder="cth. Budi Santoso" required className="pl-10" />
                 </div>
                 {state?.fields?.name && <p className="text-sm text-destructive">{state.fields.name}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email">Alamat Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="email" name="email" type="email" placeholder="you@example.com" required className="pl-10" />
+                  <Input id="email" name="email" type="email" placeholder="anda@contoh.com" required className="pl-10" />
                 </div>
                  {state?.fields?.email && <p className="text-sm text-destructive">{state.fields.email}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">Nomor Telepon</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input id="phone" name="phone" type="tel" placeholder="081234567890" required className="pl-10" />
@@ -98,10 +98,10 @@ export default function RegisterPage() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="address">Full Installation Address</Label>
+                <Label htmlFor="address">Alamat Instalasi Lengkap</Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="address" name="address" placeholder="e.g. Jl. Ijen No. 25, Malang" required className="pl-10" />
+                  <Input id="address" name="address" placeholder="cth. Jl. Ijen No. 25, Malang" required className="pl-10" />
                 </div>
                 {state?.fields?.address && <p className="text-sm text-destructive">{state.fields.address}</p>}
               </div>

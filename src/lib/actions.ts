@@ -14,24 +14,24 @@ export async function captureLead(
 
   if (!validatedFields.success) {
     return {
-      message: 'Invalid form data. Please check your inputs.',
+      message: 'Data formulir tidak valid. Silakan periksa masukan Anda.',
       issues: validatedFields.error.flatten().fieldErrors ? undefined : validatedFields.error.flatten().formErrors,
       fields: validatedFields.error.flatten().fieldErrors,
     };
   }
   
   try {
-    // Here you would typically save the lead data to a database like Firestore.
-    // For this example, we'll just log it to the console.
-    console.log('New Lead Captured:', validatedFields.data);
+    // Di sini Anda biasanya akan menyimpan data prospek ke database seperti Firestore.
+    // Untuk contoh ini, kita hanya akan mencatatnya ke konsol.
+    console.log('Prospek Baru Ditangkap:', validatedFields.data);
 
     return {
-      message: `Thank you, ${validatedFields.data.name}! We've received your information and will be in touch shortly.`,
+      message: `Terima kasih, ${validatedFields.data.name}! Kami telah menerima informasi Anda dan akan segera menghubungi Anda.`,
     };
   } catch (error) {
-    console.error('Error capturing lead:', error);
+    console.error('Kesalahan menangkap prospek:', error);
     return {
-      message: 'An unexpected error occurred. Please try again later.',
+      message: 'Terjadi kesalahan tak terduga. Silakan coba lagi nanti.',
     };
   }
 }
@@ -47,7 +47,7 @@ export async function getPersonalizedOffer(
 
   if (!validatedFields.success) {
     return {
-      message: 'Please check your inputs.',
+      message: 'Silakan periksa masukan Anda.',
       issues: validatedFields.error.flatten().formErrors,
       fields: validatedFields.error.flatten().fieldErrors,
     };
@@ -58,6 +58,6 @@ export async function getPersonalizedOffer(
     return { recommendation };
   } catch (e) {
     console.error(e);
-    return { message: "Sorry, we couldn't generate a recommendation at this time. Please try again." };
+    return { message: "Maaf, kami tidak dapat membuat rekomendasi saat ini. Silakan coba lagi." };
   }
 }

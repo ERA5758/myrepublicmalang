@@ -25,9 +25,9 @@ export const CoverageMap: FC = () => {
     return (
       <Card className="flex h-[400px] w-full items-center justify-center bg-muted/50 p-4 text-center">
         <div className="space-y-2">
-          <h3 className="font-headline text-lg font-semibold">Map Unavailable</h3>
+          <h3 className="font-headline text-lg font-semibold">Peta Tidak Tersedia</h3>
           <p className="text-muted-foreground">
-            The Google Maps API key is missing. Please add it to your environment variables to display the coverage map.
+            Kunci API Google Maps tidak ditemukan. Harap tambahkan ke variabel lingkungan Anda untuk menampilkan peta jangkauan.
           </p>
         </div>
       </Card>

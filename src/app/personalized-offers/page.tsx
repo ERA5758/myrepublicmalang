@@ -20,7 +20,7 @@ function SubmitButton() {
       ) : (
         <Sparkles className="mr-2 h-4 w-4" />
       )}
-      Get My Recommendation
+      Dapatkan Rekomendasi Saya
     </Button>
   );
 }
@@ -32,36 +32,36 @@ export default function PersonalizedOffersPage() {
   return (
     <div className="container mx-auto max-w-4xl py-12 sm:py-16">
       <div className="text-center mb-12">
-        <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">Find Your Perfect Plan</h1>
+        <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">Temukan Paket Sempurna Anda</h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-          Let our AI assistant find the ideal MyRepublic plan for you. Just answer two simple questions to get a personalized recommendation.
+          Biarkan asisten AI kami menemukan paket MyRepublic yang ideal untuk Anda. Cukup jawab dua pertanyaan sederhana untuk mendapatkan rekomendasi yang dipersonalisasi.
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>AI-Powered Recommendation</CardTitle>
-            <CardDescription>Tell us about your needs.</CardDescription>
+            <CardTitle>Rekomendasi Berbasis AI</CardTitle>
+            <CardDescription>Beri tahu kami tentang kebutuhan Anda.</CardDescription>
           </CardHeader>
           <form action={dispatch}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="address">Your Address in Malang</Label>
+                <Label htmlFor="address">Alamat Anda di Malang</Label>
                 <Input
                   id="address"
                   name="address"
-                  placeholder="e.g., Jl. Veteran, Malang"
+                  placeholder="cth., Jl. Veteran, Malang"
                   required
                 />
                 {state?.fields?.address && <p className="text-sm text-destructive">{state.fields.address}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="internetUsageHabits">How do you use the internet?</Label>
+                <Label htmlFor="internetUsageHabits">Bagaimana Anda menggunakan internet?</Label>
                 <Textarea
                   id="internetUsageHabits"
                   name="internetUsageHabits"
-                  placeholder="e.g., Heavy gaming, streaming 4K movies, working from home with video calls, etc."
+                  placeholder="cth., Bermain game berat, streaming film 4K, bekerja dari rumah dengan panggilan video, dll."
                   required
                 />
                 {state?.fields?.internetUsageHabits && <p className="text-sm text-destructive">{state.fields.internetUsageHabits}</p>}
@@ -82,9 +82,9 @@ export default function PersonalizedOffersPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-headline">
                   <Wifi className="h-6 w-6 text-primary" />
-                  Our Recommendation For You
+                  Rekomendasi Kami Untuk Anda
                 </CardTitle>
-                <CardDescription>Based on your input, here is the best plan for you.</CardDescription>
+                <CardDescription>Berdasarkan masukan Anda, inilah paket terbaik untuk Anda.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <h3 className="text-2xl font-bold text-primary">{state.recommendation.recommendedPlanName}</h3>
@@ -92,15 +92,15 @@ export default function PersonalizedOffersPage() {
               </CardContent>
               <CardFooter>
                  <Button asChild className="w-full">
-                    <Link href="/register">Sign Up Now</Link>
+                    <Link href="/register">Daftar Sekarang</Link>
                 </Button>
               </CardFooter>
             </Card>
           ) : (
             <Card className="w-full flex flex-col items-center justify-center text-center p-8 bg-muted/50 h-full">
                 <Sparkles className="h-12 w-12 text-muted-foreground/50 mb-4" />
-                <h3 className="font-headline text-lg font-semibold text-muted-foreground">Your recommendation will appear here</h3>
-                <p className="text-sm text-muted-foreground">Fill out the form to get started.</p>
+                <h3 className="font-headline text-lg font-semibold text-muted-foreground">Rekomendasi Anda akan muncul di sini</h3>
+                <p className="text-sm text-muted-foreground">Isi formulir untuk memulai.</p>
             </Card>
           )}
         </div>

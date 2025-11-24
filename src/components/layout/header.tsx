@@ -45,7 +45,7 @@ export function Header() {
 
         <div className="flex flex-1 items-center justify-end space-x-2">
           <Button asChild className="hidden md:inline-flex" variant="default">
-            <Link href="/register">Get Started</Link>
+            <Link href="/register">Mulai</Link>
           </Button>
 
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -55,7 +55,7 @@ export function Header() {
                 className="px-2 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
               >
                 <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle Menu</span>
+                <span className="sr-only">Buka Menu</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="pr-0">

@@ -1,31 +1,31 @@
 'use server';
 
 /**
- * @fileOverview This file contains a Genkit flow for providing personalized MyRepublic plan recommendations.
+ * @fileOverview File ini berisi alur Genkit untuk memberikan rekomendasi paket MyRepublic yang dipersonalisasi.
  *
- * The flow takes into account the user's address and internet usage habits to suggest the most suitable plan.
+ * Alur ini mempertimbangkan alamat pengguna dan kebiasaan penggunaan internet untuk menyarankan paket yang paling sesuai.
  *
- * @exports personalizedOfferRecommendations - A function to trigger the flow.
- * @exports PersonalizedOfferRecommendationsInput - The input type for the personalizedOfferRecommendations function.
- * @exports PersonalizedOfferRecommendationsOutput - The return type for the personalizedOfferRecommendations function.
+ * @exports personalizedOfferRecommendations - Fungsi untuk memicu alur.
+ * @exports PersonalizedOfferRecommendationsInput - Tipe input untuk fungsi personalizedOfferRecommendations.
+ * @exports PersonalizedOfferRecommendationsOutput - Tipe return untuk fungsi personalizedOfferRecommendations.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const PersonalizedOfferRecommendationsInputSchema = z.object({
-  address: z.string().describe('The user\u0027s address in Malang.'),
+  address: z.string().describe('Alamat pengguna di Malang.'),
   internetUsageHabits: z
     .string()
     .describe(
-      'A description of the user\u0027s typical internet usage habits (e.g., streaming, gaming, browsing).' // Corrected typo here
+      'Deskripsi kebiasaan penggunaan internet khas pengguna (mis., streaming, bermain game, browsing).'
     ),
 });
 export type PersonalizedOfferRecommendationsInput = z.infer<typeof PersonalizedOfferRecommendationsInputSchema>;
 
 const PersonalizedOfferRecommendationsOutputSchema = z.object({
-  recommendedPlanName: z.string().describe('The name of the recommended MyRepublic plan.'),
-  recommendedPlanDescription: z.string().describe('A description of the recommended plan and why it is suitable for the user.'),
+  recommendedPlanName: z.string().describe('Nama paket MyRepublic yang direkomendasikan.'),
+  recommendedPlanDescription: z.string().describe('Deskripsi paket yang direkomendasikan dan mengapa cocok untuk pengguna.'),
 });
 export type PersonalizedOfferRecommendationsOutput = z.infer<typeof PersonalizedOfferRecommendationsOutputSchema>;
 
@@ -37,21 +37,21 @@ const prompt = ai.definePrompt({
   name: 'personalizedOfferRecommendationsPrompt',
   input: {schema: PersonalizedOfferRecommendationsInputSchema},
   output: {schema: PersonalizedOfferRecommendationsOutputSchema},
-  prompt: `You are an AI assistant specialized in recommending MyRepublic internet plans to users in Malang.
+  prompt: `Anda adalah asisten AI yang berspesialisasi dalam merekomendasikan paket internet MyRepublic kepada pengguna di Malang.
 
-  Based on the user's address and internet usage habits, recommend the most suitable MyRepublic plan.
+  Berdasarkan alamat pengguna dan kebiasaan penggunaan internet, rekomendasikan paket MyRepublic yang paling sesuai.
 
-  Address: {{{address}}}
-  Internet Usage Habits: {{{internetUsageHabits}}}
+  Alamat: {{{address}}}
+  Kebiasaan Penggunaan Internet: {{{internetUsageHabits}}}
 
-  Consider the following factors when making your recommendation:
-  - MyRepublic plans available in Malang
-  - The user's internet usage habits (e.g., streaming, gaming, browsing)
-  - The user's budget
+  Pertimbangkan faktor-faktor berikut saat membuat rekomendasi Anda:
+  - Paket MyRepublic yang tersedia di Malang
+  - Kebiasaan penggunaan internet pengguna (mis., streaming, bermain game, browsing)
+  - Anggaran pengguna
 
-  Provide the recommended plan name and a brief description of why it is suitable for the user.
+  Berikan nama paket yang direkomendasikan dan deskripsi singkat mengapa paket tersebut cocok untuk pengguna.
 
-  Ensure that the output is in the correct JSON format.`, // Added instructions to ensure JSON format
+  Pastikan output dalam format JSON yang benar.`,
 });
 
 const personalizedOfferRecommendationsFlow = ai.defineFlow(

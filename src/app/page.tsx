@@ -34,22 +34,22 @@ export default function Home() {
         <div className="container relative mx-auto max-w-7xl px-4 text-center">
           <Badge variant="secondary" className="mb-4">
             <Wifi className="mr-2 h-4 w-4 text-primary" />
-            Fastest Fiber Internet in Malang
+            Internet Fiber Tercepat di Malang
           </Badge>
           <h1 className="font-headline text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-            Experience the <span className="text-primary">Future of Internet</span>
+            Rasakan <span className="text-primary">Masa Depan Internet</span>
           </h1>
           <p className="mx-auto mt-6 max-w-3xl text-lg text-muted-foreground md:text-xl">
-            Blazing-fast speeds, unlimited data, and unparalleled reliability. Join the MyRepublic network and elevate your digital life.
+            Kecepatan super cepat, data tanpa batas, dan keandalan tak tertandingi. Bergabunglah dengan jaringan MyRepublic dan tingkatkan kehidupan digital Anda.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button size="lg" asChild>
               <Link href="/register">
-                Get Started Now <ArrowRight className="ml-2 h-5 w-5" />
+                Mulai Sekarang <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/coverage-check">Check Coverage</Link>
+              <Link href="/coverage-check">Cek Jangkauan</Link>
             </Button>
           </div>
         </div>
@@ -60,10 +60,10 @@ export default function Home() {
         <div className="container mx-auto max-w-7xl px-4">
           <div className="mb-12 text-center">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-              Exclusive Offers for Malang
+              Penawaran Eksklusif untuk Malang
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-              Choose the perfect plan that fits your lifestyle and budget. Special prices for new customers!
+              Pilih paket sempurna yang sesuai dengan gaya hidup dan anggaran Anda. Harga spesial untuk pelanggan baru!
             </p>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -99,7 +99,7 @@ export default function Home() {
                     </ul>
                   </div>
                   <Button className="mt-6 w-full" asChild>
-                    <Link href="/register">Choose Plan</Link>
+                    <Link href="/register">Pilih Paket</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -113,10 +113,10 @@ export default function Home() {
         <div className="container mx-auto max-w-4xl px-4">
           <div className="mb-12 text-center">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-              Frequently Asked Questions
+              Pertanyaan yang Sering Diajukan
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-              Have questions? We have answers. If you can't find what you're looking for, feel free to contact us.
+              Punya pertanyaan? Kami punya jawabannya. Jika Anda tidak dapat menemukan apa yang Anda cari, jangan ragu untuk menghubungi kami.
             </p>
           </div>
           <Accordion type="single" collapsible className="w-full">
