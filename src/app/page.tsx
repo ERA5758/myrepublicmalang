@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, Wifi, Zap, Shield, Infinity, ClipboardList, Wrench, CreditCard, CircleCheckBig } from 'lucide-react';
+import { ArrowRight, CheckCircle, Wifi, Zap, Shield, Infinity, ClipboardList, Wrench, CreditCard, CircleCheckBig, Tv } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -10,11 +10,11 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { faqs } from '@/lib/data';
+import { faqs, offersTV } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
-import type { Offer } from '@/lib/definitions';
+import type { Offer, OfferTV } from '@/lib/definitions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TermsAndConditionsDialog } from '@/components/terms-dialog';
 
@@ -249,9 +249,61 @@ export default async function Home() {
                 ))}
               </div>
             </TabsContent>
-             <TabsContent value="internet-tv" className="text-center py-16">
-              <p className="text-muted-foreground">Konten untuk Internet + TV akan segera hadir.</p>
-            </TabsContent>
+             <TabsContent value="internet-tv" className="mt-10">
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                  {offersTV.map((offer) => (
+                    <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                      <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
+                        {offer.image && (
+                          <>
+                            <Image
+                                src={offer.image.imageUrl}
+                                alt={offer.image.description}
+                                fill
+                                className="object-cover"
+                                data-ai-hint={offer.image.imageHint}
+                            />
+                            <div className="absolute inset-0 bg-black/50"></div>
+                          </>
+                        )}
+                        <div className="relative z-10">
+                          <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
+                          <p className="text-sm text-white/80">{offer.speed}</p>
+                          <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
+                          <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="flex flex-1 flex-col justify-between p-6">
+                        <div>
+                          <div className="text-center mb-4">
+                            <h4 className="font-semibold">Channel TV</h4>
+                            <p className="text-muted-foreground text-sm flex items-center justify-center gap-2"><Tv className="h-4 w-4" /> {offer.channels}</p>
+                            <p className="text-muted-foreground text-xs">{offer.stb}</p>
+                          </div>
+                          {offer.promo && <p className="text-sm font-bold text-destructive mb-4 text-center">{offer.promo}</p>}
+                          <h4 className="font-semibold mb-2">Fitur dan Benefit</h4>
+                          <ul className="space-y-2 text-sm text-muted-foreground">
+                            {offer.features.map((feature) => (
+                              <li key={feature} className="flex items-center">
+                                <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
+                                <span>{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="mt-6 space-y-2">
+                          <Button className="w-full" asChild>
+                            <Link href={`/register?plan=${offer.id}`}>Langganan Sekarang</Link>
+                          </Button>
+                          <Button className="w-full" variant="outline" asChild>
+                            <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
             <TabsContent value="gamer" className="text-center py-16">
                <p className="text-muted-foreground">Konten untuk MyGamer akan segera hadir.</p>
             </TabsContent>

@@ -52,6 +52,18 @@ export type Offer = {
   promo?: string;
 };
 
+export type OfferTV = {
+  id: string;
+  title: string;
+  price: string;
+  speed: string;
+  features: string[];
+  image: ImagePlaceholder;
+  promo?: string;
+  channels: string;
+  stb: string;
+};
+
 export type Article = {
   id: string;
   slug: string;

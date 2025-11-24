@@ -1,6 +1,6 @@
 import type { ImagePlaceholder } from './placeholder-images';
 import { PlaceHolderImages } from './placeholder-images';
-import type { Offer } from './definitions';
+import type { Offer, OfferTV } from './definitions';
 
 type NavLink = {
   href: string;
@@ -62,6 +62,64 @@ export const offers: Offer[] = [
     image: PlaceHolderImages.find(img => img.id === 'blog-1')!,
   },
 ];
+
+export const offersTV: OfferTV[] = [
+  {
+    id: "value-tv",
+    title: "VALUE",
+    speed: "30 Mbps",
+    price: "Rp 320.000/bln",
+    promo: "Gratis Upgrade Speed 50 Mbps",
+    features: ["Vidio Platinum FREE 12 BULAN", "Genflix FREE 12 BULAN", "Internet UNLIMITED", "Include ONT/Modem", "Gratis Instalasi Rp500,000", "Ideal untuk 1 - 3 Device", "DL & UL 1:1 up to 30 Mbps"],
+    image: PlaceHolderImages.find(img => img.id === 'basic-connect')!,
+    channels: "65 Channel",
+    stb: "Termasuk STB Android 12",
+  },
+  {
+    id: "fast-tv",
+    title: "FAST",
+    speed: "50 Mbps",
+    price: "Rp 335.000/bln",
+    promo: "Gratis Upgrade Speed 100 Mbps",
+    features: ["Vidio Platinum FREE 12 BULAN", "Genflix FREE 12 BULAN", "Internet UNLIMITED", "Include ONT/Modem", "Gratis Instalasi Rp500,000", "Ideal untuk 1 - 5 Device", "DL & UL 1:1 up to 50 Mbps"],
+    image: PlaceHolderImages.find(img => img.id === 'family-stream')!,
+    channels: "76 Channel",
+    stb: "Termasuk STB Android 12",
+  },
+  {
+    id: "nova-tv",
+    title: "NOVA",
+    speed: "100 Mbps",
+    price: "Rp 385.000/bln",
+    promo: "Gratis Upgrade Speed 249 Mbps",
+    features: ["Vidio Platinum FREE 12 BULAN", "Genflix FREE 12 BULAN", "Internet UNLIMITED", "Include ONT/Modem", "Gratis Instalasi Rp500,000", "Ideal untuk 1 - 7 Device", "DL & UL 1:1 up to 100 Mbps"],
+    image: PlaceHolderImages.find(img => img.id === 'hero-bg')!,
+    channels: "76 Channel",
+    stb: "Termasuk STB Android 12",
+  },
+  {
+    id: "mygamer-tv",
+    title: "MYGAMER",
+    speed: "250 Mbps",
+    price: "Rp 485.000/bln",
+    promo: "Gratis Upgrade Speed 399 Mbps",
+    features: ["Vidio Platinum FREE 12 BULAN", "Genflix FREE 12 BULAN", "Internet UNLIMITED", "Include ONT/Modem", "IP Public Static", "Gratis Instalasi Rp500,000", "DL & UL 1:1 up to 250 Mbps", "Ideal untuk 1 - 10 Device", "Akses langsung ke server game"],
+    image: PlaceHolderImages.find(img => img.id === 'gamer-pro')!,
+    channels: "76 Channel",
+    stb: "Termasuk STB ANDROID 12",
+  },
+  {
+    id: "prime-tv",
+    title: "PRIME",
+    speed: "500 Mbps",
+    price: "Rp 585.000/bln",
+    features: ["Vidio Platinum FREE 12 BULAN", "Genflix FREE 12 BULAN", "Internet UNLIMITED", "Include ONT/Modem", "Gratis Instalasi Rp500,000", "DL & UL 1:1 up to 500 Mbps", "Ideal untuk 1 - 15 Device"],
+    image: PlaceHolderImages.find(img => img.id === 'blog-1')!,
+    channels: "76 Channel",
+    stb: "Termasuk STB ANDROID 12",
+  },
+];
+
 
 type Faq = {
   question: string;
