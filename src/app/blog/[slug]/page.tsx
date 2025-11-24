@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, CircleCheckBig, Wifi } from 'lucide-react';
+import { ArrowLeft, CircleCheckBig } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { initializeFirebase } from '@/firebase';
-import { collection, getDocs, query, where, limit, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, query, where, limit, Timestamp, orderBy } from 'firebase/firestore';
 import type { Article, Offer } from '@/lib/definitions';
 import { ShareButton } from '@/components/share-button';
 
@@ -25,14 +25,13 @@ async function getArticle(slug: string): Promise<Article | null> {
     const doc = querySnapshot.docs[0];
     const data = doc.data();
 
-    // Convert Firestore Timestamp to string
     let publishedAt: string;
     if (data.publishedAt instanceof Timestamp) {
         publishedAt = data.publishedAt.toDate().toISOString();
     } else if (typeof data.publishedAt === 'string') {
         publishedAt = data.publishedAt;
     } else {
-        publishedAt = new Date().toISOString(); // Fallback
+        publishedAt = new Date().toISOString();
     }
 
     return { 
@@ -44,11 +43,12 @@ async function getArticle(slug: string): Promise<Article | null> {
 
 async function getOffers(): Promise<Offer[]> {
     const { firestore } = initializeFirebase();
-    if (!firestore) {
-        return [];
-    }
+    if (!firestore) return [];
+    
     const offersCollection = collection(firestore, 'offers');
-    const querySnapshot = await getDocs(offersCollection);
+    const q = query(offersCollection, orderBy('price'));
+    const querySnapshot = await getDocs(q);
+
     const offers: Offer[] = [];
     querySnapshot.forEach((doc) => {
         offers.push({ id: doc.id, ...doc.data() } as Offer);
@@ -155,10 +155,11 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           <div className="relative mb-6 h-64 md:h-96 w-full overflow-hidden rounded-lg">
             <Image
               src={article.image.imageUrl}
-              alt={article.title}
+              alt={article.image.description}
               fill
               className="object-cover"
               priority
+              data-ai-hint={article.image.imageHint}
             />
           </div>
           <div className="flex justify-between items-start">
@@ -185,7 +186,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             Lihat Paket Kami
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {offers.slice(0, 3).map((offer, index) => (
+            {offers.slice(0, 3).map((offer) => (
               <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
                     <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
                       {offer.image && (
@@ -237,3 +238,5 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     </>
   );
 }
+
+    

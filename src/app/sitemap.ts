@@ -1,11 +1,12 @@
-
+import { collection, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
 import type { MetadataRoute } from 'next';
-import { articles } from '@/lib/blog-data';
+import { initializeFirebase } from './firebase';
+import type { Article } from './lib/definitions';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = 'https://myrepublicmalang.net';
 
-  // URL statis
+  // Static routes
   const staticRoutes = [
     '/',
     '/blog',
@@ -13,6 +14,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/cek-area',
     '/personalized-offers',
     '/payment-methods',
+    '/reviews',
+    '/hubungi-kami',
+    '/speed-test',
   ].map((route) => ({
     url: `${siteUrl}${route}`,
     lastModified: new Date().toISOString(),
@@ -20,13 +24,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === '/' ? 1 : 0.8,
   }));
 
-  // URL dinamis untuk artikel
-  const articleRoutes = articles.map((article) => ({
-    url: `${siteUrl}/blog/${article.slug}`,
-    lastModified: new Date(article.publishedAt).toISOString(),
-    changeFrequency: 'monthly' as 'monthly',
-    priority: 0.7,
-  }));
+  // Dynamic routes for articles from Firestore
+  const { firestore } = initializeFirebase();
+  let articleRoutes: MetadataRoute.Sitemap = [];
+  
+  if (firestore) {
+      try {
+        const articlesCollection = collection(firestore, 'articles');
+        const q = query(articlesCollection, orderBy('publishedAt', 'desc'));
+        const querySnapshot = await getDocs(q);
+
+        articleRoutes = querySnapshot.docs.map(doc => {
+            const data = doc.data() as Article;
+            const publishedAt = data.publishedAt instanceof Timestamp 
+                ? data.publishedAt.toDate().toISOString() 
+                : new Date().toISOString();
+            
+            return {
+                url: `${siteUrl}/blog/${data.slug}`,
+                lastModified: publishedAt,
+                changeFrequency: 'monthly' as 'monthly',
+                priority: 0.7,
+            };
+        });
+      } catch (error) {
+        console.error("Failed to generate sitemap for articles:", error);
+      }
+  }
+
 
   return [...staticRoutes, ...articleRoutes];
 }
