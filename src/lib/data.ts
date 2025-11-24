@@ -10,7 +10,6 @@ export const navLinks: NavLink[] = [
   { href: "/", label: "Beranda" },
   { href: "/blog", label: "Blog"},
   { href: "/register", label: "Daftar" },
-  { href: "/coverage-check", label: "Peta Jangkauan" },
   { href: "/coverage-areas", label: "Area Jangkauan" },
   { href: "/personalized-offers", label: "Rekomendasi" },
 ];
@@ -88,14 +87,14 @@ export const faqs: Faq[] = [
   },
   {
     question: "Bagaimana cara memeriksa jangkauan di area saya di Malang?",
-    answer: "Anda dapat menggunakan alat Cek Jangkauan kami di situs web kami. Cukup masukkan alamat lengkap Anda untuk melihat apakah layanan kami tersedia di lokasi Anda dan jelajahi paket yang tersedia.",
+    answer: "Anda dapat mengunjungi halaman 'Area Jangkauan' kami untuk melihat daftar lengkap semua area yang telah tercover jaringan MyRepublic. Cukup cari nama kelurahan atau area Anda untuk memeriksa ketersediaan.",
   },
   {
     question: "Paket apa saja yang tersedia?",
-    answer: "Kami menawarkan berbagai paket untuk memenuhi kebutuhan dan anggaran yang berbeda, dari paket Basic Connect kami untuk browsing sehari-hari hingga paket Gamer Pro kami untuk game online kompetitif. Anda dapat melihat penawaran unggulan kami di beranda.",
+    answer: "Kami menawarkan berbagai paket untuk memenuhi kebutuhan dan anggaran yang berbeda, dari paket Value kami untuk browsing sehari-hari hingga paket MyGamer kami untuk game online kompetitif. Anda dapat melihat penawaran unggulan kami di beranda.",
   },
   {
     question: "Bagaimana cara mendapatkan rekomendasi yang dipersonalisasi?",
-    answer: "Gunakan Alat Kustomisasi Penawaran Berbasis AI kami! Dengan memberikan alamat Anda dan menjelaskan penggunaan internet Anda, AI kami akan menyarankan paket terbaik yang disesuaikan khusus untuk Anda.",
+    answer: "Gunakan halaman 'Rekomendasi' berbasis AI kami! Dengan memberikan alamat Anda dan menjelaskan penggunaan internet Anda, AI kami akan menyarankan paket terbaik yang disesuaikan khusus untuk Anda.",
   }
 ];

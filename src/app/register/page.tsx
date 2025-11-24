@@ -11,7 +11,15 @@ import { captureLead } from '@/lib/actions';
 import { type LeadCaptureFormState } from '@/lib/definitions';
 import { useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { CoverageMap } from '@/components/coverage-map';
+import Link from 'next/link';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { faqs } from '@/lib/data';
+
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -54,12 +62,23 @@ export default function RegisterPage() {
           <p className="text-xl text-muted-foreground">
             Anda selangkah lagi untuk merasakan internet tercepat di Malang. Isi formulir untuk memulai, dan kami akan menangani sisanya.
           </p>
-          <div className="space-y-4">
-            <h2 className="font-headline text-2xl font-semibold">Area Jangkauan Kami</h2>
+           <div className="space-y-4">
+            <h2 className="font-headline text-2xl font-semibold">Belum Yakin?</h2>
             <p className="text-muted-foreground">
-              Lihat area layanan kami saat ini di Malang. Kami berkembang pesat, jadi sering-seringlah memeriksa kembali jika area Anda belum terjangkau!
+              Lihat daftar lengkap <Link href="/coverage-areas" className="text-primary hover:underline">area jangkauan</Link> kami atau lihat pertanyaan yang sering diajukan di bawah ini.
             </p>
-            <CoverageMap />
+             <Accordion type="single" collapsible className="w-full">
+              {faqs.slice(0,3).map((faq, index) => (
+                <AccordionItem key={index} value={`item-${index + 1}`}>
+                  <AccordionTrigger className="text-left font-semibold hover:no-underline">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-base text-muted-foreground">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </div>
         <Card className="w-full max-w-lg justify-self-center lg:justify-self-end">

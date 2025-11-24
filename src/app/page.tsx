@@ -49,7 +49,7 @@ export default function Home() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/coverage-check">Cek Jangkauan</Link>
+              <Link href="/coverage-areas">Cek Jangkauan</Link>
             </Button>
           </div>
         </div>
