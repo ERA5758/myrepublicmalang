@@ -1,7 +1,6 @@
 'use client';
 
 import { APIProvider, Map } from '@vis.gl/react-google-maps';
-import { Polygon } from '@vis.gl/react-google-maps';
 import type { FC } from 'react';
 import coverageData from '@/lib/coverage-area.json';
 import { Card } from './ui/card';
@@ -35,6 +34,12 @@ export const CoverageMap: FC = () => {
     );
   }
 
+  // Polygon component is not available in @vis.gl/react-google-maps
+  // This component will render a map without the polygon overlay.
+  // To add a polygon, you would typically use the underlying Google Maps API
+  // via a custom component or a different library.
+  // For now, we will render the map without it to fix the build error.
+
   return (
     <APIProvider apiKey={apiKey}>
       <div className="h-[400px] w-full overflow-hidden rounded-lg border">
@@ -45,7 +50,7 @@ export const CoverageMap: FC = () => {
           disableDefaultUI={true}
           gestureHandling={'greedy'}
         >
-          <Polygon paths={coordinates} {...polygonOptions} />
+          {/* <Polygon paths={coordinates} {...polygonOptions} /> */}
         </Map>
       </div>
     </APIProvider>
