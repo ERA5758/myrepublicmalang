@@ -118,17 +118,17 @@ export default function Home() {
               <CarouselItem key={slide.id}>
                 <div className="relative h-[60vh] md:h-[80vh] w-full">
                   <div className="container relative z-10 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-4 text-center">
-                    <Badge variant="secondary" className="mb-4 shadow-md">
+                    <Badge variant="secondary" className="mb-4 shadow-md animate-fade-in-down">
                       <Zap className="mr-2 h-4 w-4 text-primary" />
                       Internet Fiber Tercepat di Malang
                     </Badge>
-                    <h1 className="font-headline text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                    <h1 className="font-headline text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl animate-fade-in-down animation-delay-200">
                       {slide.title}
                     </h1>
-                    <p className="mx-auto mt-6 max-w-3xl text-lg text-white md:text-xl">
+                    <p className="mx-auto mt-6 max-w-3xl text-lg text-white md:text-xl animate-fade-in-down animation-delay-400">
                       {slide.description}
                     </p>
-                    <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                    <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row animate-fade-in-up animation-delay-600">
                       <Button size="lg" asChild>
                         <Link href="/register">
                           Mulai Sekarang <ArrowRight className="ml-2 h-5 w-5" />
@@ -172,7 +172,7 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <Card className="text-center">
+            <Card className="text-center animate-fade-in-up">
               <CardHeader>
                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
                     <ClipboardList className="h-8 w-8 text-primary"/>
@@ -186,7 +186,7 @@ export default function Home() {
                 </Button>
               </CardContent>
             </Card>
-            <Card className="text-center">
+            <Card className="text-center animate-fade-in-up animation-delay-200">
               <CardHeader>
                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
                     <Wrench className="h-8 w-8 text-primary"/>
@@ -200,7 +200,7 @@ export default function Home() {
                 </Button>
               </CardContent>
             </Card>
-            <Card className="text-center">
+            <Card className="text-center animate-fade-in-up animation-delay-400">
               <CardHeader>
                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
                     <CreditCard className="h-8 w-8 text-primary"/>
@@ -230,8 +230,8 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-             {features.map((feature) => (
-                <div key={feature.title} className="text-center">
+             {features.map((feature, index) => (
+                <div key={feature.title} className="text-center animate-fade-in-up" style={{ animationDelay: `${index * 200}ms` }}>
                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                       {feature.icon}
                    </div>
@@ -263,8 +263,8 @@ export default function Home() {
             </TabsList>
             <TabsContent value="internet-only" className="mt-10">
                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {offers.map((offer) => (
-                  <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                {offers.map((offer, index) => (
+                  <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
                     <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
                       {offer.image && (
                         <>
@@ -313,8 +313,8 @@ export default function Home() {
             </TabsContent>
              <TabsContent value="internet-tv" className="mt-10">
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                  {offersTV.map((offer) => (
-                    <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                  {offersTV.map((offer, index) => (
+                    <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
                       <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
                         {offer.image && (
                           <>
