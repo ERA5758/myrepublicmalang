@@ -25,7 +25,9 @@ async function submitReview(
     const rawData = Object.fromEntries(formData.entries());
     const validatedFields = ReviewSchema.safeParse({
         ...rawData,
-        rating: Number(rawData.rating)
+        rating: Number(rawData.rating),
+        status: 'pending',
+        createdAt: new Date(),
     });
 
     if (!validatedFields.success) {
@@ -41,8 +43,11 @@ async function submitReview(
         if (!firestore) throw new Error("Firestore not initialized");
 
         const reviewsCollection = collection(firestore, 'reviews');
+        
+        const { status, createdAt, ...dataToSave } = validatedFields.data;
+
         await addDoc(reviewsCollection, {
-            ...validatedFields.data,
+            ...dataToSave,
             status: 'pending',
             createdAt: serverTimestamp(),
         });
@@ -189,8 +194,8 @@ export default function ReviewsPage() {
         setLoading(false);
       }
     }
-    // Re-fetch when dialog closes after a successful submission, or when firestore is initialized
-    if (firestore && !isDialogOpen) {
+    
+    if (firestore) {
         fetchReviews();
     }
   }, [firestore, isDialogOpen]); 
@@ -217,8 +222,6 @@ export default function ReviewsPage() {
             <h2 className="font-headline text-2xl font-bold text-center">Ulasan Terbaru</h2>
              {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <ReviewSkeleton />
-                    <ReviewSkeleton />
                     <ReviewSkeleton />
                     <ReviewSkeleton />
                 </div>
@@ -274,5 +277,7 @@ export default function ReviewsPage() {
     </Dialog>
   );
 }
+
+    
 
     
