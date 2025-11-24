@@ -54,7 +54,7 @@ type LeadData = {
 }
 
 export async function sendLeadNotification(lead: LeadData) {
-    const settings = getWhatsappSettings();
+    const settings = await getWhatsappSettings();
 
     if (!settings.deviceId || !settings.targetNumber) {
         console.error("WhatsApp settings (Device ID or Target Number) are not configured in environment variables.");
