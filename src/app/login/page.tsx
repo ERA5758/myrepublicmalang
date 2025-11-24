@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useAuth } from '@/firebase';
+import { useAuth, useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -23,6 +24,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const auth = useAuth();
+  const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -31,26 +33,46 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
 
-    if (!auth) {
-        setError('Layanan otentikasi tidak tersedia.');
+    if (!auth || !firestore) {
+        setError('Layanan otentikasi atau database tidak tersedia.');
         setIsLoading(false);
         return;
     }
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Check if the user is an admin
+      const adminDocRef = doc(firestore, 'admins', user.uid);
+      const adminDocSnap = await getDoc(adminDocRef);
+
+      if (!adminDocSnap.exists()) {
+        throw new Error('access-denied');
+      }
+
       toast({
         title: 'Login Berhasil!',
         description: 'Anda akan diarahkan ke panel admin.',
       });
       router.push('/admin');
     } catch (error: any) {
-      setError('Email atau password salah. Silakan coba lagi.');
-      toast({
-        title: 'Login Gagal',
-        description: 'Email atau password salah.',
-        variant: 'destructive',
-      });
+      if (error.message === 'access-denied' || error.code === 'auth/invalid-credential') {
+        setError('Akses ditolak. Anda bukan admin atau kredensial salah.');
+        toast({
+          title: 'Login Gagal',
+          description: 'Anda tidak memiliki hak akses admin atau email/password salah.',
+          variant: 'destructive',
+        });
+      } else {
+        setError('Terjadi kesalahan tak terduga. Silakan coba lagi.');
+        toast({
+          title: 'Login Gagal',
+          description: 'Terjadi kesalahan. Periksa konsol untuk detail.',
+          variant: 'destructive',
+        });
+        console.error("Login error:", error);
+      }
     } finally {
       setIsLoading(false);
     }
