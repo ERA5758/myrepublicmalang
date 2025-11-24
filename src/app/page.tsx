@@ -202,11 +202,25 @@ export default async function Home() {
                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {offers.map((offer) => (
                   <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-                    <CardHeader className="text-center bg-muted/30 p-6">
-                      <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{offer.speed}</p>
-                      <p className="font-bold text-primary text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
-                      <p className="text-xs text-muted-foreground">Harga belum termasuk PPN 11%</p>
+                    <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
+                      {offer.image && (
+                        <>
+                           <Image
+                              src={offer.image.imageUrl}
+                              alt={offer.image.description}
+                              fill
+                              className="object-cover"
+                              data-ai-hint={offer.image.imageHint}
+                           />
+                           <div className="absolute inset-0 bg-black/50"></div>
+                        </>
+                      )}
+                      <div className="relative z-10">
+                         <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
+                         <p className="text-sm text-white/80">{offer.speed}</p>
+                         <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
+                         <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
+                      </div>
                     </CardHeader>
                     <CardContent className="flex flex-1 flex-col justify-between p-6">
                       <div>
