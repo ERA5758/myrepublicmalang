@@ -6,7 +6,7 @@ import { Menu, Wifi } from 'lucide-react';
 
 import { MyRepublicLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { navLinks } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
@@ -59,14 +59,17 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="pr-0">
-              <Link
-                href="/"
-                className="mr-6 flex items-center space-x-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Wifi className="h-6 w-6 text-primary" />
-                <span className="font-bold font-headline">MyRepublic Malang</span>
-              </Link>
+                <SheetHeader>
+                  <SheetTitle className="sr-only">Menu Navigasi</SheetTitle>
+                  <Link
+                    href="/"
+                    className="mr-6 flex items-center space-x-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Wifi className="h-6 w-6 text-primary" />
+                    <span className="font-bold font-headline">MyRepublic Malang</span>
+                  </Link>
+                </SheetHeader>
               <div className="my-4 h-px w-full bg-border" />
               <div className="flex flex-col space-y-4">
                 {navLinks.map((link) => (
