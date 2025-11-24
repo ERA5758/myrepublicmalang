@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Facebook, Instagram, Phone, Rocket, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Phone, Twitter } from 'lucide-react';
 import Image from 'next/image';
 
 export function Footer() {
@@ -58,7 +58,7 @@ export function Footer() {
         
         <div className="border-t border-border/40 py-6">
           <p className="text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} MyRepublic Malang. Sales Excutiv khusus pasang baru
+            © {new Date().getFullYear()} MyRepublic Malang. Sales Executive khusus pasang baru
           </p>
         </div>
       </div>
