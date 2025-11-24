@@ -25,14 +25,10 @@ async function getArticle(slug: string): Promise<Article | null> {
     const doc = querySnapshot.docs[0];
     const data = doc.data();
 
-    let publishedAt: string;
-    if (data.publishedAt instanceof Timestamp) {
-        publishedAt = data.publishedAt.toDate().toISOString();
-    } else if (typeof data.publishedAt === 'string') {
-        publishedAt = data.publishedAt;
-    } else {
-        publishedAt = new Date().toISOString();
-    }
+    // Safely handle the timestamp
+    const publishedAt = data.publishedAt instanceof Timestamp 
+        ? data.publishedAt.toDate().toISOString() 
+        : new Date().toISOString();
 
     return { 
         id: doc.id, 

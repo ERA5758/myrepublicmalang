@@ -38,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             const data = doc.data() as Article;
             const publishedAt = data.publishedAt instanceof Timestamp 
                 ? data.publishedAt.toDate().toISOString() 
-                : new Date().toISOString();
+                : new Date(data.publishedAt as string).toISOString();
             
             return {
                 url: `${siteUrl}/blog/${data.slug}`,
@@ -55,5 +55,3 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [...staticRoutes, ...articleRoutes];
 }
-
-    

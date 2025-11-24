@@ -50,14 +50,9 @@ export default function BlogIndexPage() {
             querySnapshot.forEach(doc => {
                 const data = doc.data();
                 
-                let publishedAt: string;
-                if (data.publishedAt instanceof Timestamp) {
-                    publishedAt = data.publishedAt.toDate().toISOString();
-                } else if (typeof data.publishedAt === 'string') {
-                    publishedAt = data.publishedAt;
-                } else {
-                    publishedAt = new Date().toISOString(); // Fallback
-                }
+                const publishedAt = data.publishedAt instanceof Timestamp
+                    ? data.publishedAt.toDate().toISOString()
+                    : new Date().toISOString(); // Fallback
                 
                 fetchedArticles.push({
                     id: doc.id,
