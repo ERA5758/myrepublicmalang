@@ -58,7 +58,7 @@ export default function Home() {
       setOffers(fetchedOffers);
     }
     getOffers();
-  }, [firestore, offers]);
+  }, [firestore]);
 
 
   const addOnPerangkat = addOns.filter(a => a.category === 'perangkat');
@@ -317,7 +317,7 @@ export default function Home() {
                 <h3 className="font-headline text-2xl font-bold mb-6 text-center">Add On Perangkat</h3>
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                   {addOnPerangkat.map((addon) => (
-                    <Card key={addon.id} className="flex flex-col text-center">
+                    <Card key={addon.id} className="flex flex-col text-center bg-muted/50">
                       <CardHeader>
                         <CardTitle className="font-headline text-xl">{addon.title}</CardTitle>
                         <p className="text-sm text-muted-foreground">{addon.description}</p>
@@ -339,7 +339,7 @@ export default function Home() {
                 <h3 className="font-headline text-2xl font-bold mb-6 text-center">Add On TV</h3>
                  <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                     {addOnTV.map((addon) => (
-                      <Card key={addon.id} className="flex flex-col text-center">
+                      <Card key={addon.id} className="flex flex-col text-center bg-muted/50">
                         <CardHeader>
                             <CardTitle className="font-headline text-xl">{addon.title}</CardTitle>
                             {addon.notes && <p className="text-xs text-muted-foreground">{addon.notes}</p>}
@@ -369,7 +369,7 @@ export default function Home() {
                 <h3 className="font-headline text-2xl font-bold mb-6 text-center">Add On Smart Home</h3>
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                     {addOnSmartHome.map((addon) => (
-                      <Card key={addon.id} className="flex flex-col text-center">
+                      <Card key={addon.id} className="flex flex-col text-center bg-muted/50">
                         <CardHeader>
                           <CardTitle className="font-headline text-xl">{addon.title}</CardTitle>
                         </CardHeader>
@@ -402,7 +402,7 @@ export default function Home() {
                  <h3 className="font-headline text-2xl font-bold mb-6 text-center">Add On Speed Booster</h3>
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                   {addOnSpeedBooster.map((addon) => (
-                    <Card key={addon.id} className="flex flex-col text-center">
+                    <Card key={addon.id} className="flex flex-col text-center bg-muted/50">
                       <CardHeader>
                         <CardTitle className="font-headline text-xl">{addon.title}</CardTitle>
                         <p className="text-sm text-muted-foreground">{addon.description}</p>
