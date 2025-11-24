@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, Wifi } from 'lucide-react';
+import { Menu, Rocket } from 'lucide-react';
 
 import { MyRepublicLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ export function Header() {
       <div className="container flex h-16 max-w-7xl items-center">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Wifi className="h-6 w-6 text-primary" />
+            <Rocket className="h-6 w-6 text-primary" />
             <span className="hidden font-bold sm:inline-block font-headline">
               MyRepublic Malang
             </span>
@@ -66,7 +66,7 @@ export function Header() {
                     className="mr-6 flex items-center space-x-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <Wifi className="h-6 w-6 text-primary" />
+                    <Rocket className="h-6 w-6 text-primary" />
                     <span className="font-bold font-headline">MyRepublic Malang</span>
                   </Link>
                 </SheetHeader>

@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { Phone, Wifi } from 'lucide-react';
+import { Phone, Rocket } from 'lucide-react';
 
 export function Footer() {
   return (
     <footer className="w-full border-t border-border/40 bg-background">
       <div className="container mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 py-10 md:flex-row md:py-6">
         <div className="flex flex-col items-center gap-4 px-8 text-center md:flex-row md:gap-2 md:px-0 md:text-left">
-          <Wifi className="h-6 w-6 text-primary" />
+          <Rocket className="h-6 w-6 text-primary" />
           <p className="text-sm leading-loose text-muted-foreground">
             © {new Date().getFullYear()} MyRepublic Malang. Hak cipta dilindungi undang-undang.
           </p>
