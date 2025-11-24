@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, Wifi, Zap, Shield, Infinity, ClipboardList, Wrench, CreditCard } from 'lucide-react';
+import { ArrowRight, CheckCircle, Wifi, Zap, Shield, Infinity, ClipboardList, Wrench, CreditCard, CircleCheckBig } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -16,6 +16,7 @@ import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
 import type { Offer } from '@/lib/definitions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TermsAndConditionsDialog } from '@/components/terms-dialog';
 
 
 const features = [
@@ -229,7 +230,7 @@ export default async function Home() {
                         <ul className="space-y-2 text-sm text-muted-foreground">
                           {offer.features.map((feature) => (
                             <li key={feature} className="flex items-center">
-                              <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                              <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
                               <span>{feature}</span>
                             </li>
                           ))}
@@ -259,7 +260,7 @@ export default async function Home() {
             </TabsContent>
           </Tabs>
            <div className="text-center mt-8">
-              <p className="text-xs text-muted-foreground">*Syarat dan Ketentuan berlaku.</p>
+              <TermsAndConditionsDialog />
            </div>
         </div>
       </section>
