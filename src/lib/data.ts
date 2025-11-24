@@ -13,6 +13,7 @@ export const navLinks: NavLink[] = [
   { href: "/blog", label: "Blog"},
   { href: "/register", label: "Daftar" },
   { href: "/coverage-areas", label: "Area Jangkauan" },
+  { href: "/payment-methods", label: "Cara Bayar"},
   { href: "/personalized-offers", label: "Rekomendasi" },
 ];
 
@@ -191,3 +192,5 @@ export const faqs: Faq[] = [
     answer: "Gunakan halaman 'Rekomendasi' berbasis AI kami! Dengan memberikan alamat Anda dan menjelaskan penggunaan internet Anda, AI kami akan menyarankan paket terbaik yang disesuaikan khusus untuk Anda.",
   }
 ];
+
+    

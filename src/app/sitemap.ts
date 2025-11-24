@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/register',
     '/coverage-areas',
     '/personalized-offers',
+    '/payment-methods',
   ].map((route) => ({
     url: `${siteUrl}${route}`,
     lastModified: new Date().toISOString(),
@@ -28,3 +29,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...staticRoutes, ...articleRoutes];
 }
+
+    

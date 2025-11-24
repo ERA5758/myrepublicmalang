@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Image from 'next/image';
@@ -209,7 +210,7 @@ export default function Home() {
               <CardContent>
                 <p className="text-muted-foreground mb-4">Bayar tagihan dan nikmati kecepatan layanan MyRepublic.</p>
                 <Button asChild variant="outline">
-                   <Link href="#">Lihat Cara Bayar</Link>
+                   <Link href="/payment-methods">Lihat Cara Bayar</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -510,5 +511,7 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     
