@@ -1,6 +1,6 @@
 import type { ImagePlaceholder } from './placeholder-images';
 import { PlaceHolderImages } from './placeholder-images';
-import type { Offer, OfferTV } from './definitions';
+import type { Offer, OfferTV, AddOn } from './definitions';
 
 type NavLink = {
   href: string;
@@ -118,6 +118,27 @@ export const offersTV: OfferTV[] = [
     channels: "76 Channel",
     stb: "Termasuk STB ANDROID 12",
   },
+];
+
+export const addOns: AddOn[] = [
+  // Perangkat
+  { id: "addon-router-plus", category: "perangkat", title: "Router Plus", description: "Wi-Fi single band 2,4 GHz", price: "Rp 13.636 / Bulan" },
+  { id: "addon-ip-static", category: "perangkat", title: "IP Public Static V4", description: "Akses perangkat dari manapun", price: "Rp 25.000 / Bulan" },
+  { id: "addon-router-pro", category: "perangkat", title: "Router Pro", description: "Wi-Fi dual band 2,4 dan 5 GHz", price: "Rp 40.000 / Bulan" },
+  { id: "addon-wifi-mesh", category: "perangkat", title: "Wifi Mesh", description: "Dua Wi-Fi Router yang terhubung secara nirkabel", price: "Rp 80.000 / Bulan" },
+  // TV
+  { id: "addon-tv-entertainment", category: "tv", title: "TV Entertainment", price: "Rp 15.000 / Bulan", notes: "Termasuk paket Value30 keatas", features: ["Lifetime", "Rock Entertainment", "Rock Action"] },
+  { id: "addon-tv-knowledge", category: "tv", title: "TV Knowledge & Lifestyle", price: "Rp 15.000 / Bulan", notes: "Termasuk paket Value30 keatas", features: ["afn", "BBC Lifestyle", "HGTV", "History", "Love Nature 4K"] },
+  { id: "addon-tv-movies", category: "tv", title: "TV Movies", price: "Rp 20.000 / Bulan", notes: "Termasuk paket FAST50 keatas", features: ["Galaxy Premium", "IMC", "Zeebioskop"] },
+  // Smart Home
+  { id: "addon-sh-lite", category: "smart-home", title: "Smart Security Lite Plus", description: "Perangkat yang didapatkan:\n1x Indoor CCTV IP PTZ X Rabit\n1x SD Card 64Gb", price: "Rp 335.000", oldPrice: "Rp 385.765", discount: "-14%", features: ["AI Auto Tracking", "Image Sensor: 1/2.9″ Color CMOS", "Lens Type: FHD, 2MP", "Viewing Angle: 105°", "Nightvision: IR-Cut Autoswitch", "Video Resolution: 1920*1080", "Audio: Built-in Mic & Speaker", "Wi-Fi: IEEE 802.11 b/g/n 2.4GHz", "Cloud Storage: Support", "Terhubung dengan aplikasi Rabit"] },
+  { id: "addon-sh-pro", category: "smart-home", title: "Smart Security Pro Plus", description: "Perangkat yang didapatkan:\n1x Indoor CCTV IP PTZ Screen Rabit\n1x SD Card 64Gb", price: "Rp 475.000", oldPrice: "Rp 538.918", discount: "-12%", features: ["AI Auto Tracking", "Image Sensor: 1/2.9″ Color CMOS", "Lens Type: FHD, 2MP", "Viewing Angle: 100°", "Nightvision: IR-Cut Autoswitch", "Video Resolution: 1920*1080", "Audio: Built-in Mic & Speaker", "Wi-Fi: IEEE 802.11 b/g/n 2.4GHz", "Cloud Storage: Support", "2 Way Video Call Screen", "Terhubung dengan aplikasi Rabit"] },
+  { id: "addon-sh-starter", category: "smart-home", title: "Smart Home Starter Pack", description: "Perangkat yang didapatkan:\n1x Smart Light Bulb Color 10W Bluetooth\n1x Smart Plug 2 in 1 +Bluetooth Gateway\n1x Universal IR Remote Control (WiFi)", price: "Rp 245.000", oldPrice: "Rp 286.756", discount: "-15%", features: ["Smart Light Bulb: Color Temp: 2700K – 6500K", "Smart Light Bulb: Power 10 Watt", "Smart Plug: Power: 3680 W", "Smart Plug: Ampere: 16 A", "Smart Plug: Voltage: 230 V", "Universal IR Remote Control: WiFi: 802.11 b/g/n 2.4 Ghz", "Universal IR Remote Control: Jarak Infra Red: ≤ 8 Meter"] },
+  // Speed Booster
+  { id: "addon-speed-40", category: "speed-booster", title: "Speed Upgrade to 40Mbps", description: "Khusus Untuk Paket Value30", price: "Rp 10.000 / Bulan" },
+  { id: "addon-speed-75", category: "speed-booster", title: "Speed Upgrade to 75Mbps", description: "Khusus Untuk Paket Fast50", price: "Rp 25.000 / Bulan" },
+  { id: "addon-speed-150", category: "speed-booster", title: "Speed Upgrade to 150Mbps", description: "Khusus Untuk Paket Nova100", price: "Rp 45.000 / Bulan" },
+  { id: "addon-speed-325", category: "speed-booster", title: "Speed Upgrade to 325Mbps", description: "Khusus Untuk Paket MyGamer250", price: "Rp 55.000 / Bulan" },
 ];
 
 

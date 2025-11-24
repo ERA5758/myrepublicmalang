@@ -74,3 +74,15 @@ export type Article = {
   category: string;
   image: ImagePlaceholder;
 };
+
+export type AddOn = {
+  id: string;
+  category: 'perangkat' | 'tv' | 'smart-home' | 'speed-booster';
+  title: string;
+  description?: string;
+  price: string;
+  oldPrice?: string;
+  discount?: string;
+  features?: string[];
+  notes?: string;
+};

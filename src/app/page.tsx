@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle, Wifi, Zap, Shield, Infinity, ClipboardList, Wrench, CreditCard, CircleCheckBig, Tv } from 'lucide-react';
@@ -10,13 +12,14 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { faqs, offersTV } from '@/lib/data';
+import { faqs, offersTV, addOns } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
-import { initializeFirebase } from '@/firebase';
-import type { Offer, OfferTV } from '@/lib/definitions';
+import { useFirestore } from '@/firebase';
+import type { Offer, OfferTV, AddOn } from '@/lib/definitions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TermsAndConditionsDialog } from '@/components/terms-dialog';
+import { useEffect, useState } from 'react';
 
 
 const features = [
@@ -37,25 +40,31 @@ const features = [
     },
 ];
 
-async function getOffers(): Promise<Offer[]> {
-    const { firestore } = initializeFirebase();
-    if (!firestore) {
-        return [];
-    }
-    const offersCollection = collection(firestore, 'offers');
-    const q = query(offersCollection, orderBy('price'));
-    const querySnapshot = await getDocs(q);
-    const offers: Offer[] = [];
-    querySnapshot.forEach((doc) => {
-        offers.push({ id: doc.id, ...doc.data() } as Offer);
-    });
-    return offers;
-}
-
-
-export default async function Home() {
+export default function Home() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-bg');
-  const offers = await getOffers();
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const firestore = useFirestore();
+
+  useEffect(() => {
+    async function getOffers() {
+      if (!firestore) return;
+      const offersCollection = collection(firestore, 'offers');
+      const q = query(offersCollection, orderBy('price'));
+      const querySnapshot = await getDocs(q);
+      const fetchedOffers: Offer[] = [];
+      querySnapshot.forEach((doc) => {
+          offers.push({ id: doc.id, ...doc.data() } as Offer);
+      });
+      setOffers(fetchedOffers);
+    }
+    getOffers();
+  }, [firestore]);
+
+
+  const addOnPerangkat = addOns.filter(a => a.category === 'perangkat');
+  const addOnTV = addOns.filter(a => a.category === 'tv');
+  const addOnSmartHome = addOns.filter(a => a.category === 'smart-home');
+  const addOnSpeedBooster = addOns.filter(a => a.category === 'speed-booster');
 
   return (
     <div className="flex flex-col">
@@ -307,8 +316,115 @@ export default async function Home() {
             <TabsContent value="gamer" className="text-center py-16">
                <p className="text-muted-foreground">Konten untuk MyGamer akan segera hadir.</p>
             </TabsContent>
-            <TabsContent value="addons" className="text-center py-16">
-               <p className="text-muted-foreground">Konten untuk Add On akan segera hadir.</p>
+            <TabsContent value="addons" className="mt-10 space-y-12">
+              <div>
+                <h3 className="font-headline text-2xl font-bold mb-6 text-center">Add On Perangkat</h3>
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+                  {addOnPerangkat.map((addon) => (
+                    <Card key={addon.id} className="flex flex-col text-center">
+                      <CardHeader>
+                        <CardTitle className="font-headline text-xl">{addon.title}</CardTitle>
+                        <p className="text-sm text-muted-foreground">{addon.description}</p>
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                        <p className="font-bold text-2xl">{addon.price}</p>
+                        <p className="text-xs text-muted-foreground">Harga belum termasuk PPN 11%</p>
+                      </CardContent>
+                      <div className="p-6 pt-0">
+                        <Button className="w-full" variant="outline" asChild>
+                          <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="font-headline text-2xl font-bold mb-6 text-center">Add On TV</h3>
+                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                    {addOnTV.map((addon) => (
+                      <Card key={addon.id} className="flex flex-col text-center">
+                        <CardHeader>
+                            <CardTitle className="font-headline text-xl">{addon.title}</CardTitle>
+                            {addon.notes && <p className="text-xs text-muted-foreground">{addon.notes}</p>}
+                        </CardHeader>
+                        <CardContent className="flex-grow">
+                            <p className="font-bold text-2xl">{addon.price}</p>
+                            <p className="text-xs text-muted-foreground">Harga belum termasuk PPN 11%</p>
+                            {addon.features && (
+                                <>
+                                <h4 className="font-semibold mt-4 mb-2">Fitur dan Benefit</h4>
+                                <ul className="space-y-1 text-sm text-muted-foreground">
+                                    {addon.features.map(feature => <li key={feature}>{feature}</li>)}
+                                </ul>
+                                </>
+                            )}
+                        </CardContent>
+                        <div className="p-6 pt-0">
+                            <Button className="w-full" variant="outline" asChild>
+                            <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                            </Button>
+                        </div>
+                      </Card>
+                    ))}
+                 </div>
+              </div>
+              <div>
+                <h3 className="font-headline text-2xl font-bold mb-6 text-center">Add On Smart Home</h3>
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                    {addOnSmartHome.map((addon) => (
+                      <Card key={addon.id} className="flex flex-col text-center">
+                        <CardHeader>
+                          <CardTitle className="font-headline text-xl">{addon.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-grow">
+                           <div className="flex justify-center items-baseline gap-2">
+                            {addon.discount && <Badge variant="destructive">{addon.discount}</Badge>}
+                            {addon.oldPrice && <p className="text-sm text-muted-foreground line-through">{addon.oldPrice}</p>}
+                           </div>
+                           <p className="font-bold text-2xl mt-1">{addon.price}</p>
+                           <p className="text-xs text-muted-foreground">Harga belum termasuk PPN 11%</p>
+                           <div className="text-left mt-4">
+                            <p className="font-semibold text-sm">Fitur dan Benefit:</p>
+                            <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1 mt-1">
+                                {addon.features?.map(f => <li key={f}>{f}</li>)}
+                            </ul>
+                            <p className="font-semibold text-sm mt-2">Deskripsi:</p>
+                            <p className="text-xs text-muted-foreground">{addon.description}</p>
+                           </div>
+                        </CardContent>
+                         <div className="p-6 pt-0">
+                            <Button className="w-full" variant="outline" asChild>
+                            <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                            </Button>
+                        </div>
+                      </Card>
+                    ))}
+                </div>
+              </div>
+              <div>
+                 <h3 className="font-headline text-2xl font-bold mb-6 text-center">Add On Speed Booster</h3>
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+                  {addOnSpeedBooster.map((addon) => (
+                    <Card key={addon.id} className="flex flex-col text-center">
+                      <CardHeader>
+                        <CardTitle className="font-headline text-xl">{addon.title}</CardTitle>
+                        <p className="text-sm text-muted-foreground">{addon.description}</p>
+                        {addon.notes && <p className="text-xs text-primary font-semibold">{addon.notes}</p>}
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                        <p className="font-bold text-2xl">{addon.price}</p>
+                        <p className="text-xs text-muted-foreground">Harga belum termasuk PPN 11%</p>
+                      </CardContent>
+                      <div className="p-6 pt-0">
+                        <Button className="w-full" variant="outline" asChild>
+                          <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
             </TabsContent>
           </Tabs>
            <div className="text-center mt-8">
