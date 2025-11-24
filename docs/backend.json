@@ -58,6 +58,18 @@
         }
       },
       "required": ["slug", "title", "summary", "content", "publishedAt", "category", "image"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Represents an administrator user.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user's Firebase Authentication UID." },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["superadmin", "editor"], "description": "The role of the admin." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role", "createdAt"]
     }
   },
   "auth": {
@@ -75,6 +87,10 @@
     "/articles/{articleId}": {
       "schema": { "$ref": "#/entities/Article" },
       "description": "Collection of blog articles."
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/Admin" },
+      "description": "Collection of administrator users. The document ID should be the user's UID."
     }
   }
 }
