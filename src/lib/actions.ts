@@ -3,6 +3,8 @@
 import { z } from 'zod';
 import { personalizedOfferRecommendations } from '@/ai/flows/personalized-offer-recommendations';
 import { LeadCaptureSchema, PersonalizedOfferSchema, type LeadCaptureFormState, type PersonalizedOfferFormState } from './definitions';
+import { sendLeadNotification } from './whatsapp';
+import { offers } from './data';
 
 export async function captureLead(
   prevState: LeadCaptureFormState,
@@ -24,6 +26,15 @@ export async function captureLead(
     // Di sini Anda biasanya akan menyimpan data prospek ke database seperti Firestore.
     // Untuk contoh ini, kita hanya akan mencatatnya ke konsol.
     console.log('Prospek Baru Ditangkap:', validatedFields.data);
+
+    // Send WhatsApp notification
+    const selectedPlan = offers.find(o => o.id === validatedFields.data.selectedPlan);
+    const leadDataForNotif = {
+        ...validatedFields.data,
+        selectedPlan: selectedPlan ? `${selectedPlan.title} - ${selectedPlan.speed}` : validatedFields.data.selectedPlan,
+    };
+    await sendLeadNotification(leadDataForNotif);
+
 
     return {
       message: `Terima kasih, ${validatedFields.data.name}! Kami telah menerima informasi Anda dan akan segera menghubungi Anda.`,
