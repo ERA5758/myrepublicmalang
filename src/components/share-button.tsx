@@ -19,6 +19,10 @@ export function ShareButton({ title, url, size = "sm" }: { title: string; url: s
           url: url,
         });
       } catch (error) {
+        // Ignore AbortError which occurs when the user cancels the share dialog
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          return;
+        }
         console.error('Error sharing:', error);
         toast({
           title: 'Gagal Membagikan',
