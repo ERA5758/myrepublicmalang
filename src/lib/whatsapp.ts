@@ -3,6 +3,11 @@
 import { getWhatsappSettings } from '@/lib/server/whatsapp-settings';
 
 async function internalSendWhatsapp(deviceId: string, target: string, message: string, isGroup: boolean = false) {
+    if (!deviceId || !target) {
+        console.error("WhatsApp Device ID atau Target tidak tersedia. Pengiriman dibatalkan.");
+        return;
+    }
+
     const formData = new FormData();
     formData.append('device_id', deviceId);
     formData.append(isGroup ? 'group' : 'number', target);
@@ -16,19 +21,20 @@ async function internalSendWhatsapp(deviceId: string, target: string, message: s
             body: formData,
         });
 
+        const responseText = await response.text();
         if (!response.ok) {
-            const responseJson = await response.json().catch(() => ({}));
-            console.error('WhaCenter API HTTP Error:', { status: response.status, body: responseJson });
+            console.error('WhaCenter API HTTP Error:', { status: response.status, body: responseText });
+            return;
+        }
+
+        const responseJson = JSON.parse(responseText);
+        if (responseJson.status === 'error') {
+            console.error('WhaCenter API Error:', { target, reason: responseJson.reason });
         } else {
-            const responseJson = await response.json();
-            if (responseJson.status === 'error') {
-                console.error('WhaCenter API Error:', responseJson.reason);
-            } else {
-                console.log('WhatsApp notification sent successfully.');
-            }
+            console.log(`Pesan WhatsApp berhasil dikirim ke ${target}.`);
         }
     } catch (error) {
-        console.error("Failed to send WhatsApp message:", error);
+        console.error(`Gagal mengirim pesan WhatsApp ke ${target}:`, error);
     }
 }
 
@@ -56,12 +62,14 @@ type LeadData = {
 export async function sendLeadNotification(lead: LeadData) {
     const settings = await getWhatsappSettings();
 
-    if (!settings.deviceId || !settings.targetNumber) {
-        console.error("WhatsApp settings (Device ID or Target Number) are not configured in environment variables.");
+    if (!settings.deviceId) {
+        console.error("WhatsApp Device ID tidak dikonfigurasi di environment variables.");
         return;
     }
 
-    const message = `
+    // Pesan untuk grup admin
+    if (settings.targetNumber) {
+        const adminMessage = `
 *🔔 Prospek Baru MyRepublic Malang!*
 
 Ada pendaftaran baru telah masuk melalui website.
@@ -75,9 +83,27 @@ Ada pendaftaran baru telah masuk melalui website.
 ${lead.locationPin ? `- *Koordinat GPS:* https://www.google.com/maps?q=${lead.locationPin}` : ''}
 
 Harap segera tindak lanjuti.
-    `.trim();
+        `.trim();
+        await internalSendWhatsapp(settings.deviceId, settings.targetNumber, adminMessage, true);
+    } else {
+        console.warn("WA_TARGET_NUMBER (ID Grup Admin) tidak diatur. Notifikasi ke admin dilewati.");
+    }
+    
+    // Pesan konfirmasi untuk pelanggan
+    const customerNumber = formatWhatsappNumber(lead.phone);
+    if (customerNumber) {
+        const customerMessage = `
+Halo ${lead.name},
 
-    const formattedTarget = formatWhatsappNumber(settings.targetNumber);
+Terima kasih telah mendaftar di MyRepublic Malang! Kami telah menerima data pendaftaran Anda untuk paket *${lead.selectedPlan}*.
 
-    await internalSendWhatsapp(settings.deviceId, formattedTarget, message);
+Tim kami akan segera menghubungi Anda untuk proses verifikasi dan penjadwalan instalasi.
+
+Salam hangat,
+Tim MyRepublic Malang
+        `.trim();
+        await internalSendWhatsapp(settings.deviceId, customerNumber, customerMessage, false);
+    } else {
+        console.warn(`Nomor telepon pelanggan tidak valid, notifikasi ke pelanggan dilewati: ${lead.phone}`);
+    }
 }
