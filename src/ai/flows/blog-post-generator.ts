@@ -51,7 +51,12 @@ Instruksi:
 2.  **Slug:** Buat slug URL dari judul yang Anda buat. Formatnya harus berupa huruf kecil dengan kata-kata yang dipisahkan oleh tanda hubung (-).
 3.  **Ringkasan:** Tulis ringkasan singkat (1-2 kalimat) yang merangkum isi artikel.
 4.  **Kategori:** Pilih satu kategori yang paling sesuai dari daftar berikut: Teknologi, Gaming, Hiburan, Berita, Layanan.
-5.  **Konten:** Tulis konten artikel yang informatif dan mudah dibaca, minimal 300 kata. Gunakan format HTML dengan tag <p> untuk paragraf, <h3> untuk sub-judul, dan <ul> dengan <li> untuk daftar. Pastikan untuk menyertakan tautan internal ke halaman lain jika relevan (misalnya, <a href="/register">Daftar Sekarang</a> atau <a href="/coverage-areas">Area Jangkauan</a>).
+5.  **Konten (PENTING):** Tulis konten artikel yang informatif, terstruktur dengan baik, dan mudah dibaca, minimal 300 kata.
+    - **Gunakan format HTML secara ketat.**
+    - **Setiap paragraf WAJIB dibungkus dengan tag <p>...</p>.** Jangan membuat satu blok teks yang panjang. Buat beberapa paragraf.
+    - Gunakan tag **<h3>...</h3>** untuk membuat sub-judul yang relevan untuk memecah konten.
+    - Jika ada daftar, gunakan tag **<ul>** dengan **<li>**.
+    - Jika relevan, sertakan tautan seperti <a href="/register">Daftar Sekarang</a> atau <a href="/cek-area">Area Jangkauan</a>.
 6.  **Gambar:** Buat satu objek gambar yang relevan. Gunakan URL dari https://picsum.photos/seed/{seed}/800/600, ganti {seed} dengan kata acak. Berikan deskripsi gambar dan petunjuk pencarian (image hint) yang sesuai.
 
 Pastikan output Anda dalam format JSON yang valid sesuai dengan skema yang diminta.`,
