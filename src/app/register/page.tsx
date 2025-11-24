@@ -2,14 +2,14 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { ArrowRight, Globe, Loader, Mail, MapPin, Phone, User, LocateFixed } from 'lucide-react';
+import { ArrowRight, Globe, Loader, Mail, MapPin, Phone, User, LocateFixed, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { captureLead } from '@/lib/actions';
 import { type LeadCaptureFormState } from '@/lib/definitions';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Suspense } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import {
@@ -18,7 +18,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { faqs } from '@/lib/data';
+import { faqs, offers } from '@/lib/data';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useSearchParams } from 'next/navigation';
 
 
 function SubmitButton() {
@@ -35,15 +37,19 @@ function SubmitButton() {
   );
 }
 
-export default function RegisterPage() {
+function RegisterForm() {
   const initialState: LeadCaptureFormState = null;
   const [state, dispatch] = useActionState(captureLead, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
+  const searchParams = useSearchParams();
+  const preselectedPlan = searchParams.get('plan');
   
   const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
+  const [selectedPlanValue, setSelectedPlanValue] = useState(preselectedPlan || "");
+
 
   useEffect(() => {
     if (state?.message && !state.fields) {
@@ -54,6 +60,7 @@ export default function RegisterPage() {
       });
       if(state.message.startsWith('Terima kasih')) {
         formRef.current?.reset();
+        setSelectedPlanValue("");
         setLocation(null);
         setLocationError(null);
       }
@@ -173,6 +180,26 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="selectedPlan">Paket yang Dipilih</Label>
+                <div className="relative">
+                  <Package className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Select name="selectedPlan" required value={selectedPlanValue} onValueChange={setSelectedPlanValue}>
+                    <SelectTrigger className="pl-10">
+                      <SelectValue placeholder="Pilih paket Anda" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {offers.map(offer => (
+                        <SelectItem key={offer.id} value={offer.id}>
+                          {offer.title} - {offer.speed}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {state?.fields?.selectedPlan && <p className="text-sm text-destructive">{state.fields.selectedPlan}</p>}
+              </div>
+
+              <div className="space-y-2">
                 <Label>Pin Lokasi/Koordinat GPS</Label>
                 <div className="flex items-center gap-2">
                   <Button type="button" variant="outline" onClick={handleGetLocation} disabled={isLocating} className="w-full">
@@ -203,4 +230,12 @@ export default function RegisterPage() {
       </div>
     </div>
   );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RegisterForm />
+    </Suspense>
+  )
 }

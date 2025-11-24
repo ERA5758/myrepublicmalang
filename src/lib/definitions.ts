@@ -6,6 +6,7 @@ export const LeadCaptureSchema = z.object({
   phone: z.string().min(10, { message: "Silakan masukkan nomor telepon yang valid." }),
   address: z.string().min(10, { message: "Silakan masukkan alamat lengkap." }),
   locationPin: z.string().optional(),
+  selectedPlan: z.string({ required_error: "Silakan pilih salah satu paket." }).min(1, { message: "Silakan pilih salah satu paket." }),
 });
 
 export type LeadCaptureFormState = {
