@@ -1,0 +1,23 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Malang Coverage Area"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [112.58, -8.02],
+            [112.68, -8.02],
+            [112.68, -7.92],
+            [112.58, -7.92],
+            [112.58, -8.02]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "gamer-pro",
+      "description": "A focused gamer in a high-tech setup, illustrating low latency and high speed.",
+      "imageUrl": "https://images.unsplash.com/photo-1548686304-89d188a80029?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxnYW1lciUyMGVzcG9ydHN8ZW58MHx8fHwxNzYzOTU5MjQxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gamer esports"
+    },
+    {
+      "id": "family-stream",
+      "description": "A family enjoying streaming movies together on a large screen TV.",
+      "imageUrl": "https://images.unsplash.com/photo-1752652010704-11c6a68ce66e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxmYW1pbHklMjBtb3ZpZXxlbnwwfHx8fDE3NjM5MTM1NzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "family movie"
+    },
+    {
+      "id": "basic-connect",
+      "description": "A person casually browsing on a laptop in a bright, modern home office.",
+      "imageUrl": "https://images.unsplash.com/photo-1492138786289-d35ea832da43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxob21lJTIwb2ZmaWNlfGVufDB8fHx8MTc2MzkwNjk5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "home office"
+    },
+    {
+      "id": "hero-bg",
+      "description": "An abstract representation of fiber optic light trails, conveying speed and technology.",
+      "imageUrl": "https://images.unsplash.com/photo-1607723619497-98a79f01ba90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxmaWJlciUyMG9wdGljfGVufDB8fHx8MTc2Mzk1OTI0MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fiber optic"
+    }
+  ]
 }
