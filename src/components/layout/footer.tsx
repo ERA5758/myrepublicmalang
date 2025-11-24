@@ -58,7 +58,7 @@ export function Footer() {
         
         <div className="border-t border-border/40 py-6">
           <p className="text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} MyRepublic Malang. Hak cipta dilindungi undang-undang.
+            © {new Date().getFullYear()} MyRepublic Malang. Sales Excutiv khusus pasang baru
           </p>
         </div>
       </div>
