@@ -2,21 +2,16 @@
 
 import { APIProvider, Map } from '@vis.gl/react-google-maps';
 import type { FC } from 'react';
-import coverageData from '@/lib/coverage-area.json';
 import { Card } from './ui/card';
 
+// This is a dummy polygon for demonstration purposes.
 const malangCenter = { lat: -7.983908, lng: 112.620934 };
-
-const polygonOptions = {
-  fillColor: 'hsl(197, 71%, 53%)',
-  fillOpacity: 0.3,
-  strokeColor: 'hsl(197, 71%, 53%)',
-  strokeWeight: 2,
-};
-
-const coordinates = coverageData.features[0].geometry.coordinates[0].map(
-  (coord) => ({ lat: coord[1], lng: coord[0] })
-);
+const polygonCoords = [
+    { lat: -8.02, lng: 112.58 },
+    { lat: -8.02, lng: 112.68 },
+    { lat: -7.92, lng: 112.68 },
+    { lat: -7.92, lng: 112.58 },
+];
 
 export const CoverageMap: FC = () => {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -34,12 +29,8 @@ export const CoverageMap: FC = () => {
     );
   }
 
-  // Polygon component is not available in @vis.gl/react-google-maps
-  // This component will render a map without the polygon overlay.
-  // To add a polygon, you would typically use the underlying Google Maps API
-  // via a custom component or a different library.
-  // For now, we will render the map without it to fix the build error.
-
+  // The Polygon component is not available in @vis.gl/react-google-maps.
+  // This map is for demonstration purposes only.
   return (
     <APIProvider apiKey={apiKey}>
       <div className="h-[400px] w-full overflow-hidden rounded-lg border">
@@ -50,7 +41,7 @@ export const CoverageMap: FC = () => {
           disableDefaultUI={true}
           gestureHandling={'greedy'}
         >
-          {/* <Polygon paths={coordinates} {...polygonOptions} /> */}
+          {/* A polygon would be rendered here, but the library doesn't support it directly. */}
         </Map>
       </div>
     </APIProvider>

@@ -1,7 +1,6 @@
 import { CoverageMap } from '@/components/coverage-map';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import Link from 'next/link';
 
 export default function CoverageCheckPage() {
   return (
@@ -9,20 +8,16 @@ export default function CoverageCheckPage() {
       <div className="text-center mb-12">
         <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">Cek Jangkauan Kami</h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-          Gunakan peta interaktif untuk melihat jangkauan jaringan fiber kami di seluruh Malang. Kami berkembang setiap hari!
+          Lihat daftar lengkap area yang dijangkau di halaman <Link href="/coverage-areas" className="text-primary hover:underline">Area Jangkauan</Link> kami. Peta di bawah ini adalah untuk tujuan demonstrasi.
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Area Layanan Malang</CardTitle>
-          <CardDescription>Area yang disorot menunjukkan di mana internet fiber MyRepublic saat ini tersedia. Anda dapat memasukkan alamat Anda di bawah untuk memeriksa, meskipun ini untuk tujuan demonstrasi.</CardDescription>
+          <CardTitle>Peta Demonstrasi Area Layanan Malang</CardTitle>
+          <CardDescription>Peta ini menunjukkan contoh area layanan kami. Untuk daftar area yang paling akurat dan terkini, silakan kunjungi halaman Area Jangkauan kami.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="address">Masukkan alamat Anda untuk memeriksa</Label>
-            <Input id="address" name="address" placeholder="cth. Jl. Soekarno Hatta, Malang" />
-          </div>
+        <CardContent>
           <CoverageMap />
         </CardContent>
       </Card>
