@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useFirestore } from '@/firebase';
-import { collection, onSnapshot, doc, updateDoc, query, orderBy, Timestamp } from 'firebase/firestore';
+import { collection, onSnapshot, doc, updateDoc, query, orderBy, Timestamp, where } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -42,7 +42,12 @@ export default function ManageReviewsPage() {
     if (!firestore) return;
 
     setLoading(true);
-    const reviewsQuery = query(collection(firestore, 'reviews'), orderBy('createdAt', 'desc'));
+    const reviewsCollection = collection(firestore, 'reviews');
+    const reviewsQuery = query(
+      reviewsCollection, 
+      where('status', '==', activeTab), 
+      orderBy('createdAt', 'desc')
+    );
 
     const unsubscribe = onSnapshot(reviewsQuery, (snapshot) => {
       const fetchedReviews = snapshot.docs.map((doc) => {
@@ -58,7 +63,7 @@ export default function ManageReviewsPage() {
     });
 
     return () => unsubscribe();
-  }, [firestore]);
+  }, [firestore, activeTab]);
 
   const handleUpdateStatus = async (id: string, status: ReviewStatus) => {
     if (!firestore) return;
@@ -77,8 +82,6 @@ export default function ManageReviewsPage() {
       });
     }
   };
-
-  const filteredReviews = reviews.filter(review => review.status === activeTab);
 
   return (
     <div className="container mx-auto max-w-7xl py-12 sm:py-16">
@@ -108,7 +111,7 @@ export default function ManageReviewsPage() {
                 </div>
             ) : (
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredReviews.length > 0 ? filteredReviews.map(review => (
+                    {reviews.length > 0 ? reviews.map(review => (
                         <Card key={review.id} className="flex flex-col">
                             <CardHeader>
                                 <div className="flex justify-between items-start">
