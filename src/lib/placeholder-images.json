@@ -15,7 +15,7 @@
     {
       "id": "basic-connect",
       "description": "Seseorang dengan santai browsing di laptop di kantor rumah yang cerah dan modern.",
-      "imageUrl": "https://images.unsplash.com/photo-1492138786289-d35ea832da43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxob21lJTIwb2ZmaWNlfGVufDB8fHx8MTc2MzkwNjk5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://www.myrepublic.co.id/_next/image?url=%2Fimg%2Fgothel%2Fuploads%2FDesign_Thumbnail_Produk_01_b1381ab385.webp&w=360&q=75",
       "imageHint": "home office"
     },
     {
@@ -53,6 +53,24 @@
       "description": "Tim customer service MyRepublic yang ramah",
       "imageUrl": "https://images.unsplash.com/photo-1626863905121-3b0c0ed7b94c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjdXN0b21lciUyMHNlcnZpY2V8ZW58MHx8fHwxNzYzODgwNDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "customer service"
+    },
+    {
+      "id": "hero-carousel-1",
+      "description": "Representasi abstrak dari jejak cahaya serat optik, yang menyampaikan kecepatan dan teknologi.",
+      "imageUrl": "https://images.unsplash.com/photo-1607723619497-98a79f01ba90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxmaWJlciUyMG9wdGljfGVufDB8fHx8MTc2Mzk1OTI0MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fiber optic"
+    },
+    {
+      "id": "hero-carousel-2",
+      "description": "Seorang gamer yang fokus dalam pengaturan berteknologi tinggi, mengilustrasikan latensi rendah dan kecepatan tinggi.",
+      "imageUrl": "https://images.unsplash.com/photo-1548686304-89d188a80029?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxnYW1lciUyMGVzcG9ydHN8ZW58MHx8fHwxNzYzOTU5MjQxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gamer esports"
+    },
+    {
+      "id": "hero-carousel-3",
+      "description": "Sebuah keluarga menikmati streaming film bersama di TV layar lebar.",
+      "imageUrl": "https://images.unsplash.com/photo-1752652010704-11c6a68ce66e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxmYW1pbHklMjBtb3ZpZXxlbnwwfHx8fDE3NjM5MTM1NzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "family movie"
     }
   ]
 }

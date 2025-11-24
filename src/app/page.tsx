@@ -19,7 +19,9 @@ import { useFirestore } from '@/firebase';
 import type { Offer, OfferTV, AddOn } from '@/lib/definitions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TermsAndConditionsDialog } from '@/components/terms-dialog';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
 
 
 const features = [
@@ -40,10 +42,34 @@ const features = [
     },
 ];
 
+const carouselSlides = [
+    {
+      id: 'hero-carousel-1',
+      title: 'Rasakan Masa Depan Internet',
+      description: 'Kecepatan super cepat, data tanpa batas, dan keandalan tak tertandingi. Bergabunglah dengan jaringan MyRepublic dan tingkatkan kehidupan digital Anda. GRATIS INSTALASI!',
+      image: PlaceHolderImages.find(img => img.id === 'hero-carousel-1')!
+    },
+    {
+      id: 'hero-carousel-2',
+      title: 'Gaming Tanpa Kompromi',
+      description: 'Latensi rendah dan jaringan prioritas untuk para gamer. Dominasi setiap pertandingan dengan paket MyGamer kami.',
+      image: PlaceHolderImages.find(img => img.id === 'hero-carousel-2')!
+    },
+    {
+      id: 'hero-carousel-3',
+      title: 'Hiburan Tanpa Batas untuk Keluarga',
+      description: 'Streaming film 4K dan nikmati tayangan TV favorit tanpa buffer. Paket combo TV kami hadir untuk hiburan keluarga terbaik.',
+      image: PlaceHolderImages.find(img => img.id === 'hero-carousel-3')!
+    }
+  ];
+
 export default function Home() {
-  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-bg');
   const [offers, setOffers] = useState<Offer[]>([]);
   const firestore = useFirestore();
+
+  const autoplayPlugin = useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: true })
+  );
 
   useEffect(() => {
     async function getOffers() {
@@ -70,42 +96,63 @@ export default function Home() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="relative w-full overflow-hidden">
-         <div className="container relative z-10 mx-auto max-w-7xl px-4 py-24 text-center md:py-32 lg:py-40">
-           <Badge variant="secondary" className="mb-4 shadow-md">
-             <Wifi className="mr-2 h-4 w-4 text-primary" />
-             Internet Fiber Tercepat di Malang
-           </Badge>
-           <h1 className="font-headline text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-             Rasakan <span className="text-primary">Masa Depan Internet</span>
-           </h1>
-           <p className="mx-auto mt-6 max-w-3xl text-lg text-muted-foreground md:text-xl">
-             Kecepatan super cepat, data tanpa batas, dan keandalan tak tertandingi. Bergabunglah dengan jaringan MyRepublic dan tingkatkan kehidupan digital Anda. GRATIS INSTALASI!
-           </p>
-           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-             <Button size="lg" asChild>
-               <Link href="/register">
-                 Mulai Sekarang <ArrowRight className="ml-2 h-5 w-5" />
-               </Link>
-             </Button>
-             <Button size="lg" variant="outline" asChild>
-               <Link href="/coverage-areas">Cek Jangkauan</Link>
-             </Button>
-           </div>
-         </div>
-          {heroImage && (
-             <div className="absolute inset-0 z-0">
-                <Image
-                    src={heroImage.imageUrl}
-                    alt={heroImage.description}
-                    fill
-                    className="object-cover"
-                    priority
-                    data-ai-hint={heroImage.imageHint}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/60 to-background/20"></div>
-                <div className="absolute inset-0 bg-background/50"></div>
-             </div>
-        )}
+        <Carousel
+          plugins={[autoplayPlugin.current]}
+          className="w-full"
+          onMouseEnter={autoplayPlugin.current.stop}
+          onMouseLeave={autoplayPlugin.current.reset}
+        >
+          <CarouselContent>
+            {carouselSlides.map((slide) => (
+              <CarouselItem key={slide.id}>
+                <div className="relative h-[60vh] md:h-[80vh] w-full">
+                  <div className="container relative z-10 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-4 text-center">
+                    <Badge variant="secondary" className="mb-4 shadow-md">
+                      <Wifi className="mr-2 h-4 w-4 text-primary" />
+                      Internet Fiber Tercepat di Malang
+                    </Badge>
+                    <h1 className="font-headline text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+                      {slide.title.split(' ').map((word, index) =>
+                        ['Internet', 'Kompromi', 'Batas'].includes(word) ? (
+                          <span key={index} className="text-primary">{word} </span>
+                        ) : (
+                          word + ' '
+                        )
+                      )}
+                    </h1>
+                    <p className="mx-auto mt-6 max-w-3xl text-lg text-white md:text-xl">
+                      {slide.description}
+                    </p>
+                    <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                      <Button size="lg" asChild>
+                        <Link href="/register">
+                          Mulai Sekarang <ArrowRight className="ml-2 h-5 w-5" />
+                        </Link>
+                      </Button>
+                      <Button size="lg" variant="outline" asChild>
+                        <Link href="/coverage-areas">Cek Jangkauan</Link>
+                      </Button>
+                    </div>
+                  </div>
+                  {slide.image && (
+                    <div className="absolute inset-0 z-0">
+                      <Image
+                        src={slide.image.imageUrl}
+                        alt={slide.image.description}
+                        fill
+                        className="object-cover"
+                        priority
+                        data-ai-hint={slide.image.imageHint}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/50 to-transparent"></div>
+                      <div className="absolute inset-0 bg-black/50"></div>
+                    </div>
+                  )}
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
       </section>
 
       {/* How to Subscribe Section */}
