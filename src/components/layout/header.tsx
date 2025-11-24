@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { navLinks } from '@/lib/data';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { PwaInstallButton } from '../pwa-install-button';
 
 export function Header() {
   const pathname = usePathname();
@@ -47,6 +48,7 @@ export function Header() {
         </div>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
+          <PwaInstallButton />
           <Button asChild className="hidden md:inline-flex" variant="default">
             <Link href="/register">Mulai</Link>
           </Button>
