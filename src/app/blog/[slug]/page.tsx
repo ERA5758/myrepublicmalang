@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { initializeFirebase } from '@/firebase';
-import { collection, getDocs, query, where, limit } from 'firebase/firestore';
+import { collection, getDocs, query, where, limit, Timestamp } from 'firebase/firestore';
 import type { Article, Offer } from '@/lib/definitions';
 
 async function getArticle(slug: string): Promise<Article | null> {
@@ -22,7 +22,21 @@ async function getArticle(slug: string): Promise<Article | null> {
     }
 
     const doc = querySnapshot.docs[0];
-    return { id: doc.id, ...doc.data() } as Article;
+    const data = doc.data();
+
+    // Convert Firestore Timestamp to string
+    let publishedAt: string;
+    if (data.publishedAt instanceof Timestamp) {
+        publishedAt = data.publishedAt.toDate().toISOString();
+    } else {
+        publishedAt = new Date().toISOString(); // Fallback
+    }
+
+    return { 
+        id: doc.id, 
+        ...data,
+        publishedAt,
+     } as Article;
 }
 
 async function getOffers(): Promise<Offer[]> {
@@ -113,7 +127,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       name: 'MyRepublic Malang',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://myrepublic.co.id/wp-content/uploads/2022/12/logo-myrepublic.png',
+        url: 'https://www.myrepublic.co.id/wp-content/uploads/2022/12/logo-myrepublic.png',
       },
     },
     datePublished: article.publishedAt,

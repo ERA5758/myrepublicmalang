@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useEffect, useState } from 'react';
 import { useFirestore } from '@/firebase';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
 import type { Article } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -44,9 +44,19 @@ export default function BlogIndexPage() {
             const querySnapshot = await getDocs(q);
             const fetchedArticles: Article[] = [];
             querySnapshot.forEach(doc => {
+                const data = doc.data();
+                
+                let publishedAt: string;
+                if (data.publishedAt instanceof Timestamp) {
+                    publishedAt = data.publishedAt.toDate().toISOString();
+                } else {
+                    publishedAt = new Date().toISOString(); // Fallback
+                }
+                
                 fetchedArticles.push({
                     id: doc.id,
-                    ...doc.data()
+                    ...data,
+                    publishedAt,
                 } as Article);
             });
             setArticles(fetchedArticles);
