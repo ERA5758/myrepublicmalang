@@ -143,7 +143,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
     />
-    <div className="container mx-auto max-w-4xl py-12 sm:py-16">
+    <div className="container mx-auto max-w-4xl py-12 sm:py-16 px-4">
       <div className="mb-8">
         <Link href="/blog" className="flex items-center text-primary hover:underline">
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -238,5 +238,3 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     </>
   );
 }
-
-    
