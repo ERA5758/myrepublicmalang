@@ -68,7 +68,10 @@ export default function BlogIndexPage() {
             setArticles(fetchedArticles);
             setLoading(false);
         }
-        fetchArticles();
+        
+        if (firestore) {
+            fetchArticles();
+        }
     }, [firestore]);
 
   return (
