@@ -30,8 +30,12 @@ export function Footer() {
               <ul className="mt-4 space-y-2 text-sm">
                 <li><Link href="/register" className="text-muted-foreground hover:text-primary">Daftar</Link></li>
                 <li><Link href="/cek-area" className="text-muted-foreground hover:text-primary">Cek Area</Link></li>
+                <li><Link href="/reviews" className="text-muted-foreground hover:text-primary">Ulasan</Link></li>
                 <li><Link href="/blog" className="text-muted-foreground hover:text-primary">Blog</Link></li>
-                 <li><Link href="/payment-methods" className="text-muted-foreground hover:text-primary">Cara Bayar</Link></li>
+                <li><Link href="/personalized-offers" className="text-muted-foreground hover:text-primary">Rekomendasi</Link></li>
+                <li><Link href="/speed-test" className="text-muted-foreground hover:text-primary">Speed Test</Link></li>
+                <li><Link href="/payment-methods" className="text-muted-foreground hover:text-primary">Cara Bayar</Link></li>
+                <li><Link href="/hubungi-kami" className="text-muted-foreground hover:text-primary">Hubungi Kami</Link></li>
               </ul>
             </div>
 
