@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Phone, Wifi, UserCog } from 'lucide-react';
+import { Phone, Wifi } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -19,9 +19,6 @@ export function Footer() {
                 <span>Mira Velicia: 0851 84000 880</span>
               </div>
             </div>
-            <Link href="/login" className="text-muted-foreground hover:text-primary" aria-label="Admin Login">
-                <UserCog className="h-5 w-5" />
-            </Link>
         </div>
       </div>
     </footer>
