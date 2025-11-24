@@ -15,15 +15,18 @@ async function getArticle(slug: string) {
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
     const article = await getArticle(params.slug);
+    const siteUrl = 'https://myrepublicmalang.net';
 
     if (!article) {
-        return {};
+        return {
+            title: 'Artikel tidak ditemukan'
+        };
     }
 
-    const url = `/blog/${article.slug}`;
+    const url = `${siteUrl}/blog/${article.slug}`;
 
     return {
-        title: `${article.title} | MyRepublic Malang`,
+        title: article.title,
         description: article.summary,
         alternates: {
             canonical: url,
@@ -37,11 +40,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             images: [
                 {
                     url: article.image.imageUrl,
-                    width: 1200,
-                    height: 630,
+                    width: 800,
+                    height: 600,
                     alt: article.title,
                 },
             ],
+            authors: ['MyRepublic Malang'],
+        },
+         twitter: {
+            card: 'summary_large_image',
+            title: article.title,
+            description: article.summary,
+            images: [article.image.imageUrl],
         },
     };
 }
@@ -49,6 +59,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
   const article = await getArticle(params.slug);
+  const siteUrl = 'https://myrepublicmalang.net';
+
 
   if (!article) {
     notFound();
@@ -59,7 +71,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     '@type': 'Article',
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://myrepublic-malang-demo.web.app/blog/${article.slug}`,
+      '@id': `${siteUrl}/blog/${article.slug}`,
     },
     headline: article.title,
     description: article.summary,
@@ -67,6 +79,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     author: {
       '@type': 'Organization',
       name: 'MyRepublic Malang',
+      url: siteUrl
     },
     publisher: {
       '@type': 'Organization',
