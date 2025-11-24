@@ -10,6 +10,7 @@ type NavLink = {
 
 export const navLinks: NavLink[] = [
   { href: "/", label: "Beranda" },
+  { href: "/reviews", label: "Ulasan" },
   { href: "/blog", label: "Blog"},
   { href: "/register", label: "Daftar" },
   { href: "/coverage-areas", label: "Area Jangkauan" },

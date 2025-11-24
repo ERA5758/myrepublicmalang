@@ -119,6 +119,19 @@
       },
       "required": ["slug", "title", "summary", "content", "publishedAt", "category", "image"]
     },
+    "Review": {
+      "title": "Review",
+      "description": "Represents a customer review or feedback.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "review": { "type": "string" },
+        "rating": { "type": "number", "minimum": 1, "maximum": 5 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "default": "pending" }
+      },
+      "required": ["name", "review", "rating", "createdAt", "status"]
+    },
     "Admin": {
       "title": "Admin",
       "description": "Represents an administrator user.",
@@ -159,6 +172,10 @@
     "/articles/{articleId}": {
       "schema": { "$ref": "#/entities/Article" },
       "description": "Collection of blog articles."
+    },
+    "/reviews/{reviewId}": {
+      "schema": { "$ref": "#/entities/Review" },
+      "description": "Collection of customer reviews."
     },
     "/admins/{adminId}": {
       "schema": { "$ref": "#/entities/Admin" },

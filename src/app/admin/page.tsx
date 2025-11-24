@@ -75,6 +75,20 @@ export default function AdminDashboardPage() {
                         </CardContent>
                     </Card>
                 </Link>
+                 <Link href="/admin/reviews" passHref>
+                    <Card className="h-full hover:border-primary transition-colors">
+                        <CardHeader>
+                            <CardTitle>Kelola Ulasan</CardTitle>
+                            <CardDescription>Setujui atau tolak ulasan dari pelanggan.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                           <div className="flex items-center text-sm text-primary">
+                                Pergi ke Manajemen Ulasan
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </Link>
             </div>
         </div>
     );

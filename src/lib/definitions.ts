@@ -36,6 +36,18 @@ export type PersonalizedOfferFormState = {
   fields?: Record<string, string>;
 };
 
+export const ReviewSchema = z.object({
+  name: z.string().min(2, { message: "Nama harus terdiri dari minimal 2 karakter." }),
+  review: z.string().min(10, { message: "Ulasan harus terdiri dari minimal 10 karakter." }),
+  rating: z.coerce.number().min(1).max(5),
+});
+
+export type ReviewFormState = {
+  message: string;
+  fields?: Record<string, string>;
+  issues?: string[];
+} | null;
+
 
 export type ImagePlaceholder = {
   id: string;
@@ -94,4 +106,13 @@ export type CarouselSlide = {
     title: string;
     description: string;
     image: ImagePlaceholder;
+}
+
+export type Review = {
+    id: string;
+    name: string;
+    review: string;
+    rating: number;
+    createdAt: string;
+    status: 'pending' | 'approved' | 'rejected';
 }
