@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Badge } from '@/components/ui/badge';
 import { useEffect, useState } from 'react';
 import { useFirestore } from '@/firebase';
-import { collection, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import type { Article } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ShareButton } from '@/components/share-button';
@@ -34,11 +34,50 @@ function ArticleSkeleton() {
     );
 }
 
+function ArticleCard({ article }: { article: Article }) {
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://myrepublicmalang.net';
+    const articleUrl = `${siteUrl}/blog/${article.slug}`;
+
+    return (
+        <Card className="flex flex-col h-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+            <div className="flex flex-col flex-grow">
+                <Link href={`/blog/${article.slug}`} className="flex flex-col flex-grow">
+                    <div className="relative h-48 w-full">
+                        <Image
+                            src={article.image.imageUrl}
+                            alt={article.image.description}
+                            fill
+                            className="object-cover"
+                            data-ai-hint={article.image.imageHint}
+                        />
+                    </div>
+                    <CardHeader>
+                        <CardTitle className="font-headline text-xl leading-snug hover:text-primary line-clamp-2">
+                            {article.title}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                        <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
+                            {article.summary}
+                        </p>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
+                            <span>{new Date(article.publishedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                            <Badge variant="outline">{article.category}</Badge>
+                        </div>
+                    </CardContent>
+                </Link>
+            </div>
+            <CardFooter>
+                 <ShareButton title={article.title} url={articleUrl} />
+            </CardFooter>
+        </Card>
+    );
+}
+
 export default function BlogIndexPage() {
     const [articles, setArticles] = useState<Article[]>([]);
     const [loading, setLoading] = useState(true);
     const firestore = useFirestore();
-    const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://myrepublicmalang.net';
 
     useEffect(() => {
         async function fetchArticles() {
@@ -50,12 +89,10 @@ export default function BlogIndexPage() {
             const fetchedArticles: Article[] = [];
             querySnapshot.forEach(doc => {
                 const data = doc.data();
-                
                 const publishedAt = data.publishedAt && typeof (data.publishedAt as any).toDate === 'function'
                     ? ((data.publishedAt as any).toDate() as Date).toISOString()
                     : new Date().toISOString();
                 
-                // Explicitly map fields to ensure type correctness
                 fetchedArticles.push({
                     id: doc.id,
                     slug: data.slug,
@@ -92,36 +129,7 @@ export default function BlogIndexPage() {
             Array.from({ length: 3 }).map((_, i) => <ArticleSkeleton key={i} />)
         ) : (
             articles.map((article) => (
-                <Card key={article.id} className="flex flex-col h-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-                    <Link href={`/blog/${article.slug}`} className="flex flex-col flex-grow">
-                        <div className="relative h-48 w-full">
-                            <Image
-                            src={article.image.imageUrl}
-                            alt={article.image.description}
-                            fill
-                            className="object-cover"
-                            data-ai-hint={article.image.imageHint}
-                            />
-                        </div>
-                        <CardHeader>
-                            <CardTitle className="font-headline text-xl leading-snug hover:text-primary line-clamp-2">
-                            {article.title}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex-grow">
-                            <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
-                            {article.summary}
-                            </p>
-                            <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
-                                <span>{new Date(article.publishedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                                <Badge variant="outline">{article.category}</Badge>
-                            </div>
-                        </CardContent>
-                    </Link>
-                    <CardFooter>
-                         <ShareButton title={article.title} url={`${siteUrl}/blog/${article.slug}`} />
-                    </CardFooter>
-                </Card>
+                <ArticleCard key={article.id} article={article} />
             ))
         )}
       </div>
