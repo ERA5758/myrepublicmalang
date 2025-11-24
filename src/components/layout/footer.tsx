@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Facebook, Instagram, Phone, Rocket, Twitter } from 'lucide-react';
+import Image from 'next/image';
 
 export function Footer() {
   return (
@@ -9,10 +10,13 @@ export function Footer() {
           
           <div className="md:col-span-4 lg:col-span-5">
              <Link href="/" className="flex items-center space-x-2">
-                <Rocket className="h-8 w-8 text-primary" />
-                <span className="text-xl font-bold font-headline">
-                MyRepublic Malang
-                </span>
+                <Image 
+                  src="https://iconlogovector.com/uploads/images/2025/04/lg-67fd7fa2b8b25-MyRepublic.webp"
+                  alt="MyRepublic Malang Logo"
+                  width={180}
+                  height={48}
+                  className="object-contain"
+                />
             </Link>
             <p className="mt-4 text-muted-foreground text-sm">
                 Menyediakan koneksi internet fiber ultra-cepat, 100% unlimited, dan andal untuk wilayah Malang dan sekitarnya.

@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, Rocket } from 'lucide-react';
+import { Menu } from 'lucide-react';
+import Image from 'next/image';
 
-import { MyRepublicLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { navLinks } from '@/lib/data';
@@ -20,10 +20,13 @@ export function Header() {
       <div className="container flex h-16 max-w-7xl items-center">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Rocket className="h-6 w-6 text-primary" />
-            <span className="hidden font-bold sm:inline-block font-headline">
-              MyRepublic Malang
-            </span>
+            <Image 
+              src="https://iconlogovector.com/uploads/images/2025/04/lg-67fd7fa2b8b25-MyRepublic.webp"
+              alt="MyRepublic Malang Logo"
+              width={150}
+              height={40}
+              className="object-contain"
+            />
           </Link>
           <nav className="hidden items-center gap-6 text-sm md:flex">
             {navLinks.map((link) => (
@@ -66,8 +69,13 @@ export function Header() {
                     className="mr-6 flex items-center space-x-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <Rocket className="h-6 w-6 text-primary" />
-                    <span className="font-bold font-headline">MyRepublic Malang</span>
+                     <Image 
+                        src="https://iconlogovector.com/uploads/images/2025/04/lg-67fd7fa2b8b25-MyRepublic.webp"
+                        alt="MyRepublic Malang Logo"
+                        width={150}
+                        height={40}
+                        className="object-contain"
+                      />
                   </Link>
                 </SheetHeader>
               <div className="my-4 h-px w-full bg-border" />
