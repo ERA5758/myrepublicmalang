@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   },
   description: 'Daftar dan pasang internet fiber MyRepublic di Malang. Nikmati koneksi super cepat, unlimited tanpa FUP, dan tahan cuaca. Gratis instalasi dan harga flat!',
   keywords: ['internet malang', 'myrepublic malang', 'wifi malang', 'provider internet malang', 'internet cepat malang', 'internet unlimited malang'],
+  manifest: '/manifest.json',
   openGraph: {
     title: 'MyRepublic Malang - Internet Fiber Cepat & Unlimited',
     description: 'Bergabunglah dengan jaringan internet fiber tercepat di Malang. Kecepatan simetris, unlimited, dan andal. Cek jangkauan dan daftar sekarang!',
@@ -66,6 +67,8 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
           rel="stylesheet"
         />
+        <meta name="theme-color" content="#8B5CF6" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
       <body
         className={cn(
