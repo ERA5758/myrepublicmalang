@@ -7,7 +7,7 @@ export const LeadCaptureSchema = z.object({
   phone: z.string().min(10, { message: "Silakan masukkan nomor telepon yang valid." }),
   area: z.string({ required_error: "Silakan pilih area Anda." }).min(1, { message: "Silakan pilih area Anda." }),
   address: z.string().min(10, { message: "Silakan masukkan alamat lengkap." }),
-  locationPin: z.string().optional(),
+  locationPin: z.string().min(1, { message: "Silakan ambil pin lokasi GPS Anda." }),
   selectedPlan: z.string({ required_error: "Silakan pilih salah satu paket." }).min(1, { message: "Silakan pilih salah satu paket." }),
 });
 
@@ -38,18 +38,15 @@ export type PersonalizedOfferFormState = {
 };
 
 export const ReviewSchema = z.object({
-  id: z.string().optional(),
   name: z.string().min(2, { message: "Nama harus terdiri dari minimal 2 karakter." }),
   review: z.string().min(10, { message: "Ulasan harus terdiri dari minimal 10 karakter." }),
   rating: z.coerce.number().min(1, { message: "Rating tidak boleh kosong."}).max(5),
-  createdAt: z.string().optional(),
-  status: z.enum(['pending', 'approved', 'rejected']).optional(),
 });
 
 export type ReviewFormState = {
   isSuccess: boolean;
   message: string;
-  fields?: Record<string, string>;
+  fields?: Partial<z.infer<typeof ReviewSchema>>;
   issues?: string[];
 } | null;
 

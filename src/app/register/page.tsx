@@ -286,9 +286,10 @@ function RegisterForm() {
                   </p>
                 )}
                 {locationError && <p className="text-sm text-destructive">{locationError}</p>}
+                {state?.fields?.locationPin && <p className="text-sm text-destructive">{state.fields.locationPin}</p>}
               </div>
 
-              <input type="hidden" name="locationPin" value={location ? `${location.lat},${location.lon}`: ''} />
+              <input type="hidden" name="locationPin" value={location ? `${location.lat},${location.lon}`: ''} required />
               
               {state?.issues && state.issues.map(issue => <p key={issue} className="text-sm text-destructive">{issue}</p>)}
               
@@ -308,5 +309,3 @@ export default function RegisterPage() {
     </Suspense>
   )
 }
-
-    
