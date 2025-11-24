@@ -95,6 +95,7 @@ export default function BlogIndexPage() {
                 
                 fetchedArticles.push({
                     id: doc.id,
+                    slug: data.slug, // Ensure slug is explicitly mapped
                     ...data,
                     publishedAt,
                 } as Article);
