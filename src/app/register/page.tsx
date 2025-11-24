@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { captureLead } from '@/lib/actions';
-import { type LeadCaptureFormState, type Offer } from '@/lib/definitions';
+import { type LeadCaptureFormState, type Offer, type OfferTV } from '@/lib/definitions';
 import { useEffect, useRef, useState, Suspense } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -20,7 +20,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { faqs } from '@/lib/data';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useSearchParams } from 'next/navigation';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
@@ -55,26 +55,36 @@ function RegisterForm() {
   const [selectedPlanValue, setSelectedPlanValue] = useState(preselectedPlan || "");
   const [selectedArea, setSelectedArea] = useState("");
   const [offers, setOffers] = useState<Offer[]>([]);
+  const [offersTV, setOffersTV] = useState<OfferTV[]>([]);
   const firestore = useFirestore();
 
   const coverageAreas = Object.keys(coverageData).sort();
 
   useEffect(() => {
-    async function fetchOffers() {
+    async function fetchPackages() {
         if (!firestore) return;
+        
+        // Fetch Internet Only offers
         const offersCollection = collection(firestore, 'offers');
-        const q = query(offersCollection, orderBy('price'));
-        const querySnapshot = await getDocs(q);
+        const offersQuery = query(offersCollection, orderBy('price'));
+        const offersSnapshot = await getDocs(offersQuery);
         const fetchedOffers: Offer[] = [];
-        querySnapshot.forEach(doc => {
-            fetchedOffers.push({
-                id: doc.id,
-                ...doc.data()
-            } as Offer);
+        offersSnapshot.forEach(doc => {
+            fetchedOffers.push({ id: doc.id, ...doc.data() } as Offer);
         });
         setOffers(fetchedOffers);
+        
+        // Fetch Internet + TV offers
+        const offersTVCollection = collection(firestore, 'offersTV');
+        const offersTVQuery = query(offersTVCollection, orderBy('price'));
+        const offersTVSnapshot = await getDocs(offersTVQuery);
+        const fetchedOffersTV: OfferTV[] = [];
+        offersTVSnapshot.forEach(doc => {
+            fetchedOffersTV.push({ id: doc.id, ...doc.data() } as OfferTV);
+        });
+        setOffersTV(fetchedOffersTV);
     }
-    fetchOffers();
+    fetchPackages();
   }, [firestore]);
 
 
@@ -236,11 +246,22 @@ function RegisterForm() {
                       <SelectValue placeholder="Pilih paket Anda" />
                     </SelectTrigger>
                     <SelectContent>
-                      {offers.map(offer => (
-                        <SelectItem key={offer.id} value={offer.id}>
-                          {offer.title} - {offer.speed}
-                        </SelectItem>
-                      ))}
+                      <SelectGroup>
+                        <SelectLabel>Internet Saja</SelectLabel>
+                        {offers.map(offer => (
+                          <SelectItem key={offer.id} value={offer.id}>
+                            {offer.title} - {offer.speed} ({offer.price})
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                      <SelectGroup>
+                        <SelectLabel>Internet + TV</SelectLabel>
+                         {offersTV.map(offer => (
+                          <SelectItem key={offer.id} value={offer.id}>
+                            {offer.title} - {offer.speed} ({offer.price})
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
@@ -287,3 +308,5 @@ export default function RegisterPage() {
     </Suspense>
   )
 }
+
+    

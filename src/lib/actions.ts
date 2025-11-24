@@ -5,10 +5,8 @@ import { z } from 'zod';
 import { personalizedOfferRecommendations } from '@/ai/flows/personalized-offer-recommendations';
 import { LeadCaptureSchema, PersonalizedOfferSchema, type LeadCaptureFormState, type PersonalizedOfferFormState } from './definitions';
 import { sendLeadNotification } from './whatsapp';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, getDocs, query, serverTimestamp } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
-import { offers as mockOffers } from './data';
-
 
 export async function captureLead(
   prevState: LeadCaptureFormState,
@@ -38,14 +36,28 @@ export async function captureLead(
         createdAt: serverTimestamp()
     });
 
-    // Send WhatsApp notification
-    const selectedPlan = mockOffers.find(o => o.id === validatedFields.data.selectedPlan);
+    // --- Prepare data for notification ---
+    const offersCollection = collection(firestore, 'offers');
+    const offersTVCollection = collection(firestore, 'offersTV');
+    
+    const [offersSnapshot, offersTVSnapshot] = await Promise.all([
+        getDocs(query(offersCollection)),
+        getDocs(query(offersTVCollection))
+    ]);
+
+    const allPackages = [
+        ...offersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })),
+        ...offersTVSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    ];
+    
+    const selectedPlan = allPackages.find(pkg => pkg.id === validatedFields.data.selectedPlan);
+    
     const leadDataForNotif = {
         ...validatedFields.data,
         selectedPlan: selectedPlan ? `${selectedPlan.title} - ${selectedPlan.speed}` : validatedFields.data.selectedPlan,
     };
-    await sendLeadNotification(leadDataForNotif);
 
+    await sendLeadNotification(leadDataForNotif);
 
     return {
       message: `Terima kasih, ${validatedFields.data.name}! Kami telah menerima informasi Anda dan akan segera menghubungi Anda.`,
@@ -83,3 +95,5 @@ export async function getPersonalizedOffer(
     return { message: "Maaf, kami tidak dapat membuat rekomendasi saat ini. Silakan coba lagi." };
   }
 }
+
+    
