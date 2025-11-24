@@ -130,7 +130,7 @@ export default async function Home() {
         <div className="container mx-auto max-w-7xl px-4">
           <div className="mb-12 text-center">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-              Penawaran Eksklusif untuk Malang
+              Penawaran Eksklusif untuk Warga Malang
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
               Pilih paket sempurna yang sesuai dengan gaya hidup dan anggaran Anda. Harga spesial untuk pelanggan baru!
