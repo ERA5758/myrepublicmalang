@@ -3,7 +3,7 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { ArrowRight, Globe, Loader, Mail, MapPin, Phone, User, LocateFixed, Package } from 'lucide-react';
+import { ArrowRight, Globe, Loader, Mail, MapPin, Phone, User, LocateFixed, Package, Map } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -24,6 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useSearchParams } from 'next/navigation';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import coverageData from '@/lib/coverage-area.json';
 
 
 function SubmitButton() {
@@ -52,8 +53,11 @@ function RegisterForm() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [selectedPlanValue, setSelectedPlanValue] = useState(preselectedPlan || "");
+  const [selectedArea, setSelectedArea] = useState("");
   const [offers, setOffers] = useState<Offer[]>([]);
   const firestore = useFirestore();
+
+  const coverageAreas = Object.keys(coverageData).sort();
 
   useEffect(() => {
     async function fetchOffers() {
@@ -84,6 +88,7 @@ function RegisterForm() {
       if(state.message.startsWith('Terima kasih')) {
         formRef.current?.reset();
         setSelectedPlanValue("");
+        setSelectedArea("");
         setLocation(null);
         setLocationError(null);
       }
@@ -192,12 +197,32 @@ function RegisterForm() {
                 </div>
                 {state?.fields?.phone && <p className="text-sm text-destructive">{state.fields.phone}</p>}
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="area">Area/Kelurahan</Label>
+                 <div className="relative">
+                  <Map className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Select name="area" required value={selectedArea} onValueChange={setSelectedArea}>
+                    <SelectTrigger className="pl-10">
+                      <SelectValue placeholder="Pilih area/kelurahan Anda" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {coverageAreas.map(area => (
+                        <SelectItem key={area} value={area}>
+                          {area}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {state?.fields?.area && <p className="text-sm text-destructive">{state.fields.area}</p>}
+              </div>
               
               <div className="space-y-2">
                 <Label htmlFor="address">Alamat Instalasi Lengkap</Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="address" name="address" placeholder="cth. Jl. Ijen No. 25, Malang" required className="pl-10" />
+                  <Input id="address" name="address" placeholder="cth. Jl. Ijen No. 25, RT 01/RW 02" required className="pl-10" />
                 </div>
                 {state?.fields?.address && <p className="text-sm text-destructive">{state.fields.address}</p>}
               </div>

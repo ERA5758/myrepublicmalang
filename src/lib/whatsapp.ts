@@ -1,3 +1,4 @@
+
 'use server';
 
 import { getWhatsappSettings } from '@/lib/server/whatsapp-settings';
@@ -54,6 +55,7 @@ type LeadData = {
     name: string;
     email: string;
     phone: string;
+    area: string;
     address: string;
     selectedPlan: string;
     locationPin?: string;
@@ -78,7 +80,8 @@ Ada pendaftaran baru telah masuk melalui website.
 - *Nama:* ${lead.name}
 - *No. Telepon:* ${lead.phone}
 - *Email:* ${lead.email}
-- *Alamat:* ${lead.address}
+- *Area/Kelurahan:* ${lead.area}
+- *Alamat Lengkap:* ${lead.address}
 - *Paket Dipilih:* ${lead.selectedPlan}
 ${lead.locationPin ? `- *Koordinat GPS:* https://www.google.com/maps?q=${lead.locationPin}` : ''}
 
