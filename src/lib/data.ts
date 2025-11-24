@@ -16,6 +16,7 @@ export const navLinks: NavLink[] = [
   { href: "/cek-area", label: "Cek Area" },
   { href: "/hubungi-kami", label: "Hubungi Kami" },
   { href: "/personalized-offers", label: "Rekomendasi" },
+  { href: "/speed-test", label: "Speed Test" },
 ];
 
 
