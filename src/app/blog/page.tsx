@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -50,9 +51,10 @@ export default function BlogIndexPage() {
             querySnapshot.forEach(doc => {
                 const data = doc.data();
                 
-                const publishedAt = data.publishedAt instanceof Timestamp
-                    ? data.publishedAt.toDate().toISOString()
-                    : new Date().toISOString(); // Fallback
+                 // Reliably handle Firestore Timestamp on the client
+                const publishedAt = data.publishedAt && typeof data.publishedAt.toDate === 'function'
+                    ? (data.publishedAt.toDate() as Date).toISOString()
+                    : new Date().toISOString();
                 
                 fetchedArticles.push({
                     id: doc.id,
@@ -97,7 +99,7 @@ export default function BlogIndexPage() {
                             />
                         </div>
                         <CardHeader>
-                            <CardTitle className="font-headline text-xl leading-snug hover:text-primary">
+                            <CardTitle className="font-headline text-xl leading-snug hover:text-primary line-clamp-2">
                             {article.title}
                             </CardTitle>
                         </CardHeader>

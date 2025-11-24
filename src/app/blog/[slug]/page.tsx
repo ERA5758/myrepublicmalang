@@ -1,3 +1,4 @@
+
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -25,9 +26,9 @@ async function getArticle(slug: string): Promise<Article | null> {
     const doc = querySnapshot.docs[0];
     const data = doc.data();
 
-    // Safely handle the timestamp
-    const publishedAt = data.publishedAt instanceof Timestamp 
-        ? data.publishedAt.toDate().toISOString() 
+    // Reliably handle Firestore Timestamp on the server
+    const publishedAt = data.publishedAt && typeof data.publishedAt.toDate === 'function'
+        ? (data.publishedAt.toDate() as Date).toISOString()
         : new Date().toISOString();
 
     return { 

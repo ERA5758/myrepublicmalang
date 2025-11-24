@@ -1,3 +1,4 @@
+
 import { collection, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
 import type { MetadataRoute } from 'next';
 import { initializeFirebase } from './firebase';
@@ -36,9 +37,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         articleRoutes = querySnapshot.docs.map(doc => {
             const data = doc.data() as Article;
-            const publishedAt = data.publishedAt instanceof Timestamp 
-                ? data.publishedAt.toDate().toISOString() 
-                : new Date(data.publishedAt as string).toISOString();
+
+            // Reliably handle Firestore Timestamp on the server
+            const publishedAt = data.publishedAt && typeof (data.publishedAt as any).toDate === 'function'
+              ? ((data.publishedAt as any).toDate() as Date).toISOString()
+              : new Date().toISOString();
             
             return {
                 url: `${siteUrl}/blog/${data.slug}`,
