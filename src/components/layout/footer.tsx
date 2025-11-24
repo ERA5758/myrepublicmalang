@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="w-full border-t border-border/40 bg-background text-foreground">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 py-12 md:grid-cols-12">
+        <div className="grid grid-cols-1 gap-8 py-8 md:grid-cols-12">
           
           <div className="md:col-span-4 lg:col-span-5">
              <Link href="/" className="flex items-center space-x-2">
@@ -61,7 +61,7 @@ export function Footer() {
 
         </div>
         
-        <div className="border-t border-border/40 py-6">
+        <div className="border-t border-border/40 py-4">
           <p className="text-center text-sm text-muted-foreground">
             © {new Date().getFullYear()} MyRepublic Malang. Sales Executive khusus pasang baru.
           </p>
