@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { initializeFirebase } from '@/firebase';
 import { collection, getDocs, query, where, limit, Timestamp } from 'firebase/firestore';
 import type { Article, Offer } from '@/lib/definitions';
+import { ShareButton } from '@/components/share-button';
 
 async function getArticle(slug: string): Promise<Article | null> {
     const { firestore } = initializeFirebase();
@@ -160,13 +161,18 @@ export default async function ArticlePage({ params }: { params: { slug: string }
               priority
             />
           </div>
-          <Badge variant="secondary" className="mb-2">{article.category}</Badge>
-          <h1 className="font-headline text-3xl md:text-4xl font-bold tracking-tight mb-3">
-            {article.title}
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Diposting pada {new Date(article.publishedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
+          <div className="flex justify-between items-start">
+            <div>
+              <Badge variant="secondary" className="mb-2">{article.category}</Badge>
+              <h1 className="font-headline text-3xl md:text-4xl font-bold tracking-tight mb-3">
+                {article.title}
+              </h1>
+              <p className="text-muted-foreground text-sm">
+                Diposting pada {new Date(article.publishedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
+            </div>
+             <ShareButton title={article.title} url={`${siteUrl}/blog/${article.slug}`} size="default" />
+          </div>
         </header>
         <div
           className="prose prose-lg max-w-none text-foreground"

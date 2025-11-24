@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useEffect, useState } from 'react';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
 import type { Article } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ShareButton } from '@/components/share-button';
 
 function ArticleSkeleton() {
     return (
@@ -21,11 +22,13 @@ function ArticleSkeleton() {
                 <Skeleton className="h-4 w-full mb-2" />
                 <Skeleton className="h-4 w-full mb-2" />
                 <Skeleton className="h-4 w-2/3" />
-                <div className="flex items-center justify-between mt-4">
-                    <Skeleton className="h-4 w-1/4" />
-                    <Skeleton className="h-6 w-16" />
-                </div>
             </CardContent>
+            <CardFooter>
+                 <div className="flex items-center justify-between w-full">
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-9 w-24" />
+                </div>
+            </CardFooter>
         </Card>
     );
 }
@@ -34,6 +37,7 @@ export default function BlogIndexPage() {
     const [articles, setArticles] = useState<Article[]>([]);
     const [loading, setLoading] = useState(true);
     const firestore = useFirestore();
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://myrepublicmalang.net';
 
     useEffect(() => {
         async function fetchArticles() {
@@ -49,6 +53,8 @@ export default function BlogIndexPage() {
                 let publishedAt: string;
                 if (data.publishedAt instanceof Timestamp) {
                     publishedAt = data.publishedAt.toDate().toISOString();
+                } else if (typeof data.publishedAt === 'string') {
+                    publishedAt = data.publishedAt;
                 } else {
                     publishedAt = new Date().toISOString(); // Fallback
                 }
@@ -81,33 +87,36 @@ export default function BlogIndexPage() {
             Array.from({ length: 3 }).map((_, i) => <ArticleSkeleton key={i} />)
         ) : (
             articles.map((article) => (
-            <Link key={article.id} href={`/blog/${article.slug}`} passHref>
-                <Card className="flex flex-col h-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-                <div className="relative h-48 w-full">
-                    <Image
-                    src={article.image.imageUrl}
-                    alt={article.image.description}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={article.image.imageHint}
-                    />
-                </div>
-                <CardHeader>
-                    <CardTitle className="font-headline text-xl leading-snug hover:text-primary">
-                    {article.title}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col justify-between flex-grow">
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
-                    {article.summary}
-                    </p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
-                        <span>{new Date(article.publishedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                        <Badge variant="outline">{article.category}</Badge>
-                    </div>
-                </CardContent>
+                <Card key={article.id} className="flex flex-col h-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                    <Link href={`/blog/${article.slug}`} passHref className="flex flex-col flex-grow">
+                        <div className="relative h-48 w-full">
+                            <Image
+                            src={article.image.imageUrl}
+                            alt={article.image.description}
+                            fill
+                            className="object-cover"
+                            data-ai-hint={article.image.imageHint}
+                            />
+                        </div>
+                        <CardHeader>
+                            <CardTitle className="font-headline text-xl leading-snug hover:text-primary">
+                            {article.title}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-grow">
+                            <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
+                            {article.summary}
+                            </p>
+                            <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
+                                <span>{new Date(article.publishedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                <Badge variant="outline">{article.category}</Badge>
+                            </div>
+                        </CardContent>
+                    </Link>
+                    <CardFooter>
+                         <ShareButton title={article.title} url={`${siteUrl}/blog/${article.slug}`} />
+                    </CardFooter>
                 </Card>
-            </Link>
             ))
         )}
       </div>

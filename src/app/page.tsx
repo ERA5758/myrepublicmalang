@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import Image from 'next/image';
@@ -10,9 +8,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { faqs } from '@/lib/data';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
-import type { Offer, OfferTV, AddOn, CarouselSlide } from '@/lib/definitions';
+import type { Offer, OfferTV, AddOn, CarouselSlide, Article } from '@/lib/definitions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TermsAndConditionsDialog } from '@/components/terms-dialog';
 import { useEffect, useRef, useState } from 'react';
@@ -43,6 +41,7 @@ export default function Home() {
   const [offersTV, setOffersTV] = useState<OfferTV[]>([]);
   const [addOns, setAddOns] = useState<AddOn[]>([]);
   const [carouselSlides, setCarouselSlides] = useState<CarouselSlide[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const firestore = useFirestore();
 
   const autoplayPlugin = useRef(
@@ -90,6 +89,27 @@ export default function Home() {
         fetchedSlides.push({ id: doc.id, ...doc.data() } as CarouselSlide);
       });
       setCarouselSlides(fetchedSlides);
+
+      // Fetch Articles
+        const articlesCollection = collection(firestore, 'articles');
+        const q = query(articlesCollection, orderBy('publishedAt', 'desc'));
+        const articlesSnapshot = await getDocs(q);
+        const fetchedArticles: Article[] = [];
+        articlesSnapshot.forEach(doc => {
+            const data = doc.data();
+            let publishedAt: string;
+            if (data.publishedAt instanceof Timestamp) {
+                publishedAt = data.publishedAt.toDate().toISOString();
+            } else {
+                publishedAt = new Date().toISOString();
+            }
+            fetchedArticles.push({
+                id: doc.id,
+                ...data,
+                publishedAt,
+            } as Article);
+        });
+        setArticles(fetchedArticles);
     }
     getData();
   }, [firestore]);
@@ -483,8 +503,77 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Blog Section */}
+      {articles.length > 0 && (
+        <section id="blog" className="w-full bg-secondary/50 py-16 sm:py-24">
+            <div className="container mx-auto max-w-7xl px-4">
+                <div className="mb-12 text-center">
+                    <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
+                        Baca Blog Kami
+                    </h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+                        Dapatkan wawasan, tips, dan pembaruan terbaru dari dunia internet.
+                    </p>
+                </div>
+                <Carousel
+                    opts={{
+                        align: "start",
+                        loop: true,
+                    }}
+                    className="w-full"
+                >
+                    <CarouselContent>
+                        {articles.map((article) => (
+                            <CarouselItem key={article.id} className="md:basis-1/2 lg:basis-1/3">
+                                <div className="p-1">
+                                    <Link href={`/blog/${article.slug}`} passHref>
+                                        <Card className="flex flex-col h-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                                            <div className="relative h-40 w-full">
+                                                <Image
+                                                    src={article.image.imageUrl}
+                                                    alt={article.image.description}
+                                                    fill
+                                                    className="object-cover"
+                                                    data-ai-hint={article.image.imageHint}
+                                                />
+                                            </div>
+                                            <CardHeader>
+                                                <CardTitle className="font-headline text-lg leading-snug hover:text-primary line-clamp-2">
+                                                    {article.title}
+                                                </CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="flex flex-col justify-between flex-grow">
+                                                <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
+                                                    {article.summary}
+                                                </p>
+                                                <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
+                                                    <span>{new Date(article.publishedAt).toLocaleDateString('id-ID', { month: 'long', day: 'numeric' })}</span>
+                                                    <Badge variant="outline">{article.category}</Badge>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    </Link>
+                                </div>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="hidden md:flex" />
+                    <CarouselNext className="hidden md:flex" />
+                </Carousel>
+                <div className="text-center mt-12">
+                    <Button asChild>
+                        <Link href="/blog">
+                            Lihat Semua Artikel
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                    </Button>
+                </div>
+            </div>
+        </section>
+      )}
+
       {/* FAQ Section */}
-      <section id="faq" className="w-full bg-secondary/50 py-16 sm:py-24">
+      <section id="faq" className="w-full bg-background py-16 sm:py-24">
         <div className="container mx-auto max-w-4xl px-4">
           <div className="mb-12 text-center">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
@@ -511,7 +600,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
