@@ -196,7 +196,7 @@ export default function Home() {
               <CardContent>
                 <p className="text-muted-foreground mb-4">Lacak proses instalasi kemudian nikmati layanan MyRepublic!</p>
                 <Button asChild variant="outline">
-                   <Link href="#">Lacak Proses</Link>
+                   <Link href="https://wa.me/6285184000880" target="_blank">Lacak Proses</Link>
                 </Button>
               </CardContent>
             </Card>
