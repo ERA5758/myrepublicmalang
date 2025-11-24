@@ -1,6 +1,7 @@
 'use client';
 
-import { APIProvider, Map, Polygon } from '@vis.gl/react-google-maps';
+import { APIProvider, Map } from '@vis.gl/react-google-maps';
+import { Polygon } from '@vis.gl/react-google-maps';
 import type { FC } from 'react';
 import coverageData from '@/lib/coverage-area.json';
 import { Card } from './ui/card';
