@@ -82,17 +82,22 @@ function ReviewSkeleton() {
     return (
         <Card>
             <CardHeader>
-                <div className="flex justify-between items-center">
-                    <div className='flex items-center gap-2'>
+                <div className="flex justify-between items-start">
+                    <div className='flex items-center gap-3'>
                         <Skeleton className="h-10 w-10 rounded-full" />
-                        <Skeleton className="h-5 w-32" />
+                        <div className="space-y-2">
+                           <Skeleton className="h-4 w-32" />
+                           <Skeleton className="h-3 w-24" />
+                        </div>
                     </div>
-                    <Skeleton className="h-5 w-24" />
+                    <Skeleton className="h-6 w-28" />
                 </div>
             </CardHeader>
             <CardContent>
-                <Skeleton className="h-4 w-full mb-2" />
-                <Skeleton className="h-4 w-4/5" />
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-4/5" />
+                </div>
             </CardContent>
         </Card>
     );
@@ -123,7 +128,7 @@ function ReviewForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => void 
 
     return (
         <form ref={formRef} action={dispatch}>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 pt-4">
                 <div className="space-y-2">
                     <Label htmlFor="name-dialog">Nama Anda</Label>
                     <Input id="name-dialog" name="name" placeholder="cth. Budi" required />
@@ -176,7 +181,7 @@ export default function ReviewsPage() {
       setLoading(false);
     }
     fetchReviews();
-  }, [firestore]);
+  }, [firestore, isDialogOpen]); // Re-fetch when dialog closes after submission
   
 
   return (
@@ -200,6 +205,8 @@ export default function ReviewsPage() {
             <h2 className="font-headline text-2xl font-bold text-center">Ulasan Terbaru</h2>
              {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <ReviewSkeleton />
+                    <ReviewSkeleton />
                     <ReviewSkeleton />
                     <ReviewSkeleton />
                 </div>
@@ -230,7 +237,10 @@ export default function ReviewsPage() {
                 ))}
                 </div>
             ) : (
-                <p className="text-muted-foreground text-center py-8">Belum ada ulasan yang disetujui.</p>
+                 <div className="text-center py-16 text-muted-foreground bg-muted/50 rounded-lg">
+                    <p className="font-semibold">Belum Ada Ulasan</p>
+                    <p className="text-sm mt-1">Jadilah yang pertama memberikan ulasan!</p>
+                </div>
             )}
         </div>
          <div className="mt-12 text-center">
