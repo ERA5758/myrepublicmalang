@@ -51,11 +51,11 @@ export default function BlogIndexPage() {
             querySnapshot.forEach(doc => {
                 const data = doc.data();
                 
-                const publishedAt = data.publishedAt && typeof data.publishedAt.toDate === 'function'
-                    ? (data.publishedAt.toDate() as Date).toISOString()
+                const publishedAt = data.publishedAt && typeof (data.publishedAt as any).toDate === 'function'
+                    ? ((data.publishedAt as any).toDate() as Date).toISOString()
                     : new Date().toISOString();
                 
-                // Ensure all fields from data are correctly spread
+                // Explicitly map fields to ensure type correctness
                 fetchedArticles.push({
                     id: doc.id,
                     slug: data.slug,
@@ -65,7 +65,7 @@ export default function BlogIndexPage() {
                     category: data.category,
                     image: data.image,
                     publishedAt,
-                });
+                } as Article);
             });
             setArticles(fetchedArticles);
             setLoading(false);
@@ -93,7 +93,7 @@ export default function BlogIndexPage() {
         ) : (
             articles.map((article) => (
                 <Card key={article.id} className="flex flex-col h-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-                    <Link href={`/blog/${article.slug}`} passHref className="flex flex-col flex-grow">
+                    <Link href={`/blog/${article.slug}`} className="flex flex-col flex-grow">
                         <div className="relative h-48 w-full">
                             <Image
                             src={article.image.imageUrl}
