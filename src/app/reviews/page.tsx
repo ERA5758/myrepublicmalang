@@ -14,6 +14,7 @@ import { useFormStatus } from 'react-dom';
 import type { Review } from '@/lib/definitions';
 import { ReviewSchema, type ReviewFormState } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 async function submitReview(
   prevState: ReviewFormState,
@@ -25,6 +26,7 @@ async function submitReview(
 
     if (!validatedFields.success) {
         return {
+            isSuccess: false,
             message: 'Data tidak valid. Silakan periksa kembali isian Anda.',
             fields: validatedFields.error.flatten().fieldErrors,
         };
@@ -41,10 +43,10 @@ async function submitReview(
             createdAt: serverTimestamp(),
         });
 
-        return { message: 'Terima kasih! Ulasan Anda telah dikirim dan akan kami tinjau.' };
+        return { isSuccess: true, message: 'Terima kasih! Ulasan Anda telah dikirim dan akan kami tinjau.' };
     } catch (error) {
         console.error("Error submitting review:", error);
-        return { message: 'Gagal mengirim ulasan. Silakan coba lagi nanti.' };
+        return { isSuccess: false, message: 'Gagal mengirim ulasan. Silakan coba lagi nanti.' };
     }
 }
 
@@ -55,7 +57,9 @@ function StarRating({ rating, setRating, readOnly = false }: { rating: number; s
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
-          className={`h-6 w-6 cursor-pointer transition-colors ${
+          className={`h-6 w-6 transition-colors ${
+            !readOnly ? 'cursor-pointer' : ''
+          } ${
             rating >= star ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
           }`}
           onClick={() => !readOnly && setRating && setRating(star)}
@@ -94,32 +98,62 @@ function ReviewSkeleton() {
     );
 }
 
+function ReviewForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => void }) {
+    const { toast } = useToast();
+    const formRef = useRef<HTMLFormElement>(null);
+    const [rating, setRating] = useState(0);
+
+    const initialState: ReviewFormState = null;
+    const [state, dispatch] = useActionState(submitReview, initialState);
+
+    useEffect(() => {
+        if (state?.message) {
+            toast({
+                title: state.isSuccess ? 'Sukses!' : 'Gagal!',
+                description: state.message,
+                variant: state.isSuccess ? 'default' : 'destructive',
+            });
+            if (state.isSuccess) {
+                formRef.current?.reset();
+                setRating(0);
+                setDialogOpen(false);
+            }
+        }
+    }, [state, toast, setDialogOpen]);
+
+    return (
+        <form ref={formRef} action={dispatch}>
+            <CardContent className="space-y-4">
+                <div className="space-y-2">
+                    <Label htmlFor="name-dialog">Nama Anda</Label>
+                    <Input id="name-dialog" name="name" placeholder="cth. Budi" required />
+                    {state?.fields?.name && <p className="text-sm text-destructive">{state.fields.name}</p>}
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="review-dialog">Ulasan, Kritik, atau Saran</Label>
+                    <Textarea id="review-dialog" name="review" placeholder="Layanan sangat memuaskan..." required />
+                    {state?.fields?.review && <p className="text-sm text-destructive">{state.fields.review}</p>}
+                </div>
+                <div className="space-y-2">
+                    <Label>Rating Anda</Label>
+                    <StarRating rating={rating} setRating={setRating} />
+                    <input type="hidden" name="rating" value={rating} />
+                    {state?.fields?.rating && <p className="text-sm text-destructive">{state.fields.rating}</p>}
+                </div>
+            </CardContent>
+            <CardFooter>
+                <SubmitButton />
+            </CardFooter>
+        </form>
+    );
+}
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const firestore = useFirestore();
-  const { toast } = useToast();
-  const formRef = useRef<HTMLFormElement>(null);
-  const [rating, setRating] = useState(0);
-
-  const initialState: ReviewFormState = null;
-  const [state, dispatch] = useActionState(submitReview, initialState);
   
-  useEffect(() => {
-    if (state?.message) {
-      toast({
-        title: state.message.startsWith('Terima kasih') ? 'Sukses!' : 'Gagal!',
-        description: state.message,
-        variant: state.message.startsWith('Terima kasih') ? 'default' : 'destructive',
-      });
-      if (state.message.startsWith('Terima kasih')) {
-        formRef.current?.reset();
-        setRating(0);
-      }
-    }
-  }, [state, toast]);
-
   useEffect(() => {
     async function fetchReviews() {
       if (!firestore) return;
@@ -146,26 +180,31 @@ export default function ReviewsPage() {
   
 
   return (
-    <div className="container mx-auto max-w-4xl py-12 sm:py-16">
-      <div className="text-center mb-12">
-        <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">
-          Ulasan Pelanggan
-        </h1>
-        <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-          Lihat apa kata mereka tentang layanan MyRepublic di Malang.
-        </p>
-      </div>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <div className="container mx-auto max-w-4xl py-12 sm:py-16">
+        <div className="text-center mb-8">
+          <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">
+            Ulasan Pelanggan
+          </h1>
+          <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
+            Lihat apa kata mereka tentang layanan MyRepublic di Malang.
+          </p>
+        </div>
+         <div className="mb-8 text-center">
+            <DialogTrigger asChild>
+                <Button>Berikan Ulasan Anda</Button>
+            </DialogTrigger>
+        </div>
 
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
         <div className="space-y-6">
-            <h2 className="font-headline text-2xl font-bold">Ulasan Terbaru</h2>
+            <h2 className="font-headline text-2xl font-bold text-center">Ulasan Terbaru</h2>
              {loading ? (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <ReviewSkeleton />
                     <ReviewSkeleton />
                 </div>
             ) : reviews.length > 0 ? (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {reviews.map(review => (
                     <Card key={review.id}>
                     <CardHeader>
@@ -194,38 +233,22 @@ export default function ReviewsPage() {
                 <p className="text-muted-foreground text-center py-8">Belum ada ulasan yang disetujui.</p>
             )}
         </div>
-        <Card className="w-full max-w-lg justify-self-center lg:justify-self-start">
-            <CardHeader>
-                <CardTitle>Bagikan Pengalaman Anda</CardTitle>
-                <CardDescription>
-                Ulasan, kritik, atau saran Anda sangat berarti bagi kami untuk menjadi lebih baik.
-                </CardDescription>
-            </CardHeader>
-            <form ref={formRef} action={dispatch}>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="name">Nama Anda</Label>
-                        <Input id="name" name="name" placeholder="cth. Budi" required />
-                        {state?.fields?.name && <p className="text-sm text-destructive">{state.fields.name}</p>}
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="review">Ulasan, Kritik, atau Saran</Label>
-                        <Textarea id="review" name="review" placeholder="Layanan sangat memuaskan..." required />
-                         {state?.fields?.review && <p className="text-sm text-destructive">{state.fields.review}</p>}
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Rating Anda</Label>
-                        <StarRating rating={rating} setRating={setRating} />
-                        <input type="hidden" name="rating" value={rating} />
-                         {state?.fields?.rating && <p className="text-sm text-destructive">{state.fields.rating}</p>}
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <SubmitButton />
-                </CardFooter>
-            </form>
-        </Card>
+         <div className="mt-12 text-center">
+            <DialogTrigger asChild>
+                <Button>Punya Ulasan? Bagikan di Sini</Button>
+            </DialogTrigger>
+        </div>
       </div>
-    </div>
+      
+      <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+              <DialogTitle>Bagikan Pengalaman Anda</DialogTitle>
+              <DialogDescription>
+                  Ulasan, kritik, atau saran Anda sangat berarti bagi kami untuk menjadi lebih baik.
+              </DialogDescription>
+          </DialogHeader>
+          <ReviewForm setDialogOpen={setIsDialogOpen} />
+      </DialogContent>
+    </Dialog>
   );
 }

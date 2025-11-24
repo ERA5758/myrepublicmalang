@@ -39,10 +39,11 @@ export type PersonalizedOfferFormState = {
 export const ReviewSchema = z.object({
   name: z.string().min(2, { message: "Nama harus terdiri dari minimal 2 karakter." }),
   review: z.string().min(10, { message: "Ulasan harus terdiri dari minimal 10 karakter." }),
-  rating: z.coerce.number().min(1).max(5),
+  rating: z.coerce.number().min(1, { message: "Rating tidak boleh kosong."}).max(5),
 });
 
 export type ReviewFormState = {
+  isSuccess: boolean;
   message: string;
   fields?: Record<string, string>;
   issues?: string[];
