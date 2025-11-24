@@ -94,9 +94,9 @@ export default function BlogIndexPage() {
                     : new Date().toISOString();
                 
                 fetchedArticles.push({
-                    id: doc.id,
-                    slug: data.slug, // Ensure slug is explicitly mapped
                     ...data,
+                    id: doc.id,
+                    slug: data.slug,
                     publishedAt,
                 } as Article);
             });
