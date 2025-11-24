@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, Wifi, Zap, Shield, Infinity } from 'lucide-react';
+import { ArrowRight, CheckCircle, Wifi, Zap, Shield, Infinity, ClipboardList, Wrench, CreditCard } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -12,9 +12,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { faqs } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { collection, getDocs, getFirestore, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
 import type { Offer } from '@/lib/definitions';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 
 const features = [
@@ -41,8 +42,6 @@ async function getOffers(): Promise<Offer[]> {
         return [];
     }
     const offersCollection = collection(firestore, 'offers');
-    // Assuming offers have a 'price' field that can be sorted numerically, or an 'order' field.
-    // Let's sort by price for now. You might want to add an 'order' field for custom sorting.
     const q = query(offersCollection, orderBy('price'));
     const querySnapshot = await getDocs(q);
     const offers: Offer[] = [];
@@ -99,8 +98,64 @@ export default async function Home() {
         )}
       </section>
 
+      {/* How to Subscribe Section */}
+      <section id="how-to-subscribe" className="w-full bg-background py-16 sm:py-24">
+        <div className="container mx-auto max-w-7xl px-4">
+          <div className="mb-12 text-center">
+            <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">Cara Berlangganan</h2>
+             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
+              Tiga langkah mudah untuk menikmati internet cepat dari MyRepublic.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <Card className="text-center">
+              <CardHeader>
+                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+                    <ClipboardList className="h-8 w-8 text-primary"/>
+                 </div>
+                <CardTitle>1. Registrasi</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">Cek area lokasi pemasangan, pilih paket, dan pilih jadwal pemasangan.</p>
+                <Button asChild variant="outline">
+                  <Link href="/register">Registrasi Sekarang</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card className="text-center">
+              <CardHeader>
+                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+                    <Wrench className="h-8 w-8 text-primary"/>
+                 </div>
+                <CardTitle>2. Instalasi</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">Lacak proses instalasi kemudian nikmati layanan MyRepublic!</p>
+                <Button asChild variant="outline">
+                   <Link href="#">Lacak Proses</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card className="text-center">
+              <CardHeader>
+                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+                    <CreditCard className="h-8 w-8 text-primary"/>
+                 </div>
+                <CardTitle>3. Bayar</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">Bayar tagihan dan nikmati kecepatan layanan MyRepublic.</p>
+                <Button asChild variant="outline">
+                   <Link href="#">Lihat Cara Bayar</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section id="features" className="w-full bg-background py-16 sm:py-24">
+      <section id="features" className="w-full bg-secondary/50 py-16 sm:py-24">
         <div className="container mx-auto max-w-7xl px-4">
           <div className="mb-12 text-center">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
@@ -125,62 +180,78 @@ export default async function Home() {
       </section>
 
 
-      {/* Offers Section */}
-      <section id="offers" className="w-full bg-secondary/50 py-16 sm:py-24">
+      {/* New Offers Section */}
+      <section id="offers-new" className="w-full bg-background py-16 sm:py-24">
         <div className="container mx-auto max-w-7xl px-4">
-          <div className="mb-12 text-center">
+          <div className="text-center mb-12">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
               Penawaran Eksklusif untuk Warga Malang
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
-              Pilih paket sempurna yang sesuai dengan gaya hidup dan anggaran Anda. Harga spesial untuk pelanggan baru!
+              Pilih paket sempurna yang sesuai dengan gaya hidup dan anggaran Anda.
             </p>
           </div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {offers.map((offer) => (
-              <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-                {offer.image && (
-                  <div className="relative h-48 w-full">
-                    <Image
-                      src={offer.image.imageUrl}
-                      alt={offer.title}
-                      fill
-                      className="object-cover"
-                      data-ai-hint={offer.image.imageHint}
-                    />
-                  </div>
-                )}
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
-                    <Badge variant="default" className="bg-accent text-accent-foreground">{offer.speed}</Badge>
-                  </div>
-                  <p className="font-semibold text-primary text-2xl">{offer.price}</p>
-                </CardHeader>
-                <CardContent className="flex flex-1 flex-col justify-between">
-                  <div>
-                    {offer.promo && <p className="text-sm font-bold text-destructive mb-3">{offer.promo}</p>}
-                    <ul className="space-y-2 text-sm">
-                      {offer.features.map((feature) => (
-                        <li key={feature} className="flex items-center">
-                          <CheckCircle className="mr-2 h-4 w-4 text-primary" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <Button className="mt-6 w-full" asChild>
-                    <Link href={`/register?plan=${offer.id}`}>Pilih Paket</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Tabs defaultValue="internet-only" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 md:w-fit md:mx-auto">
+              <TabsTrigger value="internet-tv">Internet + TV</TabsTrigger>
+              <TabsTrigger value="internet-only">Internet</TabsTrigger>
+              <TabsTrigger value="gamer">MyGamer</TabsTrigger>
+              <TabsTrigger value="addons">Add On</TabsTrigger>
+            </TabsList>
+            <TabsContent value="internet-only" className="mt-10">
+               <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {offers.map((offer) => (
+                  <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                    <CardHeader className="text-center bg-muted/30 p-6">
+                      <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{offer.speed}</p>
+                      <p className="font-bold text-primary text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
+                      <p className="text-xs text-muted-foreground">Harga belum termasuk PPN 11%</p>
+                    </CardHeader>
+                    <CardContent className="flex flex-1 flex-col justify-between p-6">
+                      <div>
+                        {offer.promo && <p className="text-sm font-bold text-destructive mb-4 text-center">{offer.promo}</p>}
+                        <h4 className="font-semibold mb-2">Fitur dan Benefit</h4>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          {offer.features.map((feature) => (
+                            <li key={feature} className="flex items-center">
+                              <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="mt-6 space-y-2">
+                        <Button className="w-full" asChild>
+                          <Link href={`/register?plan=${offer.id}`}>Langganan Sekarang</Link>
+                        </Button>
+                         <Button className="w-full" variant="outline" asChild>
+                          <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+             <TabsContent value="internet-tv" className="text-center py-16">
+              <p className="text-muted-foreground">Konten untuk Internet + TV akan segera hadir.</p>
+            </TabsContent>
+            <TabsContent value="gamer" className="text-center py-16">
+               <p className="text-muted-foreground">Konten untuk MyGamer akan segera hadir.</p>
+            </TabsContent>
+            <TabsContent value="addons" className="text-center py-16">
+               <p className="text-muted-foreground">Konten untuk Add On akan segera hadir.</p>
+            </TabsContent>
+          </Tabs>
+           <div className="text-center mt-8">
+              <p className="text-xs text-muted-foreground">*Syarat dan Ketentuan berlaku.</p>
+           </div>
         </div>
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="w-full bg-background py-16 sm:py-24">
+      <section id="faq" className="w-full bg-secondary/50 py-16 sm:py-24">
         <div className="container mx-auto max-w-4xl px-4">
           <div className="mb-12 text-center">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
