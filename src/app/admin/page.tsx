@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useAuth, useUser } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 export default function AdminDashboardPage() {
     const { user } = useUser();
@@ -57,22 +56,6 @@ export default function AdminDashboardPage() {
                     </CardHeader>
                     <CardContent>
                        <p>Segera hadir: Tampilan daftar prospek yang mendaftar melalui website.</p>
-                    </CardContent>
-                </Card>
-                 <Card className="md:col-span-2 lg:col-span-3">
-                    <CardHeader>
-                        <CardTitle>Seed Database</CardTitle>
-                        <CardDescription>
-                            Isi database Firestore Anda dengan data artikel dan penawaran awal.
-                            Ini hanya perlu dilakukan sekali.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Button asChild>
-                            <Link href="/admin/seed">
-                                Buka Halaman Seeding
-                            </Link>
-                        </Button>
                     </CardContent>
                 </Card>
             </div>
