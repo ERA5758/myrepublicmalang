@@ -51,16 +51,21 @@ export default function BlogIndexPage() {
             querySnapshot.forEach(doc => {
                 const data = doc.data();
                 
-                 // Reliably handle Firestore Timestamp on the client
                 const publishedAt = data.publishedAt && typeof data.publishedAt.toDate === 'function'
                     ? (data.publishedAt.toDate() as Date).toISOString()
                     : new Date().toISOString();
                 
+                // Ensure all fields from data are correctly spread
                 fetchedArticles.push({
                     id: doc.id,
-                    ...data,
+                    slug: data.slug,
+                    title: data.title,
+                    summary: data.summary,
+                    content: data.content,
+                    category: data.category,
+                    image: data.image,
                     publishedAt,
-                } as Article);
+                });
             });
             setArticles(fetchedArticles);
             setLoading(false);
