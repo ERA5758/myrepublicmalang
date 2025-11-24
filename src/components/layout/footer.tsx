@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Phone, Wifi } from 'lucide-react';
+import { Phone, Wifi, UserCog } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -11,12 +11,17 @@ export function Footer() {
             © {new Date().getFullYear()} MyRepublic Malang. Hak cipta dilindungi undang-undang.
           </p>
         </div>
-        <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground md:items-end">
-          <p className="font-semibold text-foreground">Hubungi Kami:</p>
-          <div className="flex items-center gap-2">
-            <Phone className="h-4 w-4" />
-            <span>Mira Velicia: 0851 84000 880</span>
-          </div>
+        <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground md:items-end">
+              <p className="font-semibold text-foreground">Hubungi Kami:</p>
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                <span>Mira Velicia: 0851 84000 880</span>
+              </div>
+            </div>
+            <Link href="/login" className="text-muted-foreground hover:text-primary" aria-label="Admin Login">
+                <UserCog className="h-5 w-5" />
+            </Link>
         </div>
       </div>
     </footer>

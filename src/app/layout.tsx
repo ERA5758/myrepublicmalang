@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { FloatingWhatsApp } from '@/components/floating-whatsapp';
+import { FirebaseProvider } from '@/firebase/provider';
 
 const siteUrl = 'https://myrepublicmalang.net';
 
@@ -71,13 +72,15 @@ export default function RootLayout({
           'min-h-screen bg-background font-body antialiased'
         )}
       >
-        <div className="relative flex min-h-dvh flex-col bg-background">
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </div>
-        <FloatingWhatsApp />
-        <Toaster />
+        <FirebaseProvider>
+          <div className="relative flex min-h-dvh flex-col bg-background">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+          <FloatingWhatsApp />
+          <Toaster />
+        </FirebaseProvider>
       </body>
     </html>
   );
