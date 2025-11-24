@@ -8,6 +8,7 @@ type NavLink = {
 
 export const navLinks: NavLink[] = [
   { href: "/", label: "Beranda" },
+  { href: "/blog", label: "Blog"},
   { href: "/register", label: "Daftar" },
   { href: "/coverage-check", label: "Jangkauan" },
   { href: "/personalized-offers", label: "Rekomendasi" },

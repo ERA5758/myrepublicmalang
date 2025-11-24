@@ -23,6 +23,36 @@
       "description": "Representasi abstrak dari jejak cahaya serat optik, yang menyampaikan kecepatan dan teknologi.",
       "imageUrl": "https://images.unsplash.com/photo-1607723619497-98a79f01ba90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxmaWJlciUyMG9wdGljfGVufDB8fHx8MTc2Mzk1OTI0MXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "fiber optic"
+    },
+    {
+      "id": "blog-1",
+      "description": "Visualisasi kecepatan internet fiber optic",
+      "imageUrl": "https://images.unsplash.com/photo-1562575214-ffefa379432a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmaWJlciUyMHNwZWVkfGVufDB8fHx8MTc2Mzk2MDI4M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fiber speed"
+    },
+    {
+      "id": "blog-2",
+      "description": "Orang bermain game online dengan lancar",
+      "imageUrl": "https://images.unsplash.com/photo-1542751371-adc38448a05e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxvbmxpbmUlMjBnYW1pbmd8ZW58MHx8fHwxNzYzOTYwMjgzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "online gaming"
+    },
+    {
+      "id": "blog-3",
+      "description": "Keluarga streaming film bersama",
+      "imageUrl": "https://images.unsplash.com/photo-1586442454754-4d41c87262f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxmYW1pbHklMjBzdHJlYW1pbmd8ZW58MHx8fHwxNzYzOTYwMjgzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "family streaming"
+    },
+    {
+      "id": "blog-4",
+      "description": "Peta jangkauan internet di Malang",
+      "imageUrl": "https://images.unsplash.com/photo-1736117703416-f260ee174bac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjb3ZlcmFnZSUyMG1hcHxlbnwwfHx8fDE3NjM5NjAyODN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "coverage map"
+    },
+    {
+      "id": "blog-5",
+      "description": "Tim customer service MyRepublic yang ramah",
+      "imageUrl": "https://images.unsplash.com/photo-1626863905121-3b0c0ed7b94c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjdXN0b21lciUyMHNlcnZpY2V8ZW58MHx8fHwxNzYzODgwNDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "customer service"
     }
   ]
 }
