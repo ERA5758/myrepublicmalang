@@ -1,6 +1,8 @@
+
 'use client';
 
-import { useEffect, useState, useRef, useActionState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useActionState } from 'react';
 import { useFirestore, initializeFirebase } from '@/firebase';
 import { collection, query, where, orderBy, getDocs, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,8 +13,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader, Star, User } from 'lucide-react';
 import { useFormStatus } from 'react-dom';
-import type { Review } from '@/lib/definitions';
-import { ReviewSchema, type ReviewFormState } from '@/lib/definitions';
+import type { Review, ReviewFormState } from '@/lib/definitions';
+import { ReviewSchema } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
@@ -20,9 +22,11 @@ async function submitReview(
   prevState: ReviewFormState,
   formData: FormData
 ): Promise<ReviewFormState> {
-    const validatedFields = ReviewSchema.safeParse(
-        Object.fromEntries(formData.entries())
-    );
+    const rawData = Object.fromEntries(formData.entries());
+    const validatedFields = ReviewSchema.safeParse({
+        ...rawData,
+        rating: Number(rawData.rating)
+    });
 
     if (!validatedFields.success) {
         return {
@@ -163,22 +167,27 @@ export default function ReviewsPage() {
     async function fetchReviews() {
       if (!firestore) return;
       setLoading(true);
-      const reviewsCollection = collection(firestore, 'reviews');
-      const q = query(reviewsCollection, where('status', '==', 'approved'), orderBy('createdAt', 'desc'));
-      const querySnapshot = await getDocs(q);
-      const fetchedReviews: Review[] = [];
-      querySnapshot.forEach(doc => {
-          const data = doc.data();
-          let createdAt: string;
-            if (data.createdAt instanceof Timestamp) {
-                createdAt = data.createdAt.toDate().toISOString();
-            } else {
-                createdAt = new Date().toISOString();
-            }
-        fetchedReviews.push({ id: doc.id, ...data, createdAt } as Review);
-      });
-      setReviews(fetchedReviews);
-      setLoading(false);
+      try {
+        const reviewsCollection = collection(firestore, 'reviews');
+        const q = query(reviewsCollection, where('status', '==', 'approved'), orderBy('createdAt', 'desc'));
+        const querySnapshot = await getDocs(q);
+        const fetchedReviews: Review[] = [];
+        querySnapshot.forEach(doc => {
+            const data = doc.data();
+            let createdAt: string;
+              if (data.createdAt instanceof Timestamp) {
+                  createdAt = data.createdAt.toDate().toISOString();
+              } else {
+                  createdAt = new Date().toISOString();
+              }
+          fetchedReviews.push({ id: doc.id, ...data, createdAt } as Review);
+        });
+        setReviews(fetchedReviews);
+      } catch (error) {
+        console.error("Gagal mengambil ulasan:", error);
+      } finally {
+        setLoading(false);
+      }
     }
     // Re-fetch when dialog closes after a successful submission, or when firestore is initialized
     if (firestore && !isDialogOpen) {
@@ -265,3 +274,5 @@ export default function ReviewsPage() {
     </Dialog>
   );
 }
+
+    
