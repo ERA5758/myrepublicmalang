@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useFirestore } from '@/firebase';
 import { collection, onSnapshot, doc, updateDoc, query, orderBy, Timestamp } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Loader, Check, X, Star, User } from 'lucide-react';
 import type { Review } from '@/lib/definitions';
