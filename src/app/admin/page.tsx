@@ -59,17 +59,6 @@ export default function AdminDashboardPage() {
                        <p>Segera hadir: Tampilan daftar prospek yang mendaftar melalui website.</p>
                     </CardContent>
                 </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Seed Database</CardTitle>
-                        <CardDescription>Isi database dengan data awal (mock data).</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                       <Button asChild>
-                        <Link href="/admin/seed">Buka Halaman Seeding</Link>
-                       </Button>
-                    </CardContent>
-                </Card>
             </div>
         </div>
     );
