@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useActionState } from 'react';
-import { useFirestore } from '@/firebase';
+import { useFirestore, initializeFirebase } from '@/firebase';
 import { collection, query, where, orderBy, getDocs, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,7 +33,7 @@ async function submitReview(
     }
 
     try {
-        const { firestore } = await import('@/firebase').then(m => m.initializeFirebase());
+        const { firestore } = initializeFirebase();
         if (!firestore) throw new Error("Firestore not initialized");
 
         const reviewsCollection = collection(firestore, 'reviews');
@@ -180,8 +180,11 @@ export default function ReviewsPage() {
       setReviews(fetchedReviews);
       setLoading(false);
     }
-    fetchReviews();
-  }, [firestore, isDialogOpen]); // Re-fetch when dialog closes after submission
+    // Re-fetch when dialog closes after a successful submission, or when firestore is initialized
+    if (firestore && !isDialogOpen) {
+        fetchReviews();
+    }
+  }, [firestore, isDialogOpen]); 
   
 
   return (
