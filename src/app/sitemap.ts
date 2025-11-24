@@ -1,8 +1,8 @@
 
 import { collection, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
 import type { MetadataRoute } from 'next';
-import { initializeFirebase } from './firebase';
-import type { Article } from './lib/definitions';
+import { initializeFirebase } from '@/firebase';
+import type { Article } from '@/lib/definitions';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = 'https://myrepublicmalang.net';
@@ -36,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const querySnapshot = await getDocs(q);
 
         articleRoutes = querySnapshot.docs.map(doc => {
-            const data = doc.data() as Article;
+            const data = doc.data();
 
             // Reliably handle Firestore Timestamp on the server
             const publishedAt = data.publishedAt && typeof (data.publishedAt as any).toDate === 'function'
