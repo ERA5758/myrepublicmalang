@@ -1,6 +1,7 @@
+
 import type { ImagePlaceholder } from './placeholder-images';
 import { PlaceHolderImages } from './placeholder-images';
-import type { Offer, OfferTV, AddOn } from './definitions';
+import type { Offer, OfferTV, AddOn, CarouselSlide } from './definitions';
 
 type NavLink = {
   href: string;
@@ -140,6 +141,27 @@ export const addOns: AddOn[] = [
   { id: "addon-speed-150", category: "speed-booster", title: "Speed Upgrade to 150Mbps", description: "Khusus Untuk Paket Nova100", price: "Rp 45.000 / Bulan" },
   { id: "addon-speed-325", category: "speed-booster", title: "Speed Upgrade to 325Mbps", description: "Khusus Untuk Paket MyGamer250", price: "Rp 55.000 / Bulan" },
 ];
+
+export const carouselSlides: CarouselSlide[] = [
+    {
+      id: 'hero-carousel-1',
+      title: 'Rasakan Masa Depan Internet',
+      description: 'Kecepatan super cepat, data tanpa batas, dan keandalan tak tertandingi. Bergabunglah dengan jaringan MyRepublic dan tingkatkan kehidupan digital Anda. GRATIS INSTALASI!',
+      image: PlaceHolderImages.find(img => img.id === 'hero-carousel-1')!
+    },
+    {
+      id: 'hero-carousel-2',
+      title: 'Gaming Tanpa Kompromi',
+      description: 'Latensi rendah dan jaringan prioritas untuk para gamer. Dominasi setiap pertandingan dengan paket MyGamer kami.',
+      image: PlaceHolderImages.find(img => img.id === 'hero-carousel-2')!
+    },
+    {
+      id: 'hero-carousel-3',
+      title: 'Hiburan Tanpa Batas untuk Keluarga',
+      description: 'Streaming film 4K dan nikmati tayangan TV favorit tanpa buffer. Paket combo TV kami hadir untuk hiburan keluarga terbaik.',
+      image: PlaceHolderImages.find(img => img.id === 'hero-carousel-3')!
+    }
+  ];
 
 
 type Faq = {

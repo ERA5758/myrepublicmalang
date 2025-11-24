@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -13,10 +14,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { faqs, offersTV, addOns } from '@/lib/data';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
-import type { Offer, OfferTV, AddOn } from '@/lib/definitions';
+import type { Offer, OfferTV, AddOn, CarouselSlide } from '@/lib/definitions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TermsAndConditionsDialog } from '@/components/terms-dialog';
 import { useEffect, useRef, useState } from 'react';
@@ -42,29 +42,9 @@ const features = [
     },
 ];
 
-const carouselSlides = [
-    {
-      id: 'hero-carousel-1',
-      title: 'Rasakan Masa Depan Internet',
-      description: 'Kecepatan super cepat, data tanpa batas, dan keandalan tak tertandingi. Bergabunglah dengan jaringan MyRepublic dan tingkatkan kehidupan digital Anda. GRATIS INSTALASI!',
-      image: PlaceHolderImages.find(img => img.id === 'hero-carousel-1')!
-    },
-    {
-      id: 'hero-carousel-2',
-      title: 'Gaming Tanpa Kompromi',
-      description: 'Latensi rendah dan jaringan prioritas untuk para gamer. Dominasi setiap pertandingan dengan paket MyGamer kami.',
-      image: PlaceHolderImages.find(img => img.id === 'hero-carousel-2')!
-    },
-    {
-      id: 'hero-carousel-3',
-      title: 'Hiburan Tanpa Batas untuk Keluarga',
-      description: 'Streaming film 4K dan nikmati tayangan TV favorit tanpa buffer. Paket combo TV kami hadir untuk hiburan keluarga terbaik.',
-      image: PlaceHolderImages.find(img => img.id === 'hero-carousel-3')!
-    }
-  ];
-
 export default function Home() {
   const [offers, setOffers] = useState<Offer[]>([]);
+  const [carouselSlides, setCarouselSlides] = useState<CarouselSlide[]>([]);
   const firestore = useFirestore();
 
   const autoplayPlugin = useRef(
@@ -72,18 +52,27 @@ export default function Home() {
   );
 
   useEffect(() => {
-    async function getOffers() {
+    async function getData() {
       if (!firestore) return;
+      
       const offersCollection = collection(firestore, 'offers');
-      const q = query(offersCollection, orderBy('price'));
-      const querySnapshot = await getDocs(q);
+      const offersQuery = query(offersCollection, orderBy('price'));
+      const offersSnapshot = await getDocs(offersQuery);
       const fetchedOffers: Offer[] = [];
-      querySnapshot.forEach((doc) => {
+      offersSnapshot.forEach((doc) => {
           fetchedOffers.push({ id: doc.id, ...doc.data() } as Offer);
       });
       setOffers(fetchedOffers);
+
+      const carouselCollection = collection(firestore, 'carouselSlides');
+      const carouselSnapshot = await getDocs(carouselCollection);
+      const fetchedSlides: CarouselSlide[] = [];
+      carouselSnapshot.forEach((doc) => {
+        fetchedSlides.push({ id: doc.id, ...doc.data() } as CarouselSlide);
+      });
+      setCarouselSlides(fetchedSlides);
     }
-    getOffers();
+    getData();
   }, [firestore]);
 
 
@@ -111,14 +100,8 @@ export default function Home() {
                       <Wifi className="mr-2 h-4 w-4 text-primary" />
                       Internet Fiber Tercepat di Malang
                     </Badge>
-                    <h1 className="font-headline text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                      {slide.title.split(' ').map((word, index) =>
-                        ['Internet', 'Kompromi', 'Batas'].includes(word) ? (
-                          <span key={index} className="text-primary">{word} </span>
-                        ) : (
-                          word + ' '
-                        )
-                      )}
+                    <h1 className="font-headline text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-white">
+                      {slide.title}
                     </h1>
                     <p className="mx-auto mt-6 max-w-3xl text-lg text-white md:text-xl">
                       {slide.description}

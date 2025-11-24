@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 
 export const LeadCaptureSchema = z.object({
@@ -36,7 +37,8 @@ export type PersonalizedOfferFormState = {
 };
 
 
-type ImagePlaceholder = {
+export type ImagePlaceholder = {
+  id: string;
   description: string;
   imageUrl: string;
   imageHint: string;
@@ -86,3 +88,10 @@ export type AddOn = {
   features?: string[];
   notes?: string;
 };
+
+export type CarouselSlide = {
+    id: string;
+    title: string;
+    description: string;
+    image: ImagePlaceholder;
+}
