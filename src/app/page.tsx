@@ -1,18 +1,14 @@
+
 'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle, Wifi, Zap, Shield, Infinity, ClipboardList, Wrench, CreditCard, CircleCheckBig, Tv } from 'lucide-react';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+import { ArrowRight, CircleCheckBig, ClipboardList, CreditCard, Infinity, Shield, Tv, Wrench, Zap } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { faqs, offersTV, addOns } from '@/lib/data';
+import { faqs } from '@/lib/data';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import type { Offer, OfferTV, AddOn, CarouselSlide } from '@/lib/definitions';
@@ -43,6 +39,8 @@ const features = [
 
 export default function Home() {
   const [offers, setOffers] = useState<Offer[]>([]);
+  const [offersTV, setOffersTV] = useState<OfferTV[]>([]);
+  const [addOns, setAddOns] = useState<AddOn[]>([]);
   const [carouselSlides, setCarouselSlides] = useState<CarouselSlide[]>([]);
   const firestore = useFirestore();
 
@@ -54,6 +52,7 @@ export default function Home() {
     async function getData() {
       if (!firestore) return;
       
+      // Fetch Offers (Internet Only)
       const offersCollection = collection(firestore, 'offers');
       const offersQuery = query(offersCollection, orderBy('price'));
       const offersSnapshot = await getDocs(offersQuery);
@@ -63,6 +62,26 @@ export default function Home() {
       });
       setOffers(fetchedOffers);
 
+      // Fetch Offers (Internet + TV)
+      const offersTVCollection = collection(firestore, 'offersTV');
+      const offersTVQuery = query(offersTVCollection, orderBy('price'));
+      const offersTVSnapshot = await getDocs(offersTVQuery);
+      const fetchedOffersTV: OfferTV[] = [];
+      offersTVSnapshot.forEach((doc) => {
+          fetchedOffersTV.push({ id: doc.id, ...doc.data() } as OfferTV);
+      });
+      setOffersTV(fetchedOffersTV);
+
+      // Fetch AddOns
+      const addOnsCollection = collection(firestore, 'addOns');
+      const addOnsSnapshot = await getDocs(addOnsCollection);
+      const fetchedAddOns: AddOn[] = [];
+      addOnsSnapshot.forEach((doc) => {
+        fetchedAddOns.push({ id: doc.id, ...doc.data() } as AddOn);
+      });
+      setAddOns(fetchedAddOns);
+
+      // Fetch Carousel Slides
       const carouselCollection = collection(firestore, 'carouselSlides');
       const carouselSnapshot = await getDocs(carouselCollection);
       const fetchedSlides: CarouselSlide[] = [];
@@ -99,10 +118,10 @@ export default function Home() {
                 <div className="relative h-[60vh] md:h-[80vh] w-full">
                   <div className="container relative z-10 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-4 text-center">
                     <Badge variant="secondary" className="mb-4 shadow-md">
-                      <Wifi className="mr-2 h-4 w-4 text-primary" />
+                      <Zap className="mr-2 h-4 w-4 text-primary" />
                       Internet Fiber Tercepat di Malang
                     </Badge>
-                    <h1 className="font-headline text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-white">
+                    <h1 className="font-headline text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
                       {slide.title}
                     </h1>
                     <p className="mx-auto mt-6 max-w-3xl text-lg text-white md:text-xl">
@@ -491,3 +510,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
