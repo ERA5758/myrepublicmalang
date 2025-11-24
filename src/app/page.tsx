@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CircleCheckBig, ClipboardList, CreditCard, Infinity, Shield, Tv, Wrench, Zap } from 'lucide-react';
+import { ArrowRight, CircleCheckBig, ClipboardList, CreditCard, Headphones, Infinity, Shield, Tv, Wrench, Zap, Gauge, CloudOff } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,21 +19,36 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import Autoplay from 'embla-carousel-autoplay';
 
 
-const features = [
-    {
-        icon: <Zap className="h-8 w-8 text-primary" />,
-        title: 'Kecepatan Simetris',
-        description: 'Kecepatan upload dan download sama cepatnya, ideal untuk streaming, game, dan video call.',
-    },
+const whyChooseUsFeatures = [
     {
         icon: <Infinity className="h-8 w-8 text-primary" />,
-        title: 'Unlimited Kuota',
-        description: 'Nikmati internet tanpa batas kuota. Tidak ada lagi kekhawatiran tentang kehabisan data di tengah bulan.',
+        title: 'Internet Bebas Tanpa Kuota',
+        description: 'No FUP (Fair Usage Policy)',
     },
     {
-        icon: <Shield className="h-8 w-8 text-primary" />,
-        title: 'Tahan Cuaca',
-        description: 'Dengan 100% jaringan fiber optic, koneksi Anda tetap stabil dan andal bahkan saat cuaca buruk sekalipun.',
+        icon: <Wrench className="h-8 w-8 text-primary" />,
+        title: 'Gratis Biaya Instalasi',
+        description: 'Hemat senilai Rp500.000',
+    },
+    {
+        icon: <CloudOff className="h-8 w-8 text-primary" />,
+        title: 'Koneksi Bebas Gangguan Cuaca',
+        description: 'Full Fiber Optic',
+    },
+     {
+        icon: <Zap className="h-8 w-8 text-primary" />,
+        title: 'Upload & Download Sama Cepat',
+        description: 'Simetris 1:1',
+    },
+    {
+        icon: <Gauge className="h-8 w-8 text-primary" />,
+        title: 'Koneksi Stabil Anti Lag',
+        description: 'Low Latency',
+    },
+    {
+        icon: <Headphones className="h-8 w-8 text-primary" />,
+        title: 'Layanan Pengaduan 24/7 Gratis',
+        description: 'Customer Call (Web Call)',
     },
 ];
 
@@ -239,25 +254,25 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="w-full bg-secondary/50 py-16 sm:py-24">
+      {/* Why Choose Us Section */}
+      <section id="why-choose-us" className="w-full bg-secondary/50 py-16 sm:py-24">
         <div className="container mx-auto max-w-7xl px-4">
           <div className="mb-12 text-center">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-              Mengapa Memilih MyRepublic?
+              Kenapa Harus Pilih MyRepublic?
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
               Kami memberikan Anda koneksi internet terbaik dengan berbagai keunggulan.
             </p>
           </div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-             {features.map((feature, index) => (
-                <div key={feature.title} className="text-center animate-fade-in-up" style={{ animationDelay: `${index * 200}ms` }}>
-                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-6">
+             {whyChooseUsFeatures.map((feature, index) => (
+                <div key={feature.title} className="text-center animate-fade-in-up" style={{ animationDelay: `${index * 150}ms` }}>
+                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 border-2 border-primary/20">
                       {feature.icon}
                    </div>
-                   <h3 className="font-headline text-xl font-bold">{feature.title}</h3>
-                   <p className="mt-2 text-muted-foreground">{feature.description}</p>
+                   <h3 className="font-headline text-lg font-bold">{feature.title}</h3>
+                   <p className="mt-1 text-sm text-muted-foreground">{feature.description}</p>
                 </div>
              ))}
           </div>
