@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { captureLead } from '@/lib/actions';
-import { type LeadCaptureFormState } from '@/lib/definitions';
+import { type LeadCaptureFormState, type Offer } from '@/lib/definitions';
 import { useEffect, useRef, useState, Suspense } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
@@ -18,9 +18,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { faqs, offers } from '@/lib/data';
+import { faqs } from '@/lib/data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useSearchParams } from 'next/navigation';
+import { useFirestore } from '@/firebase';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 
 
 function SubmitButton() {
@@ -49,6 +51,26 @@ function RegisterForm() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [selectedPlanValue, setSelectedPlanValue] = useState(preselectedPlan || "");
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const firestore = useFirestore();
+
+  useEffect(() => {
+    async function fetchOffers() {
+        if (!firestore) return;
+        const offersCollection = collection(firestore, 'offers');
+        const q = query(offersCollection, orderBy('price'));
+        const querySnapshot = await getDocs(q);
+        const fetchedOffers: Offer[] = [];
+        querySnapshot.forEach(doc => {
+            fetchedOffers.push({
+                id: doc.id,
+                ...doc.data()
+            } as Offer);
+        });
+        setOffers(fetchedOffers);
+    }
+    fetchOffers();
+  }, [firestore]);
 
 
   useEffect(() => {

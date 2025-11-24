@@ -2,15 +2,41 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Wifi } from 'lucide-react';
-import { articles } from '@/lib/blog-data';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { offers } from '@/lib/data';
+import { initializeFirebase } from '@/firebase';
+import { collection, getDocs, query, where, limit } from 'firebase/firestore';
+import type { Article, Offer } from '@/lib/definitions';
 
-// Dummy function to fetch article by slug
-async function getArticle(slug: string) {
-  return articles.find((article) => article.slug === slug);
+async function getArticle(slug: string): Promise<Article | null> {
+    const { firestore } = initializeFirebase();
+    if (!firestore) return null;
+
+    const articlesCollection = collection(firestore, 'articles');
+    const q = query(articlesCollection, where('slug', '==', slug), limit(1));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        return null;
+    }
+
+    const doc = querySnapshot.docs[0];
+    return { id: doc.id, ...doc.data() } as Article;
+}
+
+async function getOffers(): Promise<Offer[]> {
+    const { firestore } = initializeFirebase();
+    if (!firestore) {
+        return [];
+    }
+    const offersCollection = collection(firestore, 'offers');
+    const querySnapshot = await getDocs(offersCollection);
+    const offers: Offer[] = [];
+    querySnapshot.forEach((doc) => {
+        offers.push({ id: doc.id, ...doc.data() } as Offer);
+    });
+    return offers;
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
@@ -59,6 +85,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
   const article = await getArticle(params.slug);
+  const offers = await getOffers();
   const siteUrl = 'https://myrepublicmalang.net';
 
 

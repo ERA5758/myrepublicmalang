@@ -4,7 +4,10 @@ import { z } from 'zod';
 import { personalizedOfferRecommendations } from '@/ai/flows/personalized-offer-recommendations';
 import { LeadCaptureSchema, PersonalizedOfferSchema, type LeadCaptureFormState, type PersonalizedOfferFormState } from './definitions';
 import { sendLeadNotification } from './whatsapp';
-import { offers } from './data';
+import { offers as mockOffers } from './data';
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { initializeFirebase } from '@/firebase';
+
 
 export async function captureLead(
   prevState: LeadCaptureFormState,
@@ -17,18 +20,25 @@ export async function captureLead(
   if (!validatedFields.success) {
     return {
       message: 'Data formulir tidak valid. Silakan periksa masukan Anda.',
-      issues: validatedFields.error.flatten().fieldErrors ? undefined : validatedFields.error.flatten().formErrors,
+      issues: validatedFields.error.flatten().formErrors,
       fields: validatedFields.error.flatten().fieldErrors,
     };
   }
   
   try {
-    // Di sini Anda biasanya akan menyimpan data prospek ke database seperti Firestore.
-    // Untuk contoh ini, kita hanya akan mencatatnya ke konsol.
-    console.log('Prospek Baru Ditangkap:', validatedFields.data);
+    const { firestore } = initializeFirebase();
+    if (!firestore) {
+        throw new Error('Firestore is not initialized.');
+    }
+
+    const leadsCollection = collection(firestore, 'leads');
+    await addDoc(leadsCollection, {
+        ...validatedFields.data,
+        createdAt: serverTimestamp()
+    });
 
     // Send WhatsApp notification
-    const selectedPlan = offers.find(o => o.id === validatedFields.data.selectedPlan);
+    const selectedPlan = mockOffers.find(o => o.id === validatedFields.data.selectedPlan);
     const leadDataForNotif = {
         ...validatedFields.data,
         selectedPlan: selectedPlan ? `${selectedPlan.title} - ${selectedPlan.speed}` : validatedFields.data.selectedPlan,

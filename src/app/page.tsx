@@ -10,8 +10,12 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { faqs, offers } from '@/lib/data';
+import { faqs } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { collection, getDocs, getFirestore, orderBy, query } from 'firebase/firestore';
+import { initializeFirebase } from '@/firebase';
+import type { Offer } from '@/lib/definitions';
+
 
 const features = [
     {
@@ -31,9 +35,27 @@ const features = [
     },
 ];
 
+async function getOffers(): Promise<Offer[]> {
+    const { firestore } = initializeFirebase();
+    if (!firestore) {
+        return [];
+    }
+    const offersCollection = collection(firestore, 'offers');
+    // Assuming offers have a 'price' field that can be sorted numerically, or an 'order' field.
+    // Let's sort by price for now. You might want to add an 'order' field for custom sorting.
+    const q = query(offersCollection, orderBy('price'));
+    const querySnapshot = await getDocs(q);
+    const offers: Offer[] = [];
+    querySnapshot.forEach((doc) => {
+        offers.push({ id: doc.id, ...doc.data() } as Offer);
+    });
+    return offers;
+}
 
-export default function Home() {
+
+export default async function Home() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-bg');
+  const offers = await getOffers();
 
   return (
     <div className="flex flex-col">

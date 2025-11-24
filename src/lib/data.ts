@@ -1,5 +1,6 @@
 import type { ImagePlaceholder } from './placeholder-images';
 import { PlaceHolderImages } from './placeholder-images';
+import type { Offer } from './definitions';
 
 type NavLink = {
   href: string;
@@ -14,15 +15,6 @@ export const navLinks: NavLink[] = [
   { href: "/personalized-offers", label: "Rekomendasi" },
 ];
 
-type Offer = {
-  id: string;
-  title: string;
-  price: string;
-  speed: string;
-  features: string[];
-  image: ImagePlaceholder | undefined;
-  promo?: string;
-};
 
 export const offers: Offer[] = [
   {
@@ -32,7 +24,7 @@ export const offers: Offer[] = [
     price: "Rp 227.550/bln",
     promo: "Free Upgrade 3 Bulan 50 Mbps",
     features: ["Internet Simetris 1:1", "Unlimited Kuota", "Tahan Cuaca Ekstrim"],
-    image: PlaceHolderImages.find(img => img.id === 'basic-connect'),
+    image: PlaceHolderImages.find(img => img.id === 'basic-connect')!,
   },
   {
     id: "fast",
@@ -41,7 +33,7 @@ export const offers: Offer[] = [
     price: "Rp 260.850/bln",
     promo: "Upgrade dari 50 Mbps",
     features: ["Internet Stabil", "Unlimited Kuota", "100% Full Fiber Optic"],
-    image: PlaceHolderImages.find(img => img.id === 'family-stream'),
+    image: PlaceHolderImages.find(img => img.id === 'family-stream')!,
   },
   {
     id: "nova",
@@ -50,7 +42,7 @@ export const offers: Offer[] = [
     price: "Rp 333.000/bln",
     promo: "Free Upgrade 3 Bulan 249 Mbps",
     features: ["Cocok untuk streaming & kerja", "Unlimited Kuota", "Kecepatan Simetris"],
-    image: PlaceHolderImages.find(img => img.id === 'hero-bg'),
+    image: PlaceHolderImages.find(img => img.id === 'hero-bg')!,
   },
   {
     id: "mygamer",
@@ -59,7 +51,7 @@ export const offers: Offer[] = [
     price: "Rp 444.000/bln",
     promo: "Free Upgrade 3 Bulan 399 Mbps",
     features: ["Latensi Terendah untuk Gaming", "Prioritas Jaringan Game", "Internet Super Cepat"],
-    image: PlaceHolderImages.find(img => img.id === 'gamer-pro'),
+    image: PlaceHolderImages.find(img => img.id === 'gamer-pro')!,
   },
   {
     id: "prime",
@@ -67,7 +59,7 @@ export const offers: Offer[] = [
     speed: "500 Mbps",
     price: "Rp 555.000/bln",
     features: ["Kecepatan Maksimal", "Untuk Kebutuhan Profesional", "Performa Terbaik"],
-    image: PlaceHolderImages.find(img => img.id === 'blog-1'),
+    image: PlaceHolderImages.find(img => img.id === 'blog-1')!,
   },
 ];
 

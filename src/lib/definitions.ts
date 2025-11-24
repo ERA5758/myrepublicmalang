@@ -34,3 +34,31 @@ export type PersonalizedOfferFormState = {
   issues?: string[];
   fields?: Record<string, string>;
 };
+
+
+type ImagePlaceholder = {
+  description: string;
+  imageUrl: string;
+  imageHint: string;
+};
+
+export type Offer = {
+  id: string;
+  title: string;
+  price: string;
+  speed: string;
+  features: string[];
+  image: ImagePlaceholder;
+  promo?: string;
+};
+
+export type Article = {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  content: string;
+  publishedAt: string;
+  category: string;
+  image: ImagePlaceholder;
+};

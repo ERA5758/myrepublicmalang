@@ -1,6 +1,80 @@
 {
-  "entities": {},
+  "entities": {
+    "Lead": {
+      "title": "Lead",
+      "description": "Represents a potential customer lead.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "locationPin": { "type": "string" },
+        "selectedPlan": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "phone", "address", "selectedPlan", "createdAt"]
+    },
+    "Offer": {
+      "title": "Offer",
+      "description": "Represents an internet plan offer.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "price": { "type": "string" },
+        "speed": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "promo": { "type": "string" },
+        "image": {
+          "type": "object",
+          "properties": {
+            "imageUrl": { "type": "string" },
+            "imageHint": { "type": "string" },
+            "description": { "type": "string" }
+          }
+        }
+      },
+      "required": ["id", "title", "price", "speed", "features"]
+    },
+    "Article": {
+      "title": "Article",
+      "description": "Represents a blog article.",
+      "type": "object",
+      "properties": {
+        "slug": { "type": "string" },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "content": { "type": "string" },
+        "publishedAt": { "type": "string", "format": "date-time" },
+        "category": { "type": "string" },
+        "image": {
+          "type": "object",
+          "properties": {
+            "imageUrl": { "type": "string" },
+            "imageHint": { "type": "string" },
+            "description": { "type": "string" }
+          }
+        }
+      },
+      "required": ["slug", "title", "summary", "content", "publishedAt", "category", "image"]
+    }
+  },
   "auth": {
     "providers": ["email-password"]
+  },
+  "firestore": {
+    "/leads/{leadId}": {
+      "schema": { "$ref": "#/entities/Lead" },
+      "description": "Collection of customer leads."
+    },
+    "/offers/{offerId}": {
+      "schema": { "$ref": "#/entities/Offer" },
+      "description": "Collection of internet plan offers."
+    },
+    "/articles/{articleId}": {
+      "schema": { "$ref": "#/entities/Article" },
+      "description": "Collection of blog articles."
+    }
   }
 }
