@@ -94,14 +94,8 @@ export default function BlogIndexPage() {
                     : new Date().toISOString();
                 
                 fetchedArticles.push({
-                    ...data,
                     id: doc.id,
-                    slug: data.slug,
-                    title: data.title,
-                    summary: data.summary,
-                    content: data.content,
-                    category: data.category,
-                    image: data.image,
+                    ...data,
                     publishedAt,
                 } as Article);
             });
