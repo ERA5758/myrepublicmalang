@@ -53,12 +53,12 @@ export default function Home() {
       const querySnapshot = await getDocs(q);
       const fetchedOffers: Offer[] = [];
       querySnapshot.forEach((doc) => {
-          offers.push({ id: doc.id, ...doc.data() } as Offer);
+          fetchedOffers.push({ id: doc.id, ...doc.data() } as Offer);
       });
       setOffers(fetchedOffers);
     }
     getOffers();
-  }, [firestore]);
+  }, [firestore, offers]);
 
 
   const addOnPerangkat = addOns.filter(a => a.category === 'perangkat');
@@ -202,10 +202,9 @@ export default function Home() {
             </p>
           </div>
           <Tabs defaultValue="internet-only" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 md:w-fit md:mx-auto">
+            <TabsList className="grid w-full grid-cols-3 md:w-fit md:mx-auto">
               <TabsTrigger value="internet-tv">Internet + TV</TabsTrigger>
               <TabsTrigger value="internet-only">Internet</TabsTrigger>
-              <TabsTrigger value="gamer">MyGamer</TabsTrigger>
               <TabsTrigger value="addons">Add On</TabsTrigger>
             </TabsList>
             <TabsContent value="internet-only" className="mt-10">
@@ -313,9 +312,6 @@ export default function Home() {
                   ))}
                 </div>
               </TabsContent>
-            <TabsContent value="gamer" className="text-center py-16">
-               <p className="text-muted-foreground">Konten untuk MyGamer akan segera hadir.</p>
-            </TabsContent>
             <TabsContent value="addons" className="mt-10 space-y-12">
               <div>
                 <h3 className="font-headline text-2xl font-bold mb-6 text-center">Add On Perangkat</h3>
