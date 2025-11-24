@@ -39,6 +39,12 @@ const nextConfig: NextConfig = {
         hostname: 'iconlogovector.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'instagram.fmlg9-1.fna.fbcdn.net',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
