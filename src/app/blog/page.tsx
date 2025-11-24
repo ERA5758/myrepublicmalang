@@ -35,13 +35,13 @@ function ArticleSkeleton() {
 }
 
 function ArticleCard({ article }: { article: Article }) {
-    const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://myrepublicmalang.net';
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
     const articleUrl = `${siteUrl}/blog/${article.slug}`;
 
     return (
         <Card className="flex flex-col h-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
             <div className="flex flex-col flex-grow">
-                <Link href={`/blog/${article.slug}`} className="block relative h-48 w-full">
+                 <Link href={`/blog/${article.slug}`} className="block relative h-48 w-full">
                     <Image
                         src={article.image.imageUrl}
                         alt={article.image.description}
@@ -73,6 +73,7 @@ function ArticleCard({ article }: { article: Article }) {
         </Card>
     );
 }
+
 
 export default function BlogIndexPage() {
     const [articles, setArticles] = useState<Article[]>([]);

@@ -5,7 +5,7 @@ import { initializeFirebase } from '@/firebase';
 import type { Article } from '@/lib/definitions';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = 'https://myrepublicmalang.net';
+  const siteUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
 
   // Static routes
   const staticRoutes = [

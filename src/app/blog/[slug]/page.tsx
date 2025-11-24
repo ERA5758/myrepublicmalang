@@ -11,6 +11,8 @@ import { collection, getDocs, query, where, limit, Timestamp, orderBy } from 'fi
 import type { Article, Offer } from '@/lib/definitions';
 import { ShareButton } from '@/components/share-button';
 
+const siteUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+
 async function getArticle(slug: string): Promise<Article | null> {
     const { firestore } = initializeFirebase();
     if (!firestore) return null;
@@ -32,8 +34,9 @@ async function getArticle(slug: string): Promise<Article | null> {
         : new Date().toISOString();
 
     return { 
-        id: doc.id, 
         ...data,
+        id: doc.id,
+        slug: data.slug,
         publishedAt,
      } as Article;
 }
@@ -55,7 +58,6 @@ async function getOffers(): Promise<Offer[]> {
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
     const article = await getArticle(params.slug);
-    const siteUrl = 'https://myrepublicmalang.net';
 
     if (!article) {
         return {
@@ -100,19 +102,19 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
   const article = await getArticle(params.slug);
   const offers = await getOffers();
-  const siteUrl = 'https://myrepublicmalang.net';
-
 
   if (!article) {
     notFound();
   }
   
+  const articleUrl = `${siteUrl}/blog/${article.slug}`;
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `${siteUrl}/blog/${article.slug}`,
+      '@id': articleUrl,
     },
     headline: article.title,
     description: article.summary,
@@ -169,7 +171,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                 Diposting pada {new Date(article.publishedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             </div>
-             <ShareButton title={article.title} url={`${siteUrl}/blog/${article.slug}`} size="default" />
+             <ShareButton title={article.title} url={articleUrl} size="default" />
           </div>
         </header>
         <div

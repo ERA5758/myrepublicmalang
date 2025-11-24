@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { FloatingWhatsApp } from '@/components/floating-whatsapp';
 import { FirebaseProvider } from '@/firebase/provider';
 
-const siteUrl = 'https://myrepublicmalang.net';
+const siteUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
