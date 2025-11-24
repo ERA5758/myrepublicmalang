@@ -2,10 +2,10 @@
 
 export async function getWhatsappSettings() {
   const deviceId = process.env.WA_DEVICE_ID;
-  const targetNumber = process.env.WA_TARGET_NUMBER;
+  const adminGroup = process.env.WHATSAPP_ADMIN_GROUP;
 
   return {
     deviceId,
-    targetNumber,
+    adminGroup,
   };
 }

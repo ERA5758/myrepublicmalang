@@ -68,7 +68,7 @@ export async function sendLeadNotification(lead: LeadData) {
     }
 
     // Pesan untuk grup admin
-    if (settings.targetNumber) {
+    if (settings.adminGroup) {
         const adminMessage = `
 *🔔 Prospek Baru MyRepublic Malang!*
 
@@ -84,9 +84,9 @@ ${lead.locationPin ? `- *Koordinat GPS:* https://www.google.com/maps?q=${lead.lo
 
 Harap segera tindak lanjuti.
         `.trim();
-        await internalSendWhatsapp(settings.deviceId, settings.targetNumber, adminMessage, true);
+        await internalSendWhatsapp(settings.deviceId, settings.adminGroup, adminMessage, true);
     } else {
-        console.warn("WA_TARGET_NUMBER (ID Grup Admin) tidak diatur. Notifikasi ke admin dilewati.");
+        console.warn("WHATSAPP_ADMIN_GROUP (ID Grup Admin) tidak diatur. Notifikasi ke admin dilewati.");
     }
     
     // Pesan konfirmasi untuk pelanggan
