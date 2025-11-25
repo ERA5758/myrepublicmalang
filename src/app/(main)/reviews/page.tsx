@@ -174,30 +174,34 @@ export default function ReviewsPage() {
       setLoading(true);
       try {
         const reviewsCollection = collection(firestore, 'reviews');
-        const q = query(reviewsCollection, where('status', 'in', ['approved', 'pending']), orderBy('createdAt', 'desc'));
+        // Simplified query to avoid composite index requirement
+        const q = query(reviewsCollection, orderBy('createdAt', 'desc'));
         const querySnapshot = await getDocs(q);
         const fetchedReviews: Review[] = [];
         querySnapshot.forEach(doc => {
             const data = doc.data();
-            let createdAt: string;
-            if (data.createdAt instanceof Timestamp) {
-                createdAt = data.createdAt.toDate().toISOString();
-            } else if (data.createdAt && typeof data.createdAt.toDate === 'function') {
-                createdAt = data.createdAt.toDate().toISOString();
-            } else if (data.createdAt) {
-                createdAt = new Date(data.createdAt).toISOString();
-            } else {
-                createdAt = new Date().toISOString();
+            // Filter for approved and pending reviews on the client-side
+            if (data.status === 'approved' || data.status === 'pending') {
+                let createdAt: string;
+                if (data.createdAt instanceof Timestamp) {
+                    createdAt = data.createdAt.toDate().toISOString();
+                } else if (data.createdAt && typeof data.createdAt.toDate === 'function') {
+                    createdAt = data.createdAt.toDate().toISOString();
+                } else if (data.createdAt) {
+                    createdAt = new Date(data.createdAt).toISOString();
+                } else {
+                    createdAt = new Date().toISOString();
+                }
+                
+                fetchedReviews.push({ 
+                    id: doc.id,
+                    name: data.name,
+                    review: data.review,
+                    rating: data.rating,
+                    status: data.status,
+                    createdAt: createdAt 
+                } as Review);
             }
-            
-            fetchedReviews.push({ 
-                id: doc.id,
-                name: data.name,
-                review: data.review,
-                rating: data.rating,
-                status: data.status,
-                createdAt: createdAt 
-            } as Review);
         });
         setReviews(fetchedReviews);
       } catch (error) {
