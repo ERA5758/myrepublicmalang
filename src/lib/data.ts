@@ -22,6 +22,20 @@ export const navLinks: NavLink[] = [
 
 export const offers: Offer[] = [
   {
+    id: "jet-20mbps",
+    title: "JET",
+    speed: "20 Mbps",
+    price: "Rp 164.280/bln",
+    promo: "Promo 12get3: Bayar 1 Tahun Gratis 3 Bulan",
+    features: ["Setara Rp164rb-an/bulan", "Internet Simetris 1:1", "Unlimited Kuota", "Tahan Cuaca Ekstrim"],
+    image: {
+      "id": "promo-12get3",
+      "description": "Promo internet MyRepublic bayar 1 tahun gratis 3 bulan",
+      "imageUrl": "https://picsum.photos/seed/promo12get3/800/600",
+      "imageHint": "internet promo"
+    }
+  },
+  {
     id: "value",
     title: "VALUE",
     speed: "30 Mbps",
@@ -68,6 +82,22 @@ export const offers: Offer[] = [
 ];
 
 export const offersTV: OfferTV[] = [
+  {
+    id: "jet-20mbps-tv",
+    title: "JET",
+    speed: "20 Mbps",
+    price: "Rp 239.760/bln",
+    promo: "Promo 12get3: Bayar 1 Tahun Gratis 3 Bulan",
+    features: ["Setara Rp239rb-an/bulan", "Gratis Vidio Platinum & Genflix", "Internet UNLIMITED", "Tahan Cuaca"],
+    image: {
+      "id": "promo-12get3-tv",
+      "description": "Promo internet dan TV MyRepublic bayar 1 tahun gratis 3 bulan",
+      "imageUrl": "https://picsum.photos/seed/promo12get3tv/800/600",
+      "imageHint": "tv promo"
+    },
+    channels: "76 Channel",
+    stb: "Termasuk STB Android 12"
+  },
   {
     id: "value-tv",
     title: "VALUE",
@@ -194,5 +224,7 @@ export const faqs: Faq[] = [
     answer: "Gunakan halaman 'Rekomendasi' berbasis AI kami! Dengan memberikan alamat Anda dan menjelaskan penggunaan internet Anda, AI kami akan menyarankan paket terbaik yang disesuaikan khusus untuk Anda.",
   }
 ];
+
+    
 
     
