@@ -180,12 +180,24 @@ export default function ReviewsPage() {
         querySnapshot.forEach(doc => {
             const data = doc.data();
             let createdAt: string;
-              if (data.createdAt instanceof Timestamp) {
-                  createdAt = data.createdAt.toDate().toISOString();
-              } else {
-                  createdAt = new Date().toISOString();
-              }
-          fetchedReviews.push({ id: doc.id, ...data, createdAt } as Review);
+            if (data.createdAt instanceof Timestamp) {
+                createdAt = data.createdAt.toDate().toISOString();
+            } else if (data.createdAt && typeof data.createdAt.toDate === 'function') {
+                createdAt = data.createdAt.toDate().toISOString();
+            } else if (data.createdAt) {
+                createdAt = new Date(data.createdAt).toISOString();
+            } else {
+                createdAt = new Date().toISOString();
+            }
+            
+            fetchedReviews.push({ 
+                id: doc.id,
+                name: data.name,
+                review: data.review,
+                rating: data.rating,
+                status: data.status,
+                createdAt: createdAt 
+            } as Review);
         });
         setReviews(fetchedReviews);
       } catch (error) {
@@ -277,7 +289,3 @@ export default function ReviewsPage() {
     </Dialog>
   );
 }
-
-    
-
-    
