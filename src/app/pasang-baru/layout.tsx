@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseProvider } from '@/firebase/provider';
 import Image from 'next/image';
+import { FloatingWhatsApp } from '@/components/floating-whatsapp';
 
 const siteUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
 
@@ -72,6 +73,7 @@ export default function PasangBaruLayout({
             <LandingPageHeader />
             <main>{children}</main>
             <LandingPageFooter />
+            <FloatingWhatsApp />
             <Toaster />
         </FirebaseProvider>
       </body>
