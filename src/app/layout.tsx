@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
-import { FloatingWhatsApp } from '@/components/floating-whatsapp';
 import { FirebaseProvider } from '@/firebase/provider';
+import { Footer } from '@/components/layout/footer';
 
 const siteUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
 
@@ -76,12 +74,8 @@ export default function RootLayout({
         )}
       >
         <FirebaseProvider>
-          <div className="relative flex min-h-dvh flex-col bg-background">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-          <FloatingWhatsApp />
+          {children}
+          <Footer />
           <Toaster />
         </FirebaseProvider>
       </body>
