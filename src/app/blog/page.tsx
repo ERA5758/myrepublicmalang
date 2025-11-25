@@ -39,36 +39,36 @@ function ArticleCard({ article }: { article: Article }) {
     const articleUrl = `${siteUrl}/blog/${article.slug}`;
 
     return (
-      <Card className="flex flex-col h-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-        <Link href={`/blog/${article.slug}`} passHref className="flex flex-col flex-grow">
-          <div className="relative h-48 w-full">
-            <Image
-              src={article.image.imageUrl}
-              alt={article.image.description}
-              fill
-              className="object-cover"
-              data-ai-hint={article.image.imageHint}
-            />
-          </div>
-          <CardHeader>
-            <CardTitle className="font-headline text-xl leading-snug hover:text-primary line-clamp-2">
-              {article.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex-grow">
-            <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
-              {article.summary}
-            </p>
-            <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
-              <span>{new Date(article.publishedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-              <Badge variant="outline">{article.category}</Badge>
-            </div>
-          </CardContent>
-        </Link>
-        <CardFooter>
-          <ShareButton title={article.title} url={articleUrl} />
-        </CardFooter>
-      </Card>
+        <Card className="flex flex-col h-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+            <Link href={`/blog/${article.slug}`} className="flex flex-col flex-grow">
+                <div className="relative h-48 w-full">
+                    <Image
+                        src={article.image.imageUrl}
+                        alt={article.image.description}
+                        fill
+                        className="object-cover"
+                        data-ai-hint={article.image.imageHint}
+                    />
+                </div>
+                <CardHeader>
+                    <CardTitle className="font-headline text-xl leading-snug hover:text-primary line-clamp-2">
+                        {article.title}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                    <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
+                        {article.summary}
+                    </p>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
+                        <span>{new Date(article.publishedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                        <Badge variant="outline">{article.category}</Badge>
+                    </div>
+                </CardContent>
+            </Link>
+            <CardFooter>
+                <ShareButton title={article.title} url={articleUrl} />
+            </CardFooter>
+        </Card>
     );
 }
 
@@ -93,10 +93,10 @@ export default function BlogIndexPage() {
                     : new Date().toISOString();
                 
                 fetchedArticles.push({
-                    id: doc.id,
                     ...data,
+                    id: doc.id,
+                    slug: data.slug, // The critical fix is here
                     publishedAt,
-                    slug: data.slug,
                 } as Article);
             });
             setArticles(fetchedArticles);
