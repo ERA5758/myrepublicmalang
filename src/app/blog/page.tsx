@@ -93,10 +93,14 @@ export default function BlogIndexPage() {
                     : new Date().toISOString();
                 
                 fetchedArticles.push({
-                    ...data,
                     id: doc.id,
-                    slug: data.slug, // The critical fix is here
-                    publishedAt,
+                    slug: data.slug,
+                    title: data.title,
+                    summary: data.summary,
+                    content: data.content,
+                    publishedAt: publishedAt,
+                    category: data.category,
+                    image: data.image
                 } as Article);
             });
             setArticles(fetchedArticles);
