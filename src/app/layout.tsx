@@ -3,7 +3,6 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseProvider } from '@/firebase/provider';
-import { Footer } from '@/components/layout/footer';
 
 const siteUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
 
@@ -75,7 +74,6 @@ export default function RootLayout({
       >
         <FirebaseProvider>
           {children}
-          <Footer />
           <Toaster />
         </FirebaseProvider>
       </body>

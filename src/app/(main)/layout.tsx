@@ -2,6 +2,7 @@
 
 import { Header } from '@/components/layout/header';
 import { FloatingWhatsApp } from '@/components/floating-whatsapp';
+import { Footer } from '@/components/layout/footer';
 
 export default function MainLayout({
   children,
@@ -13,6 +14,7 @@ export default function MainLayout({
       <Header />
       <main className="flex-1">{children}</main>
       <FloatingWhatsApp />
+      <Footer />
     </div>
   );
 }
