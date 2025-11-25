@@ -283,16 +283,18 @@ function PackageForm({ isOpen, setIsOpen, pkg, type }: {
         }
 
         try {
-            if (pkg) { // Editing existing package
-                const docRef = doc(firestore, type, pkg.id);
-                await updateDoc(docRef, dataToSave);
-                 toast({ title: 'Sukses!', description: 'Paket berhasil diperbarui.' });
-            } else { // Adding new package
-                if (!dataToSave.id) throw new Error("ID paket tidak boleh kosong.");
-                const docRef = doc(firestore, type, dataToSave.id);
-                await setDoc(docRef, dataToSave);
-                toast({ title: 'Sukses!', description: 'Paket baru berhasil ditambahkan.' });
-            }
+            const docId = pkg?.id || dataToSave.id;
+            if (!docId) throw new Error("ID paket tidak boleh kosong.");
+
+            const docRef = doc(firestore, type, docId);
+            // Use setDoc with merge to either create or update the document.
+            await setDoc(docRef, dataToSave, { merge: true });
+
+            toast({
+                title: 'Sukses!',
+                description: `Paket berhasil ${pkg ? 'diperbarui' : 'ditambahkan'}.`
+            });
+
             setIsOpen(false);
         } catch (error) {
             console.error(error);
@@ -380,3 +382,5 @@ function PackageForm({ isOpen, setIsOpen, pkg, type }: {
         </Dialog>
     );
 }
+
+    
