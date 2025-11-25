@@ -40,7 +40,7 @@ function ArticleCard({ article }: { article: Article }) {
 
     return (
         <Card className="flex flex-col h-full overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-            <Link href={`/blog/${article.slug}`} className="flex flex-col flex-grow">
+             <Link href={`/blog/${article.slug}`}>
                 <div className="relative h-48 w-full">
                     <Image
                         src={article.image.imageUrl}
@@ -55,16 +55,16 @@ function ArticleCard({ article }: { article: Article }) {
                         {article.title}
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="flex-grow">
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
-                        {article.summary}
-                    </p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
-                        <span>{new Date(article.publishedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                        <Badge variant="outline">{article.category}</Badge>
-                    </div>
-                </CardContent>
-            </Link>
+             </Link>
+            <CardContent className="flex-grow">
+                <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
+                    {article.summary}
+                </p>
+                <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
+                    <span>{new Date(article.publishedAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                    <Badge variant="outline">{article.category}</Badge>
+                </div>
+            </CardContent>
             <CardFooter>
                 <ShareButton title={article.title} url={articleUrl} />
             </CardFooter>
