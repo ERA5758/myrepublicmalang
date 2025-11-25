@@ -8,7 +8,7 @@ import {
   collection,
   onSnapshot,
   doc,
-  addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   query,
@@ -31,14 +31,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader, PlusCircle, Trash2, Edit, AlertTriangle } from 'lucide-react';
-import type { Offer, OfferTV } from '@/lib/definitions';
+import { Loader, PlusCircle, Trash2, Edit } from 'lucide-react';
+import type { Offer, OfferTV, ImagePlaceholder } from '@/lib/definitions';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,6 +49,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
+
 
 type PackageType = 'offers' | 'offersTV';
 type PackageData = Offer | OfferTV;
@@ -238,20 +239,30 @@ function PackageForm({ isOpen, setIsOpen, pkg, type }: {
     pkg: PackageData | null;
     type: PackageType;
 }) {
-    const [formData, setFormData] = useState<Partial<PackageData>>({});
+    const defaultImage: ImagePlaceholder = { id: '', imageUrl: '', imageHint: '', description: '' };
+    const [formData, setFormData] = useState<Partial<PackageData>>({ image: defaultImage });
     const [formLoading, setFormLoading] = useState(false);
     const firestore = useFirestore();
     const { toast } = useToast();
 
     useEffect(() => {
         if (isOpen) {
-            setFormData(pkg ? { ...pkg } : { id: '', title: '', speed: '', price: '', features: [], promo: '' });
+            setFormData(pkg ? { ...pkg } : { id: '', title: '', speed: '', price: '', features: [], promo: '', image: { ...defaultImage } });
         }
     }, [isOpen, pkg]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        if (name === 'features') {
+        if (name.startsWith('image.')) {
+            const imageField = name.split('.')[1];
+            setFormData(prev => ({ 
+                ...prev, 
+                image: { 
+                    ...(prev?.image || defaultImage), 
+                    [imageField]: value 
+                }
+            }));
+        } else if (name === 'features') {
             setFormData({ ...formData, [name]: value.split('\n') });
         } else {
             setFormData({ ...formData, [name]: value });
@@ -265,8 +276,10 @@ function PackageForm({ isOpen, setIsOpen, pkg, type }: {
 
         const dataToSave = { ...formData };
         if (!dataToSave.id) {
-          // Create a URL-friendly ID from the title
           dataToSave.id = dataToSave.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        }
+        if (dataToSave.image && !dataToSave.image.id) {
+            dataToSave.image.id = dataToSave.id!;
         }
 
         try {
@@ -277,7 +290,7 @@ function PackageForm({ isOpen, setIsOpen, pkg, type }: {
             } else { // Adding new package
                 if (!dataToSave.id) throw new Error("ID paket tidak boleh kosong.");
                 const docRef = doc(firestore, type, dataToSave.id);
-                await addDoc(collection(firestore, type), dataToSave);
+                await setDoc(docRef, dataToSave);
                 toast({ title: 'Sukses!', description: 'Paket baru berhasil ditambahkan.' });
             }
             setIsOpen(false);
@@ -291,63 +304,79 @@ function PackageForm({ isOpen, setIsOpen, pkg, type }: {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>{pkg ? 'Edit Paket' : 'Tambah Paket Baru'}</DialogTitle>
                     <DialogDescription>
                         Isi detail paket di bawah ini. Klik simpan jika sudah selesai.
                     </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                     {!pkg && (
+                <ScrollArea className="max-h-[70vh] pr-6">
+                    <form onSubmit={handleSubmit} className="space-y-4 py-4">
+                        {!pkg && (
+                            <div className="space-y-2">
+                                <Label htmlFor="id">ID Paket</Label>
+                                <Input id="id" name="id" value={formData.id || ''} onChange={handleChange} required placeholder="cth: value-30mbps" />
+                                <p className="text-xs text-muted-foreground">Gunakan huruf kecil, angka, dan tanda hubung. Cth: `value-30mbps`</p>
+                            </div>
+                        )}
                         <div className="space-y-2">
-                            <Label htmlFor="id">ID Paket</Label>
-                            <Input id="id" name="id" value={formData.id} onChange={handleChange} required placeholder="cth: value-30mbps" />
-                            <p className="text-xs text-muted-foreground">Gunakan huruf kecil, angka, dan tanda hubung. Cth: `value-30mbps`</p>
+                            <Label htmlFor="title">Nama Paket</Label>
+                            <Input id="title" name="title" value={formData.title || ''} onChange={handleChange} required />
                         </div>
-                    )}
-                    <div className="space-y-2">
-                        <Label htmlFor="title">Nama Paket</Label>
-                        <Input id="title" name="title" value={formData.title} onChange={handleChange} required />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="speed">Kecepatan</Label>
-                        <Input id="speed" name="speed" value={formData.speed} onChange={handleChange} required />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="price">Harga</Label>
-                        <Input id="price" name="price" value={formData.price} onChange={handleChange} required />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="promo">Promo</Label>
-                        <Input id="promo" name="promo" value={formData.promo} onChange={handleChange} />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="features">Fitur (satu per baris)</Label>
-                        <Textarea id="features" name="features" value={formData.features?.join('\n')} onChange={handleChange} />
-                    </div>
-                    {type === 'offersTV' && (
-                        <>
-                            <div className="space-y-2">
-                                <Label htmlFor="channels">Jumlah Channel</Label>
-                                <Input id="channels" name="channels" value={(formData as OfferTV).channels} onChange={handleChange} required />
+                        <div className="space-y-2">
+                            <Label htmlFor="speed">Kecepatan</Label>
+                            <Input id="speed" name="speed" value={formData.speed || ''} onChange={handleChange} required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="price">Harga</Label>
+                            <Input id="price" name="price" value={formData.price || ''} onChange={handleChange} required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="promo">Promo</Label>
+                            <Input id="promo" name="promo" value={formData.promo || ''} onChange={handleChange} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="features">Fitur (satu per baris)</Label>
+                            <Textarea id="features" name="features" value={formData.features?.join('\n') || ''} onChange={handleChange} />
+                        </div>
+
+                         <div className="space-y-4 rounded-lg border p-4">
+                            <h4 className="font-medium">Data Gambar</h4>
+                             <div className="space-y-2">
+                                <Label htmlFor="image.imageUrl">URL Gambar</Label>
+                                <Input id="image.imageUrl" name="image.imageUrl" value={formData.image?.imageUrl || ''} onChange={handleChange} placeholder="https://picsum.photos/seed/..."/>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="stb">Tipe STB</Label>
-                                <Input id="stb" name="stb" value={(formData as OfferTV).stb} onChange={handleChange} required />
+                             <div className="space-y-2">
+                                <Label htmlFor="image.description">Deskripsi Gambar (Alt Text)</Label>
+                                <Input id="image.description" name="image.description" value={formData.image?.description || ''} onChange={handleChange} placeholder="Deskripsi singkat untuk gambar"/>
                             </div>
-                        </>
-                    )}
-                    <DialogFooter>
-                        <Button type="submit" disabled={formLoading}>
-                            {formLoading ? <Loader className="animate-spin" /> : 'Simpan Paket'}
-                        </Button>
-                    </DialogFooter>
-                </form>
+                             <div className="space-y-2">
+                                <Label htmlFor="image.imageHint">Petunjuk Gambar</Label>
+                                <Input id="image.imageHint" name="image.imageHint" value={formData.image?.imageHint || ''} onChange={handleChange} placeholder="cth: 'internet promo'"/>
+                            </div>
+                        </div>
+
+                        {type === 'offersTV' && (
+                            <>
+                                <div className="space-y-2">
+                                    <Label htmlFor="channels">Jumlah Channel</Label>
+                                    <Input id="channels" name="channels" value={(formData as OfferTV).channels || ''} onChange={handleChange} required />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="stb">Tipe STB</Label>
+                                    <Input id="stb" name="stb" value={(formData as OfferTV).stb || ''} onChange={handleChange} required />
+                                </div>
+                            </>
+                        )}
+                        <DialogFooter className='pt-4 pr-6'>
+                            <Button type="submit" disabled={formLoading}>
+                                {formLoading ? <Loader className="animate-spin" /> : 'Simpan Paket'}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </ScrollArea>
             </DialogContent>
         </Dialog>
     );
 }
-
-
-    
