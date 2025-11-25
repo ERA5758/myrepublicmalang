@@ -174,7 +174,7 @@ export default function ReviewsPage() {
       setLoading(true);
       try {
         const reviewsCollection = collection(firestore, 'reviews');
-        const q = query(reviewsCollection, where('status', '==', 'approved'), orderBy('createdAt', 'desc'));
+        const q = query(reviewsCollection, where('status', 'in', ['approved', 'pending']), orderBy('createdAt', 'desc'));
         const querySnapshot = await getDocs(q);
         const fetchedReviews: Review[] = [];
         querySnapshot.forEach(doc => {
@@ -240,7 +240,7 @@ export default function ReviewsPage() {
             ) : reviews.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {reviews.map(review => (
-                    <Card key={review.id}>
+                    <Card key={review.id} className={review.status === 'pending' ? 'bg-muted/50' : ''}>
                     <CardHeader>
                         <div className="flex justify-between items-start">
                              <div className="flex items-center gap-3">
@@ -259,6 +259,7 @@ export default function ReviewsPage() {
                     </CardHeader>
                     <CardContent>
                         <p className="text-muted-foreground italic">&quot;{review.review}&quot;</p>
+                         {review.status === 'pending' && <p className="text-xs text-center mt-4 text-amber-600 font-semibold">Menunggu persetujuan</p>}
                     </CardContent>
                     </Card>
                 ))}

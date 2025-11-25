@@ -1,16 +1,27 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useFirestore } from '@/firebase';
-import { collection, onSnapshot, doc, updateDoc, query, orderBy, Timestamp } from 'firebase/firestore';
+import { collection, onSnapshot, doc, updateDoc, query, orderBy, Timestamp, deleteDoc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader, Check, X, Star, User } from 'lucide-react';
+import { Loader, Check, X, Star, User, Trash2 } from 'lucide-react';
 import type { Review } from '@/lib/definitions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 type ReviewStatus = 'pending' | 'approved' | 'rejected';
 
@@ -80,6 +91,23 @@ export default function ManageReviewsPage() {
       });
     }
   };
+
+  const handleDelete = async (id: string) => {
+    if (!firestore) return;
+    try {
+        await deleteDoc(doc(firestore, 'reviews', id));
+        toast({
+            title: 'Sukses!',
+            description: 'Ulasan berhasil dihapus secara permanen.',
+        });
+    } catch (error) {
+        toast({
+            variant: 'destructive',
+            title: 'Gagal Menghapus',
+            description: 'Terjadi kesalahan saat menghapus ulasan.',
+        });
+    }
+  };
   
   const filteredReviews = allReviews.filter(review => review.status === activeTab);
 
@@ -132,16 +160,39 @@ export default function ManageReviewsPage() {
                             <CardContent className="flex-grow">
                                 <p className="text-muted-foreground text-sm italic">&quot;{review.review}&quot;</p>
                             </CardContent>
-                            {review.status === 'pending' && (
-                                <CardFooter className="flex justify-end gap-2">
-                                    <Button size="sm" variant="outline" onClick={() => handleUpdateStatus(review.id, 'rejected')}>
-                                        <X className="h-4 w-4 mr-2" /> Tolak
-                                    </Button>
-                                    <Button size="sm" onClick={() => handleUpdateStatus(review.id, 'approved')}>
-                                        <Check className="h-4 w-4 mr-2" /> Setujui
-                                    </Button>
-                                </CardFooter>
-                            )}
+                            <CardFooter className="flex justify-end gap-2">
+                                {review.status === 'pending' && (
+                                    <>
+                                        <Button size="sm" variant="outline" onClick={() => handleUpdateStatus(review.id, 'rejected')}>
+                                            <X className="h-4 w-4 mr-2" /> Tolak
+                                        </Button>
+                                        <Button size="sm" onClick={() => handleUpdateStatus(review.id, 'approved')}>
+                                            <Check className="h-4 w-4 mr-2" /> Setujui
+                                        </Button>
+                                    </>
+                                )}
+                                {review.status === 'rejected' && (
+                                     <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button size="sm" variant="destructive">
+                                                <Trash2 className="h-4 w-4 mr-2" /> Hapus
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Anda yakin ingin menghapus?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Tindakan ini tidak dapat dibatalkan. Ulasan ini akan dihapus secara permanen dari database.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Batal</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => handleDelete(review.id)}>Hapus Permanen</AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                )}
+                            </CardFooter>
                         </Card>
                     )) : (
                         <div className="col-span-full text-center py-16">
