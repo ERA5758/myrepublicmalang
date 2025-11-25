@@ -12,6 +12,7 @@ export const navLinks: NavLink[] = [
   { href: "/", label: "Beranda" },
   { href: "/reviews", label: "Ulasan" },
   { href: "/blog", label: "Blog"},
+  { href: "/compare", label: "Bandingkan" },
   { href: "/register", label: "Daftar" },
   { href: "/cek-area", label: "Cek Area" },
   { href: "/hubungi-kami", label: "Hubungi Kami" },
