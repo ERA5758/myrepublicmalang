@@ -18,6 +18,7 @@ import { useFirestore } from '@/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CountdownTimer } from '@/components/countdown-timer';
 
 
 function SubmitButton() {
@@ -130,6 +131,11 @@ function PromoForm() {
     }
   };
 
+  const targetDate = new Date();
+  targetDate.setMonth(targetDate.getMonth() + 1);
+  targetDate.setDate(0);
+  targetDate.setHours(23, 59, 59, 999);
+
   return (
     <div className="bg-background">
       <div className="container mx-auto max-w-7xl py-12 px-4">
@@ -144,6 +150,16 @@ function PromoForm() {
                 </p>
             </div>
             
+            <Card>
+                <CardHeader>
+                    <CardTitle className='text-center text-lg'>PROMO BERAKHIR DALAM</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <CountdownTimer targetDate={targetDate.toISOString()} />
+                </CardContent>
+            </Card>
+
+
             <Card className="border-purple-500/50 bg-purple-500/5">
                 <CardHeader>
                     <CardTitle>Promo Bayar di Muka</CardTitle>
@@ -420,5 +436,3 @@ export default function PromoPage() {
     </Suspense>
   )
 }
-
-    
