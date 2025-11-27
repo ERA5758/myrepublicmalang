@@ -34,6 +34,7 @@ export default function BlogCreatorPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [availableTopics, setAvailableTopics] = useState<GroupedTopics>({});
   const [isLoadingTopics, setIsLoadingTopics] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedTopic, setSelectedTopic] = useState<string>('');
 
   const firestore = useFirestore();
@@ -75,7 +76,7 @@ export default function BlogCreatorPage() {
     e.preventDefault();
 
     if (!selectedTopic) {
-        toast({ title: 'Topik belum dipilih', description: 'Silakan pilih topik dari daftar.', variant: 'destructive' });
+        toast({ title: 'Topik belum dipilih', description: 'Silakan pilih kategori dan topik dari daftar.', variant: 'destructive' });
         return;
     }
     
@@ -110,15 +111,16 @@ export default function BlogCreatorPage() {
         });
         
         // Remove the published topic from the available list
-         const updatedTopics = { ...availableTopics };
-        for (const category in updatedTopics) {
-            updatedTopics[category] = updatedTopics[category].filter(t => t !== selectedTopic);
-            if (updatedTopics[category].length === 0) {
-                delete updatedTopics[category];
+        const updatedTopics = { ...availableTopics };
+        if (updatedTopics[selectedCategory]) {
+            updatedTopics[selectedCategory] = updatedTopics[selectedCategory].filter(t => t !== selectedTopic);
+            if (updatedTopics[selectedCategory].length === 0) {
+                delete updatedTopics[selectedCategory];
             }
         }
         setAvailableTopics(updatedTopics);
         
+        setSelectedCategory('');
         setSelectedTopic('');
         setGeneratedArticle(null); // Clear after saving
 
@@ -135,6 +137,8 @@ export default function BlogCreatorPage() {
   }
 
   const hasAvailableTopics = Object.keys(availableTopics).length > 0;
+  const categories = Object.keys(availableTopics);
+  const subTopics = selectedCategory ? availableTopics[selectedCategory] : [];
 
   return (
     <div className="container mx-auto max-w-7xl py-12 sm:py-16">
@@ -154,36 +158,58 @@ export default function BlogCreatorPage() {
         <Card>
           <CardHeader>
             <CardTitle>Generator Artikel</CardTitle>
-            <CardDescription>Pilih salah satu topik yang belum pernah dibuat sebelumnya.</CardDescription>
+            <CardDescription>Pilih kategori lalu topik yang belum pernah dibuat.</CardDescription>
           </CardHeader>
           <form onSubmit={handleGenerate}>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="topic">Pilih Topik Blog</Label>
+                <Label htmlFor="category">1. Pilih Kategori Topik</Label>
                 {isLoadingTopics ? (
                     <div className="flex items-center space-x-2">
                         <Loader className="h-4 w-4 animate-spin"/>
-                        <span>Memuat topik...</span>
+                        <span>Memuat kategori...</span>
                     </div>
                 ) : (
-                    <Select name="topic" required value={selectedTopic} onValueChange={setSelectedTopic}>
-                        <SelectTrigger id="topic">
-                            <SelectValue placeholder="Pilih topik yang tersedia..." />
+                    <Select 
+                        name="category" 
+                        required 
+                        value={selectedCategory} 
+                        onValueChange={(value) => {
+                            setSelectedCategory(value);
+                            setSelectedTopic(''); // Reset sub-topic when category changes
+                        }}
+                    >
+                        <SelectTrigger id="category">
+                            <SelectValue placeholder="Pilih kategori..." />
                         </SelectTrigger>
                         <SelectContent>
                              {hasAvailableTopics ? (
-                                Object.entries(availableTopics).map(([category, topics]) => (
-                                    <SelectGroup key={category}>
-                                        <SelectLabel>{category}</SelectLabel>
-                                        {topics.map(topic => (
-                                            <SelectItem key={topic} value={topic}>{topic}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
+                                categories.map(category => (
+                                    <SelectItem key={category} value={category}>{category}</SelectItem>
                                 ))
                             ) : <SelectItem value="no-topics" disabled>Semua topik telah dibuat!</SelectItem>}
                         </SelectContent>
                     </Select>
                 )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="topic">2. Pilih Sub-Topik</Label>
+                <Select 
+                    name="topic" 
+                    required 
+                    value={selectedTopic} 
+                    onValueChange={setSelectedTopic}
+                    disabled={!selectedCategory || subTopics.length === 0}
+                >
+                    <SelectTrigger id="topic">
+                        <SelectValue placeholder={!selectedCategory ? "Pilih kategori dulu" : "Pilih sub-topik..."} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {subTopics.map(topic => (
+                            <SelectItem key={topic} value={topic}>{topic}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
               </div>
             </CardContent>
             <CardFooter>
