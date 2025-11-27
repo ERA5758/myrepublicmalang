@@ -17,6 +17,7 @@ import coverageData from '@/lib/coverage-area.json';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import Image from 'next/image';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 
 function SubmitButton() {
@@ -170,108 +171,113 @@ function PromoForm() {
             </Card>
 
             <div className="space-y-6">
-                <h2 className="font-headline text-2xl font-bold">Atau Pilih Paket Lainnya</h2>
-                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1">
-                    {offers.map((offer) => (
-                    <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-                        <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
-                        {offer.image && (
-                            <>
-                            <Image
-                                src={offer.image.imageUrl}
-                                alt={offer.image.description}
-                                fill
-                                className="object-cover"
-                                data-ai-hint={offer.image.imageHint}
-                            />
-                            <div className="absolute inset-0 bg-black/50"></div>
-                            </>
-                        )}
-                        <div className="relative z-10">
-                            <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
-                            <p className="text-sm text-white/80">{offer.speed}</p>
-                            <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
-                            <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
-                        </div>
-                        </CardHeader>
-                        <CardContent className="flex flex-1 flex-col justify-between p-6">
-                        <div>
-                            {offer.promo && <p className="text-sm font-bold text-destructive mb-4 text-center">{offer.promo}</p>}
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                            {offer.features.map((feature) => (
-                                <li key={feature} className="flex items-center">
-                                <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
-                                <span>{feature}</span>
-                                </li>
-                            ))}
-                            </ul>
-                        </div>
-                        <div className="mt-6">
-                            <Button className="w-full" variant="outline" onClick={() => {
-                                setSelectedPlanValue(offer.id);
-                                document.getElementById('form-card')?.scrollIntoView({ behavior: 'smooth' });
-                            }}>
-                                Pilih Paket Ini
-                            </Button>
-                        </div>
-                        </CardContent>
-                    </Card>
-                    ))}
-                </div>
+              <h2 className="font-headline text-2xl font-bold">Atau Pilih Paket Lainnya</h2>
+               <Tabs defaultValue="internet-only" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="internet-only">Internet Saja</TabsTrigger>
+                  <TabsTrigger value="internet-tv">Internet + TV</TabsTrigger>
+                </TabsList>
+                <TabsContent value="internet-only" className="mt-6">
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1">
+                      {offers.map((offer) => (
+                      <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                          <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
+                          {offer.image && (
+                              <>
+                              <Image
+                                  src={offer.image.imageUrl}
+                                  alt={offer.image.description}
+                                  fill
+                                  className="object-cover"
+                                  data-ai-hint={offer.image.imageHint}
+                              />
+                              <div className="absolute inset-0 bg-black/50"></div>
+                              </>
+                          )}
+                          <div className="relative z-10">
+                              <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
+                              <p className="text-sm text-white/80">{offer.speed}</p>
+                              <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
+                              <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
+                          </div>
+                          </CardHeader>
+                          <CardContent className="flex flex-1 flex-col justify-between p-6">
+                          <div>
+                              {offer.promo && <p className="text-sm font-bold text-destructive mb-4 text-center">{offer.promo}</p>}
+                              <ul className="space-y-2 text-sm text-muted-foreground">
+                              {offer.features.map((feature) => (
+                                  <li key={feature} className="flex items-center">
+                                  <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
+                                  <span>{feature}</span>
+                                  </li>
+                              ))}
+                              </ul>
+                          </div>
+                          <div className="mt-6">
+                              <Button className="w-full" variant="outline" onClick={() => {
+                                  setSelectedPlanValue(offer.id);
+                                  document.getElementById('form-card')?.scrollIntoView({ behavior: 'smooth' });
+                              }}>
+                                  Pilih Paket Ini
+                              </Button>
+                          </div>
+                          </CardContent>
+                      </Card>
+                      ))}
+                  </div>
+                </TabsContent>
+                 <TabsContent value="internet-tv" className="mt-6">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1">
+                      {offersTV.map((offer) => (
+                      <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                          <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
+                          {offer.image && (
+                              <>
+                              <Image
+                                  src={offer.image.imageUrl}
+                                  alt={offer.image.description}
+                                  fill
+                                  className="object-cover"
+                                  data-ai-hint={offer.image.imageHint}
+                              />
+                              <div className="absolute inset-0 bg-black/50"></div>
+                              </>
+                          )}
+                          <div className="relative z-10">
+                              <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
+                              <p className="text-sm text-white/80">{offer.speed}</p>
+                              <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
+                              <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
+                          </div>
+                          </CardHeader>
+                          <CardContent className="flex flex-1 flex-col justify-between p-6">
+                          <div>
+                              {offer.promo && <p className="text-sm font-bold text-destructive mb-4 text-center">{offer.promo}</p>}
+                              <p className="text-sm text-center text-muted-foreground mb-2">Termasuk {offer.channels} channel TV.</p>
+                              <ul className="space-y-2 text-sm text-muted-foreground">
+                              {offer.features.map((feature) => (
+                                  <li key={feature} className="flex items-center">
+                                  <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
+                                  <span>{feature}</span>
+                                  </li>
+                              ))}
+                              </ul>
+                          </div>
+                          <div className="mt-6">
+                              <Button className="w-full" variant="outline" onClick={() => {
+                                  setSelectedPlanValue(offer.id);
+                                  document.getElementById('form-card')?.scrollIntoView({ behavior: 'smooth' });
+                              }}>
+                                  Pilih Paket Ini
+                              </Button>
+                          </div>
+                          </CardContent>
+                      </Card>
+                      ))}
+                  </div>
+                 </TabsContent>
+              </Tabs>
             </div>
-
-             <div className="space-y-6">
-                <h2 className="font-headline text-2xl font-bold">Paket Internet + TV</h2>
-                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1">
-                    {offersTV.map((offer) => (
-                    <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-                        <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
-                        {offer.image && (
-                            <>
-                            <Image
-                                src={offer.image.imageUrl}
-                                alt={offer.image.description}
-                                fill
-                                className="object-cover"
-                                data-ai-hint={offer.image.imageHint}
-                            />
-                            <div className="absolute inset-0 bg-black/50"></div>
-                            </>
-                        )}
-                        <div className="relative z-10">
-                            <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
-                            <p className="text-sm text-white/80">{offer.speed}</p>
-                            <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
-                            <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
-                        </div>
-                        </CardHeader>
-                        <CardContent className="flex flex-1 flex-col justify-between p-6">
-                        <div>
-                            {offer.promo && <p className="text-sm font-bold text-destructive mb-4 text-center">{offer.promo}</p>}
-                             <p className="text-sm text-center text-muted-foreground mb-2">Termasuk {offer.channels} channel TV.</p>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                            {offer.features.map((feature) => (
-                                <li key={feature} className="flex items-center">
-                                <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
-                                <span>{feature}</span>
-                                </li>
-                            ))}
-                            </ul>
-                        </div>
-                        <div className="mt-6">
-                            <Button className="w-full" variant="outline" onClick={() => {
-                                setSelectedPlanValue(offer.id);
-                                document.getElementById('form-card')?.scrollIntoView({ behavior: 'smooth' });
-                            }}>
-                                Pilih Paket Ini
-                            </Button>
-                        </div>
-                        </CardContent>
-                    </Card>
-                    ))}
-                </div>
-            </div>
-
           </div>
 
           {/* Right Side - Form */}
@@ -409,5 +415,3 @@ export default function PromoPage() {
     </Suspense>
   )
 }
-
-    
