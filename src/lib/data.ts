@@ -1,4 +1,5 @@
 
+
 import type { ImagePlaceholder } from './placeholder-images';
 import { PlaceHolderImages } from './placeholder-images';
 import type { Offer, OfferTV, AddOn, CarouselSlide } from './definitions';
@@ -41,7 +42,7 @@ export const offers: Offer[] = [
     title: "VALUE",
     speed: "30 Mbps",
     price: "Rp 227.550/bln",
-    promo: "Free Upgrade 3 Bulan 50 Mbps",
+    promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Internet Simetris 1:1", "Unlimited Kuota", "Tahan Cuaca Ekstrim"],
     image: PlaceHolderImages.find(img => img.id === 'basic-connect')!,
   },
@@ -50,7 +51,7 @@ export const offers: Offer[] = [
     title: "FAST",
     speed: "100 Mbps",
     price: "Rp 260.850/bln",
-    promo: "Upgrade dari 50 Mbps",
+    promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Internet Stabil", "Unlimited Kuota", "100% Full Fiber Optic"],
     image: PlaceHolderImages.find(img => img.id === 'family-stream')!,
   },
@@ -59,7 +60,7 @@ export const offers: Offer[] = [
     title: "NOVA",
     speed: "100 Mbps",
     price: "Rp 333.000/bln",
-    promo: "Free Upgrade 3 Bulan 249 Mbps",
+    promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Cocok untuk streaming & kerja", "Unlimited Kuota", "Kecepatan Simetris"],
     image: PlaceHolderImages.find(img => img.id === 'hero-bg')!,
   },
@@ -68,7 +69,7 @@ export const offers: Offer[] = [
     title: "MYGAMER",
     speed: "250 Mbps",
     price: "Rp 444.000/bln",
-    promo: "Free Upgrade 3 Bulan 399 Mbps",
+    promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Latensi Terendah untuk Gaming", "Prioritas Jaringan Game", "Internet Super Cepat"],
     image: PlaceHolderImages.find(img => img.id === 'gamer-pro')!,
   },
@@ -77,6 +78,7 @@ export const offers: Offer[] = [
     title: "PRIME",
     speed: "500 Mbps",
     price: "Rp 555.000/bln",
+    promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Kecepatan Maksimal", "Untuk Kebutuhan Profesional", "Performa Terbaik"],
     image: PlaceHolderImages.find(img => img.id === 'blog-1')!,
   },
@@ -104,7 +106,7 @@ export const offersTV: OfferTV[] = [
     title: "VALUE",
     speed: "30 Mbps",
     price: "Rp 320.000/bln",
-    promo: "Gratis Upgrade Speed 50 Mbps",
+    promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Vidio Platinum FREE 12 BULAN", "Genflix FREE 12 BULAN", "Internet UNLIMITED", "Include ONT/Modem", "Gratis Instalasi Rp500,000", "Ideal untuk 1 - 3 Device", "DL & UL 1:1 up to 30 Mbps"],
     image: PlaceHolderImages.find(img => img.id === 'basic-connect')!,
     channels: "65 Channel",
@@ -115,7 +117,7 @@ export const offersTV: OfferTV[] = [
     title: "FAST",
     speed: "50 Mbps",
     price: "Rp 335.000/bln",
-    promo: "Gratis Upgrade Speed 100 Mbps",
+    promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Vidio Platinum FREE 12 BULAN", "Genflix FREE 12 BULAN", "Internet UNLIMITED", "Include ONT/Modem", "Gratis Instalasi Rp500,000", "Ideal untuk 1 - 5 Device", "DL & UL 1:1 up to 50 Mbps"],
     image: PlaceHolderImages.find(img => img.id === 'family-stream')!,
     channels: "76 Channel",
@@ -126,7 +128,7 @@ export const offersTV: OfferTV[] = [
     title: "NOVA",
     speed: "100 Mbps",
     price: "Rp 385.000/bln",
-    promo: "Gratis Upgrade Speed 249 Mbps",
+    promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Vidio Platinum FREE 12 BULAN", "Genflix FREE 12 BULAN", "Internet UNLIMITED", "Include ONT/Modem", "Gratis Instalasi Rp500,000", "Ideal untuk 1 - 7 Device", "DL & UL 1:1 up to 100 Mbps"],
     image: PlaceHolderImages.find(img => img.id === 'hero-bg')!,
     channels: "76 Channel",
@@ -137,7 +139,7 @@ export const offersTV: OfferTV[] = [
     title: "MYGAMER",
     speed: "250 Mbps",
     price: "Rp 485.000/bln",
-    promo: "Gratis Upgrade Speed 399 Mbps",
+    promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Vidio Platinum FREE 12 BULAN", "Genflix FREE 12 BULAN", "Internet UNLIMITED", "Include ONT/Modem", "IP Public Static", "Gratis Instalasi Rp500,000", "DL & UL 1:1 up to 250 Mbps", "Ideal untuk 1 - 10 Device", "Akses langsung ke server game"],
     image: PlaceHolderImages.find(img => img.id === 'gamer-pro')!,
     channels: "76 Channel",
@@ -148,6 +150,7 @@ export const offersTV: OfferTV[] = [
     title: "PRIME",
     speed: "500 Mbps",
     price: "Rp 585.000/bln",
+    promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Vidio Platinum FREE 12 BULAN", "Genflix FREE 12 BULAN", "Internet UNLIMITED", "Include ONT/Modem", "Gratis Instalasi Rp500,000", "DL & UL 1:1 up to 500 Mbps", "Ideal untuk 1 - 15 Device"],
     image: PlaceHolderImages.find(img => img.id === 'blog-1')!,
     channels: "76 Channel",
@@ -229,4 +232,5 @@ export const faqs: Faq[] = [
     
 
     
+
 
