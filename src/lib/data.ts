@@ -49,7 +49,7 @@ export const offers: Offer[] = [
   {
     id: "fast",
     title: "FAST",
-    speed: "100 Mbps",
+    speed: "50 Mbps",
     price: "Rp 260.850/bln",
     promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Internet Stabil", "Unlimited Kuota", "100% Full Fiber Optic"],
@@ -232,5 +232,6 @@ export const faqs: Faq[] = [
     
 
     
+
 
 
