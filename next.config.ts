@@ -45,6 +45,12 @@ const nextConfig: NextConfig = {
         hostname: 'instagram.fmlg9-1.fna.fbcdn.net',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.promomyrepublicjogja.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
