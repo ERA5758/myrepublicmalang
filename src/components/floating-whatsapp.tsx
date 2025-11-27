@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -22,7 +23,7 @@ export function FloatingWhatsApp() {
             alt="Hubungi Sales"
             width={64}
             height={64}
-            className="object-cover"
+            className="object-contain"
         />
     </Link>
   );
