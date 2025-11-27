@@ -3,7 +3,7 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem } from 'lucide-react';
+import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,9 +11,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { captureLead } from '@/lib/actions';
-import { type LeadCaptureFormState } from '@/lib/definitions';
+import { type LeadCaptureFormState, type Offer } from '@/lib/definitions';
 import { useEffect, useRef, useState, Suspense } from 'react';
 import coverageData from '@/lib/coverage-area.json';
+import { useFirestore } from '@/firebase';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import Image from 'next/image';
 
 
 function SubmitButton() {
@@ -40,8 +43,30 @@ function PromoForm() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [selectedArea, setSelectedArea] = useState("");
+  const [selectedPlanValue, setSelectedPlanValue] = useState("");
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const firestore = useFirestore();
 
   const coverageAreas = Object.keys(coverageData).sort();
+
+  useEffect(() => {
+    async function fetchPackages() {
+        if (!firestore) return;
+        const offersCollection = collection(firestore, 'offers');
+        const offersQuery = query(offersCollection, orderBy('price'));
+        const offersSnapshot = await getDocs(offersQuery);
+        const fetchedOffers: Offer[] = [];
+        offersSnapshot.forEach(doc => {
+            fetchedOffers.push({ id: doc.id, ...doc.data() } as Offer);
+        });
+        setOffers(fetchedOffers);
+        // Pre-select UMKM promo if available
+        if (fetchedOffers.some(o => o.id === 'jet-20mbps-12get3-umkm')) {
+            setSelectedPlanValue('jet-20mbps-12get3-umkm');
+        }
+    }
+    fetchPackages();
+  }, [firestore]);
 
   useEffect(() => {
     if (state?.message && !state.fields) {
@@ -105,7 +130,7 @@ function PromoForm() {
                 </p>
             </div>
             
-            <Card className="border-purple-500/50 bg-purple-500/5">
+             <Card className="border-purple-500/50 bg-purple-500/5">
                 <CardHeader>
                     <CardTitle>Paket Promo JET 20 Mbps</CardTitle>
                     <CardDescription>Bayar 12 Bulan, Gratis 3 Bulan (Total 15 Bulan)</CardDescription>
@@ -132,6 +157,57 @@ function PromoForm() {
                 </CardContent>
             </Card>
 
+            <div className="space-y-6">
+                <h2 className="font-headline text-2xl font-bold">Atau Pilih Paket Lainnya</h2>
+                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1">
+                    {offers.map((offer) => (
+                    <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                        <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
+                        {offer.image && (
+                            <>
+                            <Image
+                                src={offer.image.imageUrl}
+                                alt={offer.image.description}
+                                fill
+                                className="object-cover"
+                                data-ai-hint={offer.image.imageHint}
+                            />
+                            <div className="absolute inset-0 bg-black/50"></div>
+                            </>
+                        )}
+                        <div className="relative z-10">
+                            <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
+                            <p className="text-sm text-white/80">{offer.speed}</p>
+                            <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
+                            <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
+                        </div>
+                        </CardHeader>
+                        <CardContent className="flex flex-1 flex-col justify-between p-6">
+                        <div>
+                            {offer.promo && <p className="text-sm font-bold text-destructive mb-4 text-center">{offer.promo}</p>}
+                            <ul className="space-y-2 text-sm text-muted-foreground">
+                            {offer.features.map((feature) => (
+                                <li key={feature} className="flex items-center">
+                                <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
+                                <span>{feature}</span>
+                                </li>
+                            ))}
+                            </ul>
+                        </div>
+                        <div className="mt-6">
+                            <Button className="w-full" variant="outline" onClick={() => {
+                                setSelectedPlanValue(offer.id);
+                                document.getElementById('form-card')?.scrollIntoView({ behavior: 'smooth' });
+                            }}>
+                                Pilih Paket Ini
+                            </Button>
+                        </div>
+                        </CardContent>
+                    </Card>
+                    ))}
+                </div>
+            </div>
+
           </div>
 
           {/* Right Side - Form */}
@@ -146,7 +222,31 @@ function PromoForm() {
             <CardContent>
               <form ref={formRef} action={dispatch} className="space-y-4">
                 
-                <input type="hidden" name="selectedPlan" value="jet-20mbps-12get3-umkm" />
+                <div className="space-y-2">
+                  <Label htmlFor="selectedPlan">Paket yang Dipilih</Label>
+                  <div className="relative">
+                    <Package className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Select name="selectedPlan" required value={selectedPlanValue} onValueChange={setSelectedPlanValue}>
+                      <SelectTrigger className="pl-10">
+                        <SelectValue placeholder="Pilih paket terbaik untuk Anda" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="jet-20mbps-12get3-umkm">Promo UMKM: Jet 20Mbps (Bayar 12, Gratis 3) + POS</SelectItem>
+                        </SelectGroup>
+                        <SelectGroup>
+                           <SelectLabel>Paket Reguler</SelectLabel>
+                           {offers.map(offer => (
+                            <SelectItem key={offer.id} value={offer.id}>
+                              {offer.title} - {offer.speed} ({offer.price})
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {state?.fields?.selectedPlan && <p className="text-sm text-destructive">{state.fields.selectedPlan}</p>}
+                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="name">Nama Lengkap (sesuai KTP)</Label>
