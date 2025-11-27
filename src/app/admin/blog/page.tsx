@@ -1,25 +1,24 @@
 'use client';
 
-import { useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader, Sparkles, FileText, Save, CheckCircle } from 'lucide-react';
+import { Loader, Sparkles, FileText, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, getDocs, serverTimestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { generateBlogPost } from '@/ai/flows/blog-post-generator';
 import type { BlogPostGeneratorOutput } from '@/ai/flows/blog-post-generator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { blogTopics } from '@/lib/blog-data';
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
+function GenerateButton({ disabled }: { disabled: boolean }) {
   return (
-    <Button type="submit" disabled={pending} className="w-full">
-      {pending ? <Loader className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+    <Button type="submit" disabled={disabled} className="w-full">
+      {disabled ? <Loader className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
       Hasilkan Artikel
     </Button>
   );
@@ -29,13 +28,45 @@ export default function BlogCreatorPage() {
   const [generatedArticle, setGeneratedArticle] = useState<BlogPostGeneratorOutput | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [availableTopics, setAvailableTopics] = useState<string[]>([]);
+  const [isLoadingTopics, setIsLoadingTopics] = useState(true);
+  const [selectedTopic, setSelectedTopic] = useState<string>('');
+
   const firestore = useFirestore();
   const { toast } = useToast();
 
-  const handleGenerate = async (formData: FormData) => {
-    const topic = formData.get('topic') as string;
-    if (!topic) {
-        toast({ title: 'Topik tidak boleh kosong', variant: 'destructive' });
+  useEffect(() => {
+    async function getAvailableTopics() {
+      if (!firestore) return;
+      setIsLoadingTopics(true);
+      try {
+        const articlesCollection = collection(firestore, 'articles');
+        const querySnapshot = await getDocs(articlesCollection);
+        const existingSlugs = querySnapshot.docs.map(doc => doc.data().slug as string);
+        
+        // Helper to generate a slug from a topic title
+        const slugify = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+        const allTopics = Object.values(blogTopics).flat();
+        const unseenTopics = allTopics.filter(topic => !existingSlugs.includes(slugify(topic)));
+
+        setAvailableTopics(unseenTopics);
+      } catch (error) {
+        console.error("Gagal mengambil topik:", error);
+        toast({ title: 'Gagal memuat topik', description: 'Tidak dapat mengambil data artikel dari Firestore.', variant: 'destructive' });
+      } finally {
+        setIsLoadingTopics(false);
+      }
+    }
+    getAvailableTopics();
+  }, [firestore, toast]);
+
+
+  const handleGenerate = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedTopic) {
+        toast({ title: 'Topik belum dipilih', description: 'Silakan pilih topik dari daftar.', variant: 'destructive' });
         return;
     }
     
@@ -43,7 +74,7 @@ export default function BlogCreatorPage() {
     setGeneratedArticle(null);
 
     try {
-        const article = await generateBlogPost({ topic });
+        const article = await generateBlogPost({ topic: selectedTopic });
         setGeneratedArticle(article);
         toast({ title: 'Sukses!', description: 'Artikel berhasil dibuat oleh AI.' });
     } catch (error) {
@@ -68,7 +99,12 @@ export default function BlogCreatorPage() {
             title: 'Artikel Tersimpan!',
             description: `"${generatedArticle.title}" telah ditambahkan ke Firestore.`,
         });
+        
+        // Remove the published topic from the available list
+        setAvailableTopics(prev => prev.filter(t => t !== selectedTopic));
+        setSelectedTopic('');
         setGeneratedArticle(null); // Clear after saving
+
     } catch (error) {
         console.error("Error saving article:", error);
         toast({
@@ -88,7 +124,7 @@ export default function BlogCreatorPage() {
           Pembuat Konten Blog AI
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-          Masukkan topik, dan biarkan AI menulis draf pertama artikel blog Anda.
+          Pilih topik dari daftar, dan biarkan AI menulis draf pertama artikel blog Anda.
         </p>
         <Button asChild variant="link" className="p-0 mt-2">
           <Link href="/admin">Kembali ke dasbor</Link>
@@ -99,22 +135,33 @@ export default function BlogCreatorPage() {
         <Card>
           <CardHeader>
             <CardTitle>Generator Artikel</CardTitle>
-            <CardDescription>Mulai dengan memasukkan topik atau kata kunci.</CardDescription>
+            <CardDescription>Pilih salah satu topik yang belum pernah dibuat sebelumnya.</CardDescription>
           </CardHeader>
-          <form action={handleGenerate}>
+          <form onSubmit={handleGenerate}>
             <CardContent>
               <div className="space-y-2">
-                <Label htmlFor="topic">Topik Blog</Label>
-                <Input
-                  id="topic"
-                  name="topic"
-                  placeholder="cth., 'Keuntungan internet fiber untuk bekerja dari rumah'"
-                  required
-                />
+                <Label htmlFor="topic">Pilih Topik Blog</Label>
+                {isLoadingTopics ? (
+                    <div className="flex items-center space-x-2">
+                        <Loader className="h-4 w-4 animate-spin"/>
+                        <span>Memuat topik...</span>
+                    </div>
+                ) : (
+                    <Select name="topic" required value={selectedTopic} onValueChange={setSelectedTopic}>
+                        <SelectTrigger id="topic">
+                            <SelectValue placeholder="Pilih topik yang tersedia..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                             {availableTopics.length > 0 ? availableTopics.map((topic) => (
+                                <SelectItem key={topic} value={topic}>{topic}</SelectItem>
+                            )) : <SelectItem value="no-topics" disabled>Semua topik telah dibuat!</SelectItem>}
+                        </SelectContent>
+                    </Select>
+                )}
               </div>
             </CardContent>
             <CardFooter>
-              <SubmitButton />
+              <GenerateButton disabled={isGenerating || isLoadingTopics || !selectedTopic} />
             </CardFooter>
           </form>
         </Card>
