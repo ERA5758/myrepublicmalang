@@ -12,7 +12,7 @@ import { addDoc, collection, getDocs, serverTimestamp } from 'firebase/firestore
 import { useFirestore } from '@/firebase';
 import { generateBlogPost } from '@/ai/flows/blog-post-generator';
 import type { BlogPostGeneratorOutput } from '@/ai/flows/blog-post-generator';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { blogTopics } from '@/lib/blog-data';
 
 function GenerateButton({ disabled }: { disabled: boolean }) {
@@ -24,11 +24,15 @@ function GenerateButton({ disabled }: { disabled: boolean }) {
   );
 }
 
+type GroupedTopics = {
+    [category: string]: string[];
+};
+
 export default function BlogCreatorPage() {
   const [generatedArticle, setGeneratedArticle] = useState<BlogPostGeneratorOutput | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [availableTopics, setAvailableTopics] = useState<string[]>([]);
+  const [availableTopics, setAvailableTopics] = useState<GroupedTopics>({});
   const [isLoadingTopics, setIsLoadingTopics] = useState(true);
   const [selectedTopic, setSelectedTopic] = useState<string>('');
 
@@ -44,11 +48,16 @@ export default function BlogCreatorPage() {
         const querySnapshot = await getDocs(articlesCollection);
         const existingSlugs = querySnapshot.docs.map(doc => doc.data().slug as string);
         
-        // Helper to generate a slug from a topic title
         const slugify = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-        const allTopics = Object.values(blogTopics).flat();
-        const unseenTopics = allTopics.filter(topic => !existingSlugs.includes(slugify(topic)));
+        const unseenTopics: GroupedTopics = {};
+        for (const category in blogTopics) {
+            const topicsInCategory = blogTopics[category as keyof typeof blogTopics];
+            const filteredTopics = topicsInCategory.filter(topic => !existingSlugs.includes(slugify(topic)));
+            if (filteredTopics.length > 0) {
+                unseenTopics[category] = filteredTopics;
+            }
+        }
 
         setAvailableTopics(unseenTopics);
       } catch (error) {
@@ -101,7 +110,15 @@ export default function BlogCreatorPage() {
         });
         
         // Remove the published topic from the available list
-        setAvailableTopics(prev => prev.filter(t => t !== selectedTopic));
+         const updatedTopics = { ...availableTopics };
+        for (const category in updatedTopics) {
+            updatedTopics[category] = updatedTopics[category].filter(t => t !== selectedTopic);
+            if (updatedTopics[category].length === 0) {
+                delete updatedTopics[category];
+            }
+        }
+        setAvailableTopics(updatedTopics);
+        
         setSelectedTopic('');
         setGeneratedArticle(null); // Clear after saving
 
@@ -116,6 +133,8 @@ export default function BlogCreatorPage() {
         setIsSaving(false);
     }
   }
+
+  const hasAvailableTopics = Object.keys(availableTopics).length > 0;
 
   return (
     <div className="container mx-auto max-w-7xl py-12 sm:py-16">
@@ -152,9 +171,16 @@ export default function BlogCreatorPage() {
                             <SelectValue placeholder="Pilih topik yang tersedia..." />
                         </SelectTrigger>
                         <SelectContent>
-                             {availableTopics.length > 0 ? availableTopics.map((topic) => (
-                                <SelectItem key={topic} value={topic}>{topic}</SelectItem>
-                            )) : <SelectItem value="no-topics" disabled>Semua topik telah dibuat!</SelectItem>}
+                             {hasAvailableTopics ? (
+                                Object.entries(availableTopics).map(([category, topics]) => (
+                                    <SelectGroup key={category}>
+                                        <SelectLabel>{category}</SelectLabel>
+                                        {topics.map(topic => (
+                                            <SelectItem key={topic} value={topic}>{topic}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                ))
+                            ) : <SelectItem value="no-topics" disabled>Semua topik telah dibuat!</SelectItem>}
                         </SelectContent>
                     </Select>
                 )}
