@@ -3,12 +3,12 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig } from 'lucide-react';
+import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { captureLead } from '@/lib/actions';
 import { type LeadCaptureFormState, type Offer, type OfferTV } from '@/lib/definitions';
@@ -118,6 +118,7 @@ function PromoForm() {
           switch (error.code) {
             case error.PERMISSION_DENIED: errorMessage = "Anda menolak izin untuk mengakses lokasi."; break;
             case error.POSITION_UNAVAILABLE: errorMessage = "Informasi lokasi tidak tersedia."; break;
+
             case error.TIMEOUT: errorMessage = "Waktu permintaan lokasi habis."; break;
           }
           setLocationError(errorMessage);
@@ -139,19 +140,22 @@ function PromoForm() {
             <div className='space-y-3'>
                 <h1 className="font-headline text-4xl font-bold tracking-tight text-primary sm:text-5xl">Promo Spesial UMKM Malang</h1>
                 <p className="text-xl text-muted-foreground">
-                    Tingkatkan bisnis Anda dengan internet super cepat plus <strong className="text-foreground">GRATIS Aplikasi Kasir Premium</strong>. Penawaran terbatas!
+                    Tingkatkan bisnis Anda dengan internet super cepat plus <strong className="text-foreground">GRATIS Aplikasi Kasir Premium</strong> untuk setiap pembayaran di muka.
                 </p>
             </div>
             
-             <Card className="border-purple-500/50 bg-purple-500/5">
+            <Card className="border-purple-500/50 bg-purple-500/5">
                 <CardHeader>
-                    <CardTitle>Paket Promo JET 20 Mbps</CardTitle>
-                    <CardDescription>Bayar 12 Bulan, Gratis 3 Bulan (Total 15 Bulan)</CardDescription>
+                    <CardTitle>Promo Bayar di Muka</CardTitle>
+                    <CardDescription>Pilih skema pembayaran di muka untuk paket apapun dan nikmati gratis langganan berbulan-bulan.</CardDescription>
                 </CardHeader>
                  <CardContent>
-                    <p className='text-muted-foreground'>
-                       Dapatkan koneksi internet simetris 20 Mbps yang andal, cocok untuk menunjang operasional bisnis Anda.
-                    </p>
+                    <ul className="space-y-2 text-sm text-muted-foreground list-disc list-inside">
+                        <li><span className="font-semibold text-foreground">Bayar 5 Bulan</span>, Gratis 1 Bulan</li>
+                        <li><span className="font-semibold text-foreground">Bayar 9 Bulan</span>, Gratis 3 Bulan</li>
+                        <li><span className="font-semibold text-foreground">Bayar 12 Bulan</span>, Gratis 6 Bulan (Khusus paket 30 Mbps ke atas)</li>
+                         <li><span className="font-semibold text-foreground">Bayar 12 Bulan</span>, Gratis 3 Bulan (Khusus paket 20 Mbps)</li>
+                    </ul>
                 </CardContent>
             </Card>
 
@@ -165,13 +169,13 @@ function PromoForm() {
                 <CardContent className="space-y-2">
                     <p className="font-bold text-lg text-foreground">GRATIS Aplikasi Kasir Chika POS Premium (3 Bulan)</p>
                     <p className='text-muted-foreground'>
-                        Kelola usaha jadi lebih mudah dengan fitur kasir canggih dan <strong className='text-foreground'>Katalog Digital</strong> untuk memamerkan produk Anda secara online. Senilai <span className='font-bold'>Rp 297.000!</span>
+                        Kelola usaha jadi lebih mudah dengan fitur kasir canggih dan <strong className='text-foreground'>Katalog Digital</strong> untuk memamerkan produk Anda secara online. Senilai <span className='font-bold'>Rp 450.000!</span>
                     </p>
                 </CardContent>
             </Card>
 
             <div className="space-y-6">
-              <h2 className="font-headline text-2xl font-bold">Atau Pilih Paket Lainnya</h2>
+              <h2 className="font-headline text-2xl font-bold">Pilih Paket Terbaik Anda</h2>
                <Tabs defaultValue="internet-only" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="internet-only">Internet Saja</TabsTrigger>
@@ -252,15 +256,20 @@ function PromoForm() {
                           </CardHeader>
                           <CardContent className="flex flex-1 flex-col justify-between p-6">
                           <div>
+                              <div className="text-center mb-4">
+                                <h4 className="font-semibold">Channel TV</h4>
+                                <p className="text-muted-foreground text-sm flex items-center justify-center gap-2"><Tv className="h-4 w-4" /> {offer.channels}</p>
+                                <p className="text-muted-foreground text-xs">{offer.stb}</p>
+                              </div>
                               {offer.promo && <p className="text-sm font-bold text-destructive mb-4 text-center">{offer.promo}</p>}
-                              <p className="text-sm text-center text-muted-foreground mb-2">Termasuk {offer.channels} channel TV.</p>
+                              <h4 className="font-semibold mb-2">Fitur dan Benefit</h4>
                               <ul className="space-y-2 text-sm text-muted-foreground">
-                              {offer.features.map((feature) => (
+                                {offer.features.map((feature) => (
                                   <li key={feature} className="flex items-center">
-                                  <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
-                                  <span>{feature}</span>
+                                    <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
+                                    <span>{feature}</span>
                                   </li>
-                              ))}
+                                ))}
                               </ul>
                           </div>
                           <div className="mt-6">
@@ -302,11 +311,10 @@ function PromoForm() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                            <SelectLabel>Promo UMKM</SelectLabel>
                             <SelectItem value="jet-20mbps-12get3-umkm">Promo UMKM: Jet 20Mbps (Bayar 12, Gratis 3) + POS</SelectItem>
                         </SelectGroup>
                         <SelectGroup>
-                           <SelectLabel>Internet Saja (Reguler)</SelectLabel>
+                           <SelectItem value="internet-only-reguler">Internet Saja (Reguler)</SelectItem>
                            {offers.map(offer => (
                             <SelectItem key={offer.id} value={offer.id}>
                               {offer.title} - {offer.speed} ({offer.price})
@@ -314,7 +322,7 @@ function PromoForm() {
                           ))}
                         </SelectGroup>
                          <SelectGroup>
-                           <SelectLabel>Internet + TV (Reguler)</SelectLabel>
+                           <SelectItem value="internet-tv-reguler">Internet + TV (Reguler)</SelectItem>
                            {offersTV.map(offer => (
                             <SelectItem key={offer.id} value={offer.id}>
                               {offer.title} - {offer.speed} ({offer.price})
@@ -415,3 +423,5 @@ export default function PromoPage() {
     </Suspense>
   )
 }
+
+    
