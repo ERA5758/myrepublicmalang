@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { captureLead } from '@/lib/actions';
-import { type LeadCaptureFormState, type Offer } from '@/lib/definitions';
+import { type LeadCaptureFormState, type Offer, type OfferTV } from '@/lib/definitions';
 import { useEffect, useRef, useState, Suspense } from 'react';
 import coverageData from '@/lib/coverage-area.json';
 import { useFirestore } from '@/firebase';
@@ -45,6 +45,7 @@ function PromoForm() {
   const [selectedArea, setSelectedArea] = useState("");
   const [selectedPlanValue, setSelectedPlanValue] = useState("");
   const [offers, setOffers] = useState<Offer[]>([]);
+  const [offersTV, setOffersTV] = useState<OfferTV[]>([]);
   const firestore = useFirestore();
 
   const coverageAreas = Object.keys(coverageData).sort();
@@ -53,13 +54,24 @@ function PromoForm() {
     async function fetchPackages() {
         if (!firestore) return;
         const offersCollection = collection(firestore, 'offers');
+        const offersTVCollection = collection(firestore, 'offersTV');
+
         const offersQuery = query(offersCollection, orderBy('price'));
+        const offersTVSnapshot = await getDocs(offersTVCollection);
         const offersSnapshot = await getDocs(offersQuery);
+
         const fetchedOffers: Offer[] = [];
         offersSnapshot.forEach(doc => {
             fetchedOffers.push({ id: doc.id, ...doc.data() } as Offer);
         });
         setOffers(fetchedOffers);
+
+        const fetchedOffersTV: OfferTV[] = [];
+        offersTVSnapshot.forEach(doc => {
+          fetchedOffersTV.push({ id: doc.id, ...doc.data() } as OfferTV);
+        });
+        setOffersTV(fetchedOffersTV);
+        
         // Pre-select UMKM promo if available
         if (fetchedOffers.some(o => o.id === 'jet-20mbps-12get3-umkm')) {
             setSelectedPlanValue('jet-20mbps-12get3-umkm');
@@ -208,6 +220,58 @@ function PromoForm() {
                 </div>
             </div>
 
+             <div className="space-y-6">
+                <h2 className="font-headline text-2xl font-bold">Paket Internet + TV</h2>
+                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1">
+                    {offersTV.map((offer) => (
+                    <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                        <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
+                        {offer.image && (
+                            <>
+                            <Image
+                                src={offer.image.imageUrl}
+                                alt={offer.image.description}
+                                fill
+                                className="object-cover"
+                                data-ai-hint={offer.image.imageHint}
+                            />
+                            <div className="absolute inset-0 bg-black/50"></div>
+                            </>
+                        )}
+                        <div className="relative z-10">
+                            <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
+                            <p className="text-sm text-white/80">{offer.speed}</p>
+                            <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
+                            <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
+                        </div>
+                        </CardHeader>
+                        <CardContent className="flex flex-1 flex-col justify-between p-6">
+                        <div>
+                            {offer.promo && <p className="text-sm font-bold text-destructive mb-4 text-center">{offer.promo}</p>}
+                             <p className="text-sm text-center text-muted-foreground mb-2">Termasuk {offer.channels} channel TV.</p>
+                            <ul className="space-y-2 text-sm text-muted-foreground">
+                            {offer.features.map((feature) => (
+                                <li key={feature} className="flex items-center">
+                                <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
+                                <span>{feature}</span>
+                                </li>
+                            ))}
+                            </ul>
+                        </div>
+                        <div className="mt-6">
+                            <Button className="w-full" variant="outline" onClick={() => {
+                                setSelectedPlanValue(offer.id);
+                                document.getElementById('form-card')?.scrollIntoView({ behavior: 'smooth' });
+                            }}>
+                                Pilih Paket Ini
+                            </Button>
+                        </div>
+                        </CardContent>
+                    </Card>
+                    ))}
+                </div>
+            </div>
+
           </div>
 
           {/* Right Side - Form */}
@@ -232,11 +296,20 @@ function PromoForm() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectItem value="jet-20mbps-12get3-umkm">Promo UMKM: Jet 20Mbps (Bayar 12, Gratis 3) + POS</SelectItem>
+                            <SelectLabel>Promo UMKM</SelectLabel>
+                            <SelectItem value="jet-20mbps-12get3-umkm">Promo UMKM: Jet 20Mbps (Bayar 12, Gratis 3) + POS</SelectItem>
                         </SelectGroup>
                         <SelectGroup>
-                           <SelectLabel>Paket Reguler</SelectLabel>
+                           <SelectLabel>Internet Saja (Reguler)</SelectLabel>
                            {offers.map(offer => (
+                            <SelectItem key={offer.id} value={offer.id}>
+                              {offer.title} - {offer.speed} ({offer.price})
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                         <SelectGroup>
+                           <SelectLabel>Internet + TV (Reguler)</SelectLabel>
+                           {offersTV.map(offer => (
                             <SelectItem key={offer.id} value={offer.id}>
                               {offer.title} - {offer.speed} ({offer.price})
                             </SelectItem>
@@ -336,3 +409,5 @@ export default function PromoPage() {
     </Suspense>
   )
 }
+
+    
