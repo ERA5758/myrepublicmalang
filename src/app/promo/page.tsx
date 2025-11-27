@@ -11,15 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { captureLead } from '@/lib/actions';
-import { type LeadCaptureFormState, type Offer } from '@/lib/definitions';
+import { type LeadCaptureFormState } from '@/lib/definitions';
 import { useEffect, useRef, useState, Suspense } from 'react';
 import coverageData from '@/lib/coverage-area.json';
 
-const promoOptions = [
-    { id: 'jet-promo-5', label: 'Bayar 5 Bulan Gratis 1 (Total 6 Bulan)' },
-    { id: 'jet-promo-9', label: 'Bayar 9 Bulan Gratis 3 (Total 12 Bulan)' },
-    { id: 'jet-promo-12', label: 'Bayar 12 Bulan Gratis 6 (Total 18 Bulan)' },
-];
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -44,7 +39,6 @@ function PromoForm() {
   const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
-  const [selectedPlanValue, setSelectedPlanValue] = useState("jet-promo-9"); // Default to best value
   const [selectedArea, setSelectedArea] = useState("");
 
   const coverageAreas = Object.keys(coverageData).sort();
@@ -58,7 +52,6 @@ function PromoForm() {
       });
       if(state.message.startsWith('Terima kasih')) {
         formRef.current?.reset();
-        setSelectedPlanValue("jet-promo-9");
         setSelectedArea("");
         setLocation(null);
         setLocationError(null);
@@ -112,6 +105,18 @@ function PromoForm() {
                 </p>
             </div>
             
+            <Card className="border-purple-500/50 bg-purple-500/5">
+                <CardHeader>
+                    <CardTitle>Paket Promo JET 20 Mbps</CardTitle>
+                    <CardDescription>Bayar 12 Bulan, Gratis 3 Bulan (Total 15 Bulan)</CardDescription>
+                </CardHeader>
+                 <CardContent>
+                    <p className='text-muted-foreground'>
+                       Dapatkan koneksi internet simetris 20 Mbps yang andal, cocok untuk menunjang operasional bisnis Anda.
+                    </p>
+                </CardContent>
+            </Card>
+
             <Card className="border-green-500/50 bg-green-500/5">
                 <CardHeader>
                     <CardTitle className='flex items-center gap-3 text-green-700'>
@@ -127,19 +132,6 @@ function PromoForm() {
                 </CardContent>
             </Card>
 
-            <div className="space-y-4">
-              <h2 className="font-headline text-2xl font-semibold">Pilih Paket Promo Anda</h2>
-              <div className="grid grid-cols-1 gap-4">
-                {promoOptions.map(option => (
-                    <Card key={option.id} className={`cursor-pointer transition-all ${selectedPlanValue === option.id ? 'border-primary shadow-lg ring-2 ring-primary' : 'hover:border-primary/50'}`} onClick={() => setSelectedPlanValue(option.id)}>
-                        <CardHeader>
-                            <CardTitle>{option.label}</CardTitle>
-                            <CardDescription>Berlangganan internet Jet 20 Mbps</CardDescription>
-                        </CardHeader>
-                    </Card>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Right Side - Form */}
@@ -154,27 +146,7 @@ function PromoForm() {
             <CardContent>
               <form ref={formRef} action={dispatch} className="space-y-4">
                 
-                <div className="space-y-2">
-                  <Label htmlFor="selectedPlan">Paket Promo yang Dipilih</Label>
-                  <div className="relative">
-                    <Package className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Select name="selectedPlan" required value={selectedPlanValue} onValueChange={setSelectedPlanValue}>
-                      <SelectTrigger className="pl-10">
-                        <SelectValue placeholder="Pilih paket promo..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {promoOptions.map(option => (
-                            <SelectItem key={option.id} value={option.id}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  {state?.fields?.selectedPlan && <p className="text-sm text-destructive">{state.fields.selectedPlan}</p>}
-                </div>
+                <input type="hidden" name="selectedPlan" value="jet-20mbps-12get3-umkm" />
 
                 <div className="space-y-2">
                   <Label htmlFor="name">Nama Lengkap (sesuai KTP)</Label>

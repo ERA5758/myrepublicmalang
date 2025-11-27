@@ -27,7 +27,7 @@ export const offers: Offer[] = [
     title: "JET",
     speed: "20 Mbps",
     price: "Rp 164.280/bln",
-    promo: "Promo 12get3: Bayar 1 Tahun Gratis 3 Bulan",
+    promo: "Promo Bayar 12 Bulan Gratis 3 Bulan",
     features: ["Setara Rp164rb-an/bulan", "Internet Simetris 1:1", "Unlimited Kuota", "Tahan Cuaca Ekstrim"],
     image: {
       "id": "promo-12get3",
@@ -88,7 +88,7 @@ export const offersTV: OfferTV[] = [
     title: "JET",
     speed: "20 Mbps",
     price: "Rp 239.760/bln",
-    promo: "Promo 12get3: Bayar 1 Tahun Gratis 3 Bulan",
+    promo: "Promo Bayar 12 Bulan Gratis 3 Bulan",
     features: ["Setara Rp239rb-an/bulan", "Gratis Vidio Platinum & Genflix", "Internet UNLIMITED", "Tahan Cuaca"],
     image: {
       "id": "promo-12get3-tv",
@@ -229,3 +229,4 @@ export const faqs: Faq[] = [
     
 
     
+
