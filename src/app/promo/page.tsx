@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { captureLead } from '@/lib/actions';
 import { type LeadCaptureFormState, type Offer, type OfferTV } from '@/lib/definitions';
@@ -151,10 +151,10 @@ function PromoForm() {
                 </CardHeader>
                  <CardContent>
                     <ul className="space-y-2 text-sm text-muted-foreground list-disc list-inside">
-                        <li><span className="font-semibold text-foreground">Bayar 5 Bulan</span>, Gratis 1 Bulan</li>
-                        <li><span className="font-semibold text-foreground">Bayar 9 Bulan</span>, Gratis 3 Bulan</li>
-                        <li><span className="font-semibold text-foreground">Bayar 12 Bulan</span>, Gratis 6 Bulan (Khusus paket 30 Mbps ke atas)</li>
-                         <li><span className="font-semibold text-foreground">Bayar 12 Bulan</span>, Gratis 3 Bulan (Khusus paket 20 Mbps)</li>
+                        <li><span className="font-semibold text-foreground">Bayar 5 Bulan, Gratis 1 Bulan</span> (Khusus paket 30 Mbps ke atas)</li>
+                        <li><span className="font-semibold text-foreground">Bayar 9 Bulan, Gratis 3 Bulan</span> (Khusus paket 30 Mbps ke atas)</li>
+                        <li><span className="font-semibold text-foreground">Bayar 12 Bulan, Gratis 6 Bulan</span> (Khusus paket 30 Mbps ke atas)</li>
+                        <li><span className="font-semibold text-foreground">Bayar 12 Bulan, Gratis 3 Bulan</span> (Khusus paket 20 Mbps)</li>
                     </ul>
                 </CardContent>
             </Card>
@@ -310,19 +310,16 @@ function PromoForm() {
                         <SelectValue placeholder="Pilih paket terbaik untuk Anda" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="jet-20mbps-12get3-umkm">Promo UMKM: Jet 20Mbps (Bayar 12, Gratis 3) + POS</SelectItem>
-                        </SelectGroup>
-                        <SelectGroup>
-                           <SelectItem value="internet-only-reguler">Internet Saja (Reguler)</SelectItem>
-                           {offers.map(offer => (
+                         <SelectGroup>
+                          <SelectLabel>Internet Saja</SelectLabel>
+                          {offers.map(offer => (
                             <SelectItem key={offer.id} value={offer.id}>
                               {offer.title} - {offer.speed} ({offer.price})
                             </SelectItem>
                           ))}
                         </SelectGroup>
                          <SelectGroup>
-                           <SelectItem value="internet-tv-reguler">Internet + TV (Reguler)</SelectItem>
+                          <SelectLabel>Internet + TV</SelectLabel>
                            {offersTV.map(offer => (
                             <SelectItem key={offer.id} value={offer.id}>
                               {offer.title} - {offer.speed} ({offer.price})
