@@ -24,7 +24,7 @@ function LandingPageHeader() {
         <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
             <div className="container mx-auto flex h-16 justify-between items-center px-4">
                  <Image 
-                    src="https://iconlogovector.com/uploads/images/2025/04/lg-67fd7fa2b8b25-MyRepublic.webp"
+                    src="https://www.myrepublic.co.id/wp-content/uploads/2022/12/logo-myrepublic.png"
                     alt="MyRepublic Malang Logo"
                     width={150}
                     height={40}

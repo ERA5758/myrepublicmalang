@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -22,7 +23,7 @@ export function Header() {
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Image 
-              src="https://iconlogovector.com/uploads/images/2025/04/lg-67fd7fa2b8b25-MyRepublic.webp"
+              src="https://www.myrepublic.co.id/wp-content/uploads/2022/12/logo-myrepublic.png"
               alt="MyRepublic Malang Logo"
               width={150}
               height={40}
@@ -72,7 +73,7 @@ export function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                      <Image 
-                        src="https://iconlogovector.com/uploads/images/2025/04/lg-67fd7fa2b8b25-MyRepublic.webp"
+                        src="https://www.myrepublic.co.id/wp-content/uploads/2022/12/logo-myrepublic.png"
                         alt="MyRepublic Malang Logo"
                         width={150}
                         height={40}
