@@ -6,56 +6,30 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlarmClock, ArrowRight, Tag } from 'lucide-react';
-
-function TimeUnit({ value, label }: { value: number; label: string }) {
-  return (
-    <div className="flex flex-col items-center">
-      <div className="text-2xl font-bold text-primary tracking-tighter">
-        {String(value).padStart(2, '0')}
-      </div>
-      <div className="text-xs text-muted-foreground uppercase tracking-wider">{label}</div>
-    </div>
-  );
-}
+import { CountdownTimer } from './countdown-timer';
 
 export function FlashSaleBanner() {
-  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [promoEndTime, setPromoEndTime] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const promoEndTimeStr = localStorage.getItem('promoEndTime');
-    let endTime: number;
+    // Set a fixed end date for the promotion for all users.
+    // Example: End of the current month.
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    
+    // You can replace this with any fixed future date.
+    const targetDate = endOfMonth;
 
-    if (promoEndTimeStr) {
-      endTime = parseInt(promoEndTimeStr, 10);
+    if (targetDate > now) {
+      setPromoEndTime(targetDate.toISOString());
+      setIsVisible(true);
     } else {
-      endTime = Date.now() + 6 * 60 * 60 * 1000; // 6 hours from now
-      localStorage.setItem('promoEndTime', String(endTime));
+      setIsVisible(false);
     }
-
-    const calculateTimeLeft = () => {
-      const difference = endTime - Date.now();
-      if (difference > 0) {
-        setIsVisible(true);
-        setTimeLeft({
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
-        });
-      } else {
-        setIsVisible(false);
-        // Optional: clear the item when the promo is over
-        // localStorage.removeItem('promoEndTime');
-      }
-    };
-
-    calculateTimeLeft();
-    const timer = setInterval(calculateTimeLeft, 1000);
-
-    return () => clearInterval(timer);
   }, []);
 
-  if (!isVisible) {
+  if (!isVisible || !promoEndTime) {
     return null;
   }
 
@@ -76,7 +50,7 @@ export function FlashSaleBanner() {
             </p>
             <ul className="space-y-2 text-sm list-inside list-disc text-foreground/80 pl-2">
               <li><span className="font-semibold">Promo Bayar di Muka:</span> Dapatkan gratis langganan hingga 6 bulan.</li>
-              <li><span className="font-semibold">GRATIS Aplikasi Kasir POS Premium*</span> selama 3 bulan (khusus UMKM, inisiatif pribadi).</li>
+              <li><span className="font-semibold">GRATIS Aplikasi Kasir POS Premium*</span> selama 3 bulan (inisiatif pribadi).</li>
               <li><span className="font-semibold">GRATIS Langganan Bulan Pertama*</span> (khusus UMKM, maks. Rp 150rb, inisiatif pribadi).</li>
             </ul>
              <Button asChild className="mt-4 animate-fade-in-up">
@@ -92,11 +66,7 @@ export function FlashSaleBanner() {
                     <AlarmClock className="h-4 w-4" />
                     <span>Penawaran Berakhir Dalam:</span>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
-                    <TimeUnit value={timeLeft.hours} label="Jam" />
-                    <TimeUnit value={timeLeft.minutes} label="Menit" />
-                    <TimeUnit value={timeLeft.seconds} label="Detik" />
-                </div>
+                <CountdownTimer targetDate={promoEndTime} />
             </CardContent>
           </Card>
 

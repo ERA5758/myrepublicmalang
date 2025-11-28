@@ -24,18 +24,7 @@ type CountdownTimerProps = {
 };
 
 export function CountdownTimer({ targetDate }: CountdownTimerProps) {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-
-    const calculateTimeLeft = () => {
+  const calculateTimeLeft = () => {
       const difference = +new Date(targetDate) - +new Date();
       let timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
@@ -48,15 +37,19 @@ export function CountdownTimer({ targetDate }: CountdownTimerProps) {
         };
       }
       return timeLeft;
-    };
+  };
 
-    setTimeLeft(calculateTimeLeft());
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  const [isClient, setIsClient] = useState(false);
 
+  useEffect(() => {
+    setIsClient(true);
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
     return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetDate]);
 
   if (!isClient) {
@@ -71,13 +64,27 @@ export function CountdownTimer({ targetDate }: CountdownTimerProps) {
   }
 
   const { days, hours, minutes, seconds } = timeLeft;
+  
+  const allUnits = [
+    { value: days, label: "Hari" },
+    { value: hours, label: "Jam" },
+    { value: minutes, label: "Menit" },
+    { value: seconds, label: "Detik" }
+  ];
+
+  const relevantUnits = days > 0 ? allUnits : allUnits.slice(1);
+
+  if (days > 0) {
+    return (
+      <div className="grid grid-cols-4 gap-4 text-center">
+        {relevantUnits.map(unit => <TimeUnit key={unit.label} value={unit.value} label={unit.label} />)}
+      </div>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-4 gap-4 text-center">
-      <TimeUnit value={days} label="Hari" />
-      <TimeUnit value={hours} label="Jam" />
-      <TimeUnit value={minutes} label="Menit" />
-      <TimeUnit value={seconds} label="Detik" />
+    <div className="grid grid-cols-3 gap-4 text-center">
+        {relevantUnits.map(unit => <TimeUnit key={unit.label} value={unit.value} label={unit.label} />)}
     </div>
   );
 }

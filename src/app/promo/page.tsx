@@ -58,21 +58,18 @@ function PromoForm() {
   const coverageAreas = Object.keys(coverageData).sort();
 
   useEffect(() => {
-    const promoEndTimeStr = localStorage.getItem('promoEndTime');
-    let endTime: number;
+    // Set a fixed end date for the promotion for all users.
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
-    if (promoEndTimeStr) {
-      endTime = parseInt(promoEndTimeStr, 10);
+    // You can replace this with any fixed future date.
+    const targetDate = endOfMonth;
+
+    if (targetDate > now) {
+      setPromoEndTime(targetDate.toISOString());
+      setPromoExpired(false);
     } else {
-      endTime = Date.now() + 6 * 60 * 60 * 1000;
-      localStorage.setItem('promoEndTime', String(endTime));
-    }
-    
-    if (new Date(endTime) > new Date()) {
-        setPromoEndTime(new Date(endTime).toISOString());
-        setPromoExpired(false);
-    } else {
-        setPromoExpired(true);
+      setPromoExpired(true);
     }
 
 
