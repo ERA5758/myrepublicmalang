@@ -49,10 +49,28 @@ function PromoForm() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [offersTV, setOffersTV] = useState<OfferTV[]>([]);
   const firestore = useFirestore();
+  const [promoEndTime, setPromoEndTime] = useState<string | null>(null);
+
 
   const coverageAreas = Object.keys(coverageData).sort();
 
   useEffect(() => {
+    // Logic for the 6-hour timer, consistent with the flash banner
+    const promoEndTimeStr = localStorage.getItem('promoEndTime');
+    let endTime: number;
+
+    if (promoEndTimeStr) {
+      endTime = parseInt(promoEndTimeStr, 10);
+    } else {
+      endTime = Date.now() + 6 * 60 * 60 * 1000; // 6 hours from now
+      localStorage.setItem('promoEndTime', String(endTime));
+    }
+    
+    if (new Date(endTime) > new Date()) {
+        setPromoEndTime(new Date(endTime).toISOString());
+    }
+
+
     async function fetchPackages() {
         if (!firestore) return;
         const offersCollection = collection(firestore, 'offers');
@@ -131,10 +149,6 @@ function PromoForm() {
     }
   };
 
-  const targetDate = new Date();
-  targetDate.setMonth(targetDate.getMonth() + 1);
-  targetDate.setDate(0);
-  targetDate.setHours(23, 59, 59, 999);
 
   return (
     <div className="bg-background">
@@ -150,14 +164,16 @@ function PromoForm() {
                 </p>
             </div>
             
-            <Card>
-                <CardHeader>
-                    <CardTitle className='text-center text-lg'>PROMO BERAKHIR DALAM</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <CountdownTimer targetDate={targetDate.toISOString()} />
-                </CardContent>
-            </Card>
+            {promoEndTime && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className='text-center text-lg'>PROMO BERAKHIR DALAM</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <CountdownTimer targetDate={promoEndTime} />
+                    </CardContent>
+                </Card>
+            )}
 
 
             <Card className="border-purple-500/50 bg-purple-500/5">
