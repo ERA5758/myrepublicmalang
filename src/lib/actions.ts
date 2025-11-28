@@ -12,9 +12,10 @@ export async function captureLead(
   prevState: LeadCaptureFormState,
   formData: FormData
 ): Promise<LeadCaptureFormState> {
-  const validatedFields = LeadCaptureSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  );
+  const validatedFields = LeadCaptureSchema.safeParse({
+    ...Object.fromEntries(formData.entries()),
+    status: 'Proses' // Set default status
+  });
 
   if (!validatedFields.success) {
     return {

@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "Lead": {
@@ -11,9 +12,10 @@
         "address": { "type": "string" },
         "locationPin": { "type": "string" },
         "selectedPlan": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "createdAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["Proses", "Cancel", "Reject", "Tidak Cover", "Done"], "default": "Proses" }
       },
-      "required": ["name", "email", "phone", "address", "selectedPlan", "createdAt"]
+      "required": ["name", "email", "phone", "address", "selectedPlan", "createdAt", "status"]
     },
     "Offer": {
       "title": "Offer",

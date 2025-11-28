@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { collection, query, orderBy, getDocs, Timestamp, deleteDoc, doc } from "firebase/firestore";
+import { collection, query, orderBy, getDocs, Timestamp, deleteDoc, doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { useFirestore } from "@/firebase";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -31,21 +31,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-
-type Lead = {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    area: string;
-    address: string;
-    selectedPlan: string;
-    locationPin: string;
-    createdAt: string;
-    promo_prepaid?: string;
-    promo_pos?: string;
-    promos?: string[];
-};
+import { type Lead, LeadStatusEnum } from "@/lib/definitions";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 function LeadSkeleton() {
     return (
@@ -54,6 +42,7 @@ function LeadSkeleton() {
             <TableCell><Skeleton className="h-4 w-48" /></TableCell>
             <TableCell><Skeleton className="h-4 w-24" /></TableCell>
             <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+            <TableCell><Skeleton className="h-9 w-32" /></TableCell>
             <TableCell><Skeleton className="h-9 w-20" /></TableCell>
         </TableRow>
     )
@@ -118,6 +107,14 @@ function LeadDetailDialog({ lead }: { lead: Lead }) {
   );
 }
 
+const statusColors: Record<Lead['status'], string> = {
+    "Proses": "bg-blue-100 text-blue-800 border-blue-200",
+    "Done": "bg-green-100 text-green-800 border-green-200",
+    "Cancel": "bg-yellow-100 text-yellow-800 border-yellow-200",
+    "Reject": "bg-red-100 text-red-800 border-red-200",
+    "Tidak Cover": "bg-gray-100 text-gray-800 border-gray-200",
+};
+
 
 export default function ViewLeadsPage() {
     const [leads, setLeads] = useState<Lead[]>([]);
@@ -126,14 +123,13 @@ export default function ViewLeadsPage() {
     const firestore = useFirestore();
     const { toast } = useToast();
 
-    async function fetchLeads() {
+    useEffect(() => {
         if (!firestore) return;
         setLoading(true);
-        try {
-            const leadsCollection = collection(firestore, 'leads');
-            const q = query(leadsCollection, orderBy('createdAt', 'desc'));
-            const querySnapshot = await getDocs(q);
+        const leadsCollection = collection(firestore, 'leads');
+        const q = query(leadsCollection, orderBy('createdAt', 'desc'));
 
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const fetchedLeads = querySnapshot.docs.map(doc => {
                 const data = doc.data();
                 let createdAt = 'Tanggal tidak tersedia';
@@ -156,22 +152,36 @@ export default function ViewLeadsPage() {
                     locationPin: data.locationPin,
                     createdAt: createdAt,
                     promos: promos,
+                    status: data.status || 'Proses', // Default to 'Proses'
                 } as Lead;
             });
             setLeads(fetchedLeads);
-        } catch (error) {
+            setLoading(false);
+        }, (error) => {
             console.error("Gagal mengambil data leads:", error);
             toast({ variant: "destructive", title: "Gagal Mengambil Data", description: "Terjadi kesalahan saat mengambil daftar pendaftar." });
-        } finally {
             setLoading(false);
-        }
-    }
+        });
 
-    useEffect(() => {
-        if (firestore) {
-            fetchLeads();
+        return () => unsubscribe();
+
+    }, [firestore, toast]);
+
+    const handleUpdateStatus = async (leadId: string, status: Lead['status']) => {
+        if (!firestore) return;
+        const docRef = doc(firestore, "leads", leadId);
+        try {
+            await updateDoc(docRef, { status: status });
+            toast({
+                title: "Status Diperbarui",
+                description: `Status pendaftar telah diubah menjadi ${status}.`,
+            });
+        } catch (error) {
+            console.error("Gagal memperbarui status:", error);
+            toast({ variant: "destructive", title: "Gagal Memperbarui", description: "Terjadi kesalahan saat mengubah status." });
         }
-    }, [firestore]);
+    };
+
 
     const handleDelete = async (leadId: string) => {
         if (!firestore) return;
@@ -179,8 +189,6 @@ export default function ViewLeadsPage() {
         try {
             await deleteDoc(doc(firestore, "leads", leadId));
             toast({ title: "Sukses!", description: "Data pendaftar telah dihapus." });
-            // Refresh list after delete
-            fetchLeads();
         } catch (error) {
             console.error("Gagal menghapus lead:", error);
             toast({ variant: "destructive", title: "Gagal Menghapus", description: "Terjadi kesalahan saat menghapus data." });
@@ -216,6 +224,7 @@ export default function ViewLeadsPage() {
                                     <TableHead>Kontak</TableHead>
                                     <TableHead>Paket</TableHead>
                                     <TableHead>Alamat</TableHead>
+                                    <TableHead>Progres</TableHead>
                                     <TableHead className="text-right">Aksi</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -238,6 +247,20 @@ export default function ViewLeadsPage() {
                                             <TableCell>
                                                 <div className="font-medium line-clamp-2">{lead.address}</div>
                                                 <div className="text-sm text-muted-foreground">{lead.area}</div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Select value={lead.status} onValueChange={(value: Lead['status']) => handleUpdateStatus(lead.id, value)}>
+                                                    <SelectTrigger className={cn("w-32 border-2", statusColors[lead.status])}>
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {LeadStatusEnum.options.map(status => (
+                                                            <SelectItem key={status} value={status}>
+                                                                {status}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
@@ -273,7 +296,7 @@ export default function ViewLeadsPage() {
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="h-24 text-center">
+                                        <TableCell colSpan={6} className="h-24 text-center">
                                             Belum ada pendaftar yang masuk.
                                         </TableCell>
                                     </TableRow>

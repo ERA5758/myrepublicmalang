@@ -1,6 +1,8 @@
 
 import { z } from "zod";
 
+export const LeadStatusEnum = z.enum(["Proses", "Cancel", "Reject", "Tidak Cover", "Done"]);
+
 export const LeadCaptureSchema = z.object({
   name: z.string().min(2, { message: "Nama harus terdiri dari minimal 2 karakter." }),
   email: z.string().email({ message: "Silakan masukkan alamat email yang valid." }),
@@ -11,6 +13,7 @@ export const LeadCaptureSchema = z.object({
   selectedPlan: z.string({ required_error: "Silakan pilih salah satu paket." }).min(1, { message: "Silakan pilih salah satu paket." }),
   promo_prepaid: z.string().optional(),
   promo_pos: z.string().optional(),
+  status: LeadStatusEnum.default("Proses"),
 });
 
 export type LeadCaptureFormState = {
@@ -120,3 +123,18 @@ export type Review = {
     createdAt: string;
     status: 'pending' | 'approved' | 'rejected';
 }
+
+export type Lead = {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    area: string;
+    address: string;
+    selectedPlan: string;
+    locationPin: string;
+    createdAt: string;
+    promos?: string[];
+    status: z.infer<typeof LeadStatusEnum>;
+};
+
