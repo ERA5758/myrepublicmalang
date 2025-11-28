@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { FirebaseProvider } from '@/firebase/provider';
 import Image from 'next/image';
 import { FloatingWhatsApp } from '@/components/floating-whatsapp';
+import { Footer } from '@/components/layout/footer';
 
 const siteUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
 
@@ -39,30 +40,34 @@ function LandingPageHeader() {
     )
 }
 
-function LandingPageFooter() {
-    return (
-        <footer className="bg-muted py-4 mt-8">
-            <div className="container mx-auto text-center text-muted-foreground text-sm px-4">
-                <p>© {new Date().getFullYear()} MyRepublic Malang - Penawaran Khusus UMKM.</p>
-            </div>
-        </footer>
-    )
-}
-
 export default function PromoLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <div className={cn('min-h-dvh bg-secondary/30')}>
+    <html lang="id" suppressHydrationWarning>
+        <head>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            <link
+            href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+            rel="stylesheet"
+            />
+      </head>
+      <body
+        className={cn(
+          'min-h-screen bg-background font-body antialiased flex flex-col'
+        )}
+      >
         <FirebaseProvider>
             <LandingPageHeader />
-            <main>{children}</main>
-            <LandingPageFooter />
+            <main className="flex-grow">{children}</main>
+            <Footer />
             <FloatingWhatsApp />
             <Toaster />
         </FirebaseProvider>
-    </div>
+      </body>
+    </html>
   );
 }
