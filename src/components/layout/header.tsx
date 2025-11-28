@@ -23,7 +23,7 @@ export function Header() {
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Image 
-              src="https://www.myrepublic.co.id/wp-content/uploads/2022/12/logo-myrepublic.png"
+              src="https://i.ibb.co/7MP29XK/Picsart-25-11-28-12-55-53-228.png"
               alt="MyRepublic Malang Logo"
               width={150}
               height={40}
@@ -73,7 +73,7 @@ export function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                      <Image 
-                        src="https://www.myrepublic.co.id/wp-content/uploads/2022/12/logo-myrepublic.png"
+                        src="https://i.ibb.co/7MP29XK/Picsart-25-11-28-12-55-53-228.png"
                         alt="MyRepublic Malang Logo"
                         width={150}
                         height={40}

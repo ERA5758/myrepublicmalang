@@ -12,7 +12,7 @@ export function Footer() {
           <div className="md:col-span-4 lg:col-span-5">
              <Link href="/" className="flex items-center space-x-2">
                 <Image 
-                  src="https://www.myrepublic.co.id/wp-content/uploads/2022/12/logo-myrepublic.png"
+                  src="https://i.ibb.co/7MP29XK/Picsart-25-11-28-12-55-53-228.png"
                   alt="MyRepublic Malang Logo"
                   width={180}
                   height={48}

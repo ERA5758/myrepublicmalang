@@ -24,7 +24,7 @@ function LandingPageHeader() {
         <header className="py-4 border-b">
             <div className="container mx-auto flex justify-between items-center">
                  <Image 
-                    src="https://www.myrepublic.co.id/wp-content/uploads/2022/12/logo-myrepublic.png"
+                    src="https://i.ibb.co/7MP29XK/Picsart-25-11-28-12-55-53-228.png"
                     alt="MyRepublic Malang Logo"
                     width={150}
                     height={40}
