@@ -53,11 +53,13 @@ function PromoForm() {
   const firestore = useFirestore();
   const [promoEndTime, setPromoEndTime] = useState<string | null>(null);
   const [promoExpired, setPromoExpired] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
 
   const coverageAreas = Object.keys(coverageData).sort();
 
   useEffect(() => {
+    setIsClient(true);
     // Set a fixed end date for the promotion for all users.
     const now = new Date();
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
@@ -191,7 +193,7 @@ function PromoForm() {
                         <CardTitle className='text-center text-lg'>PROMO BERAKHIR DALAM</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <CountdownTimer targetDate={promoEndTime} />
+                       {isClient && <CountdownTimer targetDate={promoEndTime} />}
                     </CardContent>
                 </Card>
             )}

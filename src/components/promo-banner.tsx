@@ -5,14 +5,16 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { AlarmClock, ArrowRight, Tag } from 'lucide-react';
+import { AlarmClock, ArrowRight, Tag, Gift } from 'lucide-react';
 import { CountdownTimer } from './countdown-timer';
 
 export function FlashSaleBanner() {
   const [promoEndTime, setPromoEndTime] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     // Set a fixed end date for the promotion for all users.
     // Example: End of the current month.
     const now = new Date();
@@ -42,7 +44,7 @@ export function FlashSaleBanner() {
             <div className="flex items-center gap-3">
               <Tag className="h-6 w-6 text-primary" />
               <h2 className="font-headline text-2xl font-bold tracking-tight text-primary">
-                PROMO KILAT UNTUK BISNIS ANDA!
+                PROMO SPESIAL UNTUK BISNIS ANDA!
               </h2>
             </div>
             <p className="text-muted-foreground">
@@ -65,7 +67,7 @@ export function FlashSaleBanner() {
                     <AlarmClock className="h-4 w-4" />
                     <span>Penawaran Berakhir Dalam:</span>
                 </div>
-                <CountdownTimer targetDate={promoEndTime} />
+                {isClient && <CountdownTimer targetDate={promoEndTime} />}
             </CardContent>
           </Card>
 
