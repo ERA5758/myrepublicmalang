@@ -59,6 +59,9 @@ type LeadData = {
     address: string;
     selectedPlan: string;
     locationPin?: string;
+    promo_prepaid?: string;
+    promo_pos?: string;
+    promo_first_month?: string;
 }
 
 export async function sendLeadNotification(lead: LeadData) {
@@ -67,6 +70,19 @@ export async function sendLeadNotification(lead: LeadData) {
     if (!settings.deviceId) {
         console.error("WhatsApp Device ID tidak dikonfigurasi di environment variables.");
         return;
+    }
+
+    const selectedPromos = [
+        lead.promo_prepaid,
+        lead.promo_pos,
+        lead.promo_first_month
+    ].filter(Boolean); // Filter out undefined/empty values
+
+    let promoText = '';
+    if (selectedPromos.length > 0) {
+        promoText = `
+*Promo yang Dipilih:*
+${selectedPromos.map(p => `- ${p}`).join('\n')}`;
     }
 
     // Pesan untuk grup admin
@@ -84,6 +100,7 @@ Ada pendaftaran baru telah masuk melalui website.
 - *Alamat Lengkap:* ${lead.address}
 - *Paket Dipilih:* ${lead.selectedPlan}
 ${lead.locationPin ? `- *Koordinat GPS:* https://www.google.com/maps?q=${lead.locationPin}` : ''}
+${promoText}
 
 Harap segera tindak lanjuti.
         `.trim();

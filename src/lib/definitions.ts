@@ -9,6 +9,9 @@ export const LeadCaptureSchema = z.object({
   address: z.string().min(10, { message: "Silakan masukkan alamat lengkap." }),
   locationPin: z.string().min(1, { message: "Silakan ambil pin lokasi GPS Anda." }),
   selectedPlan: z.string({ required_error: "Silakan pilih salah satu paket." }).min(1, { message: "Silakan pilih salah satu paket." }),
+  promo_prepaid: z.string().optional(),
+  promo_pos: z.string().optional(),
+  promo_first_month: z.string().optional(),
 });
 
 export type LeadCaptureFormState = {

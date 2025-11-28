@@ -3,7 +3,7 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle } from 'lucide-react';
+import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,7 @@ import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CountdownTimer } from '@/components/countdown-timer';
 import Link from 'next/link';
+import { Checkbox } from '@/components/ui/checkbox';
 
 
 function SubmitButton() {
@@ -400,6 +401,30 @@ function PromoForm() {
                     </Select>
                   </div>
                   {state?.fields?.selectedPlan && <p className="text-sm text-destructive">{state.fields.selectedPlan}</p>}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Pilih Promo yang Anda Inginkan</Label>
+                  <div className="space-y-2 rounded-md border p-4">
+                    <div className="flex items-center space-x-2">
+                        <Checkbox id="promo_prepaid" name="promo_prepaid" value="Bayar di Muka" />
+                        <label htmlFor="promo_prepaid" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Promo Bayar di Muka
+                        </label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox id="promo_pos" name="promo_pos" value="Gratis Aplikasi Kasir POS" />
+                        <label htmlFor="promo_pos" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Gratis Aplikasi Kasir POS
+                        </label>
+                    </div>
+                     <div className="flex items-center space-x-2">
+                        <Checkbox id="promo_first_month" name="promo_first_month" value="Gratis Langganan Bulan Pertama" />
+                        <label htmlFor="promo_first_month" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Gratis Langganan Bulan Pertama
+                        </label>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
