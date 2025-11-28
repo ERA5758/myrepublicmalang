@@ -36,6 +36,7 @@ export function Footer() {
                 <li><Link href="/speed-test" className="text-muted-foreground hover:text-primary">Speed Test</Link></li>
                 <li><Link href="/payment-methods" className="text-muted-foreground hover:text-primary">Cara Bayar</Link></li>
                 <li><Link href="/hubungi-kami" className="text-muted-foreground hover:text-primary">Hubungi Kami</Link></li>
+                <li><Link href="/privacy-policy" className="text-muted-foreground hover:text-primary">Kebijakan Privasi</Link></li>
               </ul>
             </div>
 
