@@ -51,6 +51,12 @@ const nextConfig: NextConfig = {
         hostname: 'www.promomyrepublicjogja.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ibb.co',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
