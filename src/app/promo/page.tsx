@@ -226,21 +226,6 @@ function PromoForm() {
                     </p>
                 </CardContent>
             </Card>
-            
-            <Card className="border-primary/50 bg-primary/5">
-                <CardHeader>
-                    <CardTitle className='flex items-center gap-3 text-primary'>
-                        <Star className="h-6 w-6"/>
-                        Bonus Tambahan Spesial (Inisiatif Pribadi)
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                    <p className="font-bold text-lg text-foreground">GRATIS Langganan Bulan Pertama</p>
-                    <p className='text-muted-foreground'>
-                        Sebagai dukungan untuk UMKM, saya akan menanggung biaya langganan bulan pertama Anda. <strong className='text-foreground'>(Maksimal Rp 150.000, syarat & ketentuan berlaku).</strong>
-                    </p>
-                </CardContent>
-            </Card>
 
             <div className="space-y-6">
               <h2 className="font-headline text-2xl font-bold">Pilih Paket Terbaik Anda</h2>
@@ -413,12 +398,6 @@ function PromoForm() {
                         <Checkbox id="promo_pos" name="promo_pos" value="Gratis Aplikasi Kasir POS" />
                         <label htmlFor="promo_pos" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                         Gratis Aplikasi Kasir POS
-                        </label>
-                    </div>
-                     <div className="flex items-center space-x-2">
-                        <Checkbox id="promo_first_month" name="promo_first_month" value="Gratis Langganan Bulan Pertama" />
-                        <label htmlFor="promo_first_month" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Gratis Langganan Bulan Pertama
                         </label>
                     </div>
                   </div>

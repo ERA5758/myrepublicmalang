@@ -11,7 +11,6 @@ export const LeadCaptureSchema = z.object({
   selectedPlan: z.string({ required_error: "Silakan pilih salah satu paket." }).min(1, { message: "Silakan pilih salah satu paket." }),
   promo_prepaid: z.string().optional(),
   promo_pos: z.string().optional(),
-  promo_first_month: z.string().optional(),
 });
 
 export type LeadCaptureFormState = {

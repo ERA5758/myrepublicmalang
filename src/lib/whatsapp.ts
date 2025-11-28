@@ -61,7 +61,6 @@ type LeadData = {
     locationPin?: string;
     promo_prepaid?: string;
     promo_pos?: string;
-    promo_first_month?: string;
 }
 
 export async function sendLeadNotification(lead: LeadData) {
@@ -75,7 +74,6 @@ export async function sendLeadNotification(lead: LeadData) {
     const selectedPromos = [
         lead.promo_prepaid,
         lead.promo_pos,
-        lead.promo_first_month
     ].filter(Boolean); // Filter out undefined/empty values
 
     let promoText = '';
