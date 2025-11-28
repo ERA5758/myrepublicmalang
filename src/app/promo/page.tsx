@@ -3,7 +3,7 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star } from 'lucide-react';
+import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,7 @@ import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CountdownTimer } from '@/components/countdown-timer';
+import Link from 'next/link';
 
 
 function SubmitButton() {
@@ -50,6 +51,7 @@ function PromoForm() {
   const [offersTV, setOffersTV] = useState<OfferTV[]>([]);
   const firestore = useFirestore();
   const [promoEndTime, setPromoEndTime] = useState<string | null>(null);
+  const [promoExpired, setPromoExpired] = useState(false);
 
 
   const coverageAreas = Object.keys(coverageData).sort();
@@ -67,6 +69,9 @@ function PromoForm() {
     
     if (new Date(endTime) > new Date()) {
         setPromoEndTime(new Date(endTime).toISOString());
+        setPromoExpired(false);
+    } else {
+        setPromoExpired(true);
     }
 
 
@@ -146,6 +151,26 @@ function PromoForm() {
       setLocationError("Geolokasi tidak didukung oleh browser ini.");
     }
   };
+
+  if (promoExpired) {
+    return (
+        <div className="container mx-auto max-w-2xl py-24 sm:py-32 text-center flex flex-col items-center">
+            <XCircle className="h-20 w-20 text-destructive mb-6" />
+            <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">Promo Telah Berakhir</h1>
+            <p className="mt-6 text-lg leading-8 text-muted-foreground">
+                Mohon maaf, penawaran khusus untuk UMKM telah selesai. Namun, Anda masih bisa mendaftar untuk paket reguler kami yang tidak kalah menarik.
+            </p>
+            <div className="mt-10 flex items-center justify-center gap-x-6">
+                <Button asChild>
+                    <Link href="/register">Lihat Paket Lain</Link>
+                </Button>
+                <Button variant="ghost" asChild>
+                    <Link href="/">Kembali ke Beranda <span aria-hidden="true">→</span></Link>
+                </Button>
+            </div>
+        </div>
+    );
+  }
 
 
   return (
