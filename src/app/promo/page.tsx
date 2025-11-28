@@ -3,7 +3,7 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv } from 'lucide-react';
+import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -55,14 +55,13 @@ function PromoForm() {
   const coverageAreas = Object.keys(coverageData).sort();
 
   useEffect(() => {
-    // Logic for the 6-hour timer, consistent with the flash banner
     const promoEndTimeStr = localStorage.getItem('promoEndTime');
     let endTime: number;
 
     if (promoEndTimeStr) {
       endTime = parseInt(promoEndTimeStr, 10);
     } else {
-      endTime = Date.now() + 6 * 60 * 60 * 1000; // 6 hours from now
+      endTime = Date.now() + 6 * 60 * 60 * 1000;
       localStorage.setItem('promoEndTime', String(endTime));
     }
     
@@ -92,7 +91,6 @@ function PromoForm() {
         });
         setOffersTV(fetchedOffersTV);
         
-        // Pre-select UMKM promo if available
         if (fetchedOffers.some(o => o.id === 'jet-20mbps-12get3-umkm')) {
             setSelectedPlanValue('jet-20mbps-12get3-umkm');
         }
@@ -201,7 +199,22 @@ function PromoForm() {
                 <CardContent className="space-y-2">
                     <p className="font-bold text-lg text-foreground">GRATIS Aplikasi Kasir Chika POS Premium (3 Bulan)</p>
                     <p className='text-muted-foreground'>
-                        Kelola usaha jadi lebih mudah dengan fitur kasir canggih dan <strong className='text-foreground'>Katalog Digital</strong> untuk memamerkan produk Anda secara online. Senilai <span className='font-bold'>Rp 450.000!</span>
+                        Kelola usaha jadi lebih mudah dengan fitur kasir canggih dan <strong className='text-foreground'>Katalog Digital</strong> untuk memamerkan produk Anda secara online. Senilai <span className='font-bold'>Rp 450.000! (Inisiatif Pribadi)</span>
+                    </p>
+                </CardContent>
+            </Card>
+            
+            <Card className="border-primary/50 bg-primary/5">
+                <CardHeader>
+                    <CardTitle className='flex items-center gap-3 text-primary'>
+                        <Star className="h-6 w-6"/>
+                        Bonus Tambahan Spesial (Inisiatif Pribadi)
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                    <p className="font-bold text-lg text-foreground">GRATIS Langganan Bulan Pertama</p>
+                    <p className='text-muted-foreground'>
+                        Sebagai dukungan untuk UMKM, saya akan menanggung biaya langganan bulan pertama Anda. <strong className='text-foreground'>(Maksimal Rp 150.000, syarat & ketentuan berlaku).</strong>
                     </p>
                 </CardContent>
             </Card>
