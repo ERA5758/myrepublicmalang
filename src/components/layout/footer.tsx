@@ -66,7 +66,7 @@ export function Footer() {
             © {new Date().getFullYear()} MyRepublic Malang. Sales Executive khusus pasang baru.
           </p>
           <p className="mt-2">
-            Situs ini adalah situs sales/mitra resmi, bukan website perusahaan PT MyRepublic. Untuk info perusahaan resmi silakan kunjungi <a href="https://myrepublic.co.id" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:underline">myrepublic.co.id</a>
+            Website ini dikelola oleh Sales/Mitra Resmi MyRepublic area Malang, bukan website resmi perusahaan pusat. Seluruh materi promosi mengacu pada kebijakan resmi MyRepublic.
           </p>
         </div>
       </div>
