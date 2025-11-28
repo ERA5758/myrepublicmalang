@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -75,7 +76,7 @@ export function FlashSaleBanner() {
             </p>
             <ul className="space-y-2 text-sm list-inside list-disc text-foreground/80 pl-2">
               <li><span className="font-semibold">Promo Bayar di Muka:</span> Dapatkan gratis langganan hingga 6 bulan.</li>
-              <li><span className="font-semibold">GRATIS Aplikasi Kasir POS Premium</span> selama 3 bulan (khusus UMKM).</li>
+              <li><span className="font-semibold">GRATIS Aplikasi Kasir POS Premium*</span> selama 3 bulan (khusus UMKM, inisiatif pribadi).</li>
               <li><span className="font-semibold">GRATIS Langganan Bulan Pertama*</span> (khusus UMKM, maks. Rp 150rb, inisiatif pribadi).</li>
             </ul>
              <Button asChild className="mt-4 animate-fade-in-up">
