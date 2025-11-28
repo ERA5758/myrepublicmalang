@@ -18,6 +18,7 @@ import { TermsAndConditionsDialog } from '@/components/terms-dialog';
 import { useEffect, useRef, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
+import { FlashSaleBanner } from '@/components/promo-banner';
 
 
 const whyChooseUsFeatures = [
@@ -139,6 +140,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
+      <FlashSaleBanner />
       {/* Hero Section */}
       <section className="relative w-full overflow-hidden">
         <Carousel
