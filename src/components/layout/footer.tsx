@@ -61,9 +61,12 @@ export function Footer() {
 
         </div>
         
-        <div className="border-t border-border/40 py-4">
-          <p className="text-center text-sm text-muted-foreground">
+        <div className="border-t border-border/40 py-4 text-center text-sm text-muted-foreground">
+          <p>
             © {new Date().getFullYear()} MyRepublic Malang. Sales Executive khusus pasang baru.
+          </p>
+          <p className="mt-2">
+            Situs ini adalah situs sales/mitra resmi, bukan website perusahaan PT MyRepublic. Untuk info perusahaan resmi silakan kunjungi <a href="https://myrepublic.co.id" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:underline">myrepublic.co.id</a>
           </p>
         </div>
       </div>
