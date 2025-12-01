@@ -1,16 +1,24 @@
+
 'use client';
 
 import { useState } from 'react';
 import coverageData from '@/lib/coverage-area.json';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { MapPin } from 'lucide-react';
 
 export default function CoverageAreasPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const areas = Object.keys(coverageData).sort();
+  
+  // Create a more structured data array
+  const areas = Object.entries(coverageData).map(([name, rws]) => ({
+    name,
+    rws
+  })).sort((a, b) => a.name.localeCompare(b.name));
 
   const filteredAreas = areas.filter(area =>
-    area.toLowerCase().includes(searchTerm.toLowerCase())
+    area.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -25,29 +33,38 @@ export default function CoverageAreasPage() {
       <Card>
         <CardHeader>
           <CardTitle>Area Layanan di Malang dan Sekitarnya</CardTitle>
-          <CardDescription>Cari nama kelurahan atau area Anda untuk memeriksa ketersediaan layanan.</CardDescription>
+          <CardDescription>Cari nama kelurahan Anda untuk melihat daftar RW yang ter-cover.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="mb-6">
+          <div className="mb-8">
             <Input
               type="text"
-              placeholder="Cari area Anda..."
+              placeholder="Cari kelurahan Anda..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
+              className="w-full max-w-md mx-auto"
             />
           </div>
           {filteredAreas.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="space-y-4">
               {filteredAreas.map((area) => (
-                <div key={area} className="bg-muted/50 p-3 rounded-md">
-                  <p className="font-medium text-sm text-foreground">{area}</p>
+                <div key={area.name} className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
+                  <h3 className="font-semibold flex items-center gap-2 text-primary">
+                    <MapPin className="h-5 w-5" />
+                    {area.name}
+                  </h3>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {area.rws.map((rw) => (
+                      <Badge key={rw} variant="secondary">RW {rw}</Badge>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">Area tidak ditemukan. Silakan coba kata kunci lain.</p>
+            <div className="text-center py-16 text-muted-foreground bg-muted/50 rounded-lg">
+                <p className="font-semibold">Area Tidak Ditemukan</p>
+                <p className="text-sm mt-1">Silakan coba kata kunci lain atau hubungi kami untuk informasi lebih lanjut.</p>
             </div>
           )}
         </CardContent>
