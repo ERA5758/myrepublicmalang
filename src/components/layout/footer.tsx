@@ -45,7 +45,7 @@ export function Footer() {
               <ul className="mt-4 space-y-2 text-sm">
                 <li className="flex items-start">
                     <Phone className="h-4 w-4 mr-2 mt-1 shrink-0"/>
-                    <span className="text-muted-foreground">Mira Velicia: 0851 84000 880</span>
+                    <span className="text-muted-foreground">Mira Velicia: 0851 84000 800</span>
                 </li>
               </ul>
             </div>

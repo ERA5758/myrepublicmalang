@@ -7,10 +7,10 @@ const contactMethods = [
     {
         icon: <Phone className="h-8 w-8 text-primary" />,
         title: 'Telepon / WhatsApp',
-        value: '0851 84000 880',
+        value: '0851 84000 800',
         name: 'Mira Velicia',
         actionText: 'Hubungi Sekarang',
-        href: 'https://wa.me/6285184000880'
+        href: 'https://wa.me/6285184000800'
     },
     {
         icon: <Instagram className="h-8 w-8 text-primary" />,

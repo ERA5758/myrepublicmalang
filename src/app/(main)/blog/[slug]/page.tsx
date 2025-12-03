@@ -225,7 +225,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
                           <Link href={`/register?plan=${offer.id}`}>Pilih Paket</Link>
                         </Button>
                          <Button className="w-full" variant="outline" asChild>
-                          <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                          <Link href="https://wa.me/6285184000800" target="_blank">Chat Sales</Link>
                         </Button>
                       </div>
                     </CardContent>

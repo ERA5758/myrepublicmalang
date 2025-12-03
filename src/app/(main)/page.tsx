@@ -235,7 +235,7 @@ export default function Home() {
               <CardContent>
                 <p className="text-muted-foreground mb-4">Lacak proses instalasi kemudian nikmati layanan MyRepublic!</p>
                 <Button asChild variant="outline">
-                   <Link href="https://wa.me/6285184000880" target="_blank">Lacak Proses</Link>
+                   <Link href="https://wa.me/6285184000800" target="_blank">Lacak Proses</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -342,7 +342,7 @@ export default function Home() {
                           <Link href={`/register?plan=${offer.id}`}>Langganan Sekarang</Link>
                         </Button>
                          <Button className="w-full" variant="outline" asChild>
-                          <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                          <Link href="https://wa.me/6285184000800" target="_blank">Chat Sales</Link>
                         </Button>
                       </div>
                     </CardContent>
@@ -397,7 +397,7 @@ export default function Home() {
                             <Link href={`/register?plan=${offer.id}`}>Langganan Sekarang</Link>
                           </Button>
                           <Button className="w-full" variant="outline" asChild>
-                            <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                            <Link href="https://wa.me/6285184000800" target="_blank">Chat Sales</Link>
                           </Button>
                         </div>
                       </CardContent>
@@ -421,7 +421,7 @@ export default function Home() {
                       </CardContent>
                       <div className="p-6 pt-0">
                         <Button className="w-full" variant="outline" asChild>
-                          <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                          <Link href="https://wa.me/6285184000800" target="_blank">Chat Sales</Link>
                         </Button>
                       </div>
                     </Card>
@@ -451,7 +451,7 @@ export default function Home() {
                         </CardContent>
                         <div className="p-6 pt-0">
                             <Button className="w-full" variant="outline" asChild>
-                            <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                            <Link href="https://wa.me/6285184000800" target="_blank">Chat Sales</Link>
                             </Button>
                         </div>
                       </Card>
@@ -484,7 +484,7 @@ export default function Home() {
                         </CardContent>
                          <div className="p-6 pt-0">
                             <Button className="w-full" variant="outline" asChild>
-                            <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                            <Link href="https://wa.me/6285184000800" target="_blank">Chat Sales</Link>
                             </Button>
                         </div>
                       </Card>
@@ -507,7 +507,7 @@ export default function Home() {
                       </CardContent>
                       <div className="p-6 pt-0">
                         <Button className="w-full" variant="outline" asChild>
-                          <Link href="https://wa.me/6285184000880" target="_blank">Chat Sales</Link>
+                          <Link href="https://wa.me/6285184000800" target="_blank">Chat Sales</Link>
                         </Button>
                       </div>
                     </Card>
