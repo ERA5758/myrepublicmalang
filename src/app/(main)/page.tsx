@@ -4,7 +4,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CircleCheckBig, ClipboardList, CreditCard, Headphones, Infinity, Shield, Tv, Wrench, Zap, Gauge, CloudOff } from 'lucide-react';
+import { ArrowRight, CircleCheckBig, ClipboardList, CreditCard, Headphones, Infinity, Shield, Tv, Wrench, Zap, Gauge, CloudOff, Gamepad2, Star } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -137,6 +137,8 @@ export default function Home() {
   const addOnTV = addOns.filter(a => a.category === 'tv');
   const addOnSmartHome = addOns.filter(a => a.category === 'smart-home');
   const addOnSpeedBooster = addOns.filter(a => a.category === 'speed-booster');
+  const myGamerOffer = offers.find(offer => offer.id === 'mygamer');
+
 
   return (
     <div className="flex flex-col">
@@ -295,9 +297,12 @@ export default function Home() {
             </p>
           </div>
           <Tabs defaultValue="internet-only" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 md:w-fit md:mx-auto">
+            <TabsList className="grid w-full grid-cols-4 md:w-fit md:mx-auto">
               <TabsTrigger value="internet-tv">Internet + TV</TabsTrigger>
               <TabsTrigger value="internet-only">Internet</TabsTrigger>
+              <TabsTrigger value="mygamer" className="hidden md:inline-flex items-center gap-2">
+                <Gamepad2 className="h-4 w-4" /> MyGamer
+              </TabsTrigger>
               <TabsTrigger value="addons">Add On</TabsTrigger>
             </TabsList>
             <TabsContent value="internet-only" className="mt-10">
@@ -405,6 +410,50 @@ export default function Home() {
                   ))}
                 </div>
               </TabsContent>
+            <TabsContent value="mygamer" className="mt-10">
+              <div className="rounded-xl overflow-hidden bg-gray-900 border border-purple-500/50 shadow-2xl shadow-purple-500/20">
+                {myGamerOffer && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 items-center">
+                    <div className="p-8 md:p-12 text-white">
+                      <Badge variant="destructive" className="mb-4 bg-purple-600 hover:bg-purple-700 text-white border-purple-400">
+                        <Gamepad2 className="mr-2 h-4 w-4" />
+                        PAKET GAMER TERBAIK
+                      </Badge>
+                      <h3 className="font-headline text-4xl font-bold text-purple-300">{myGamerOffer.title}</h3>
+                      <p className="text-lg text-purple-200/80 mb-4">{myGamerOffer.speed}</p>
+                      <p className="font-bold text-5xl text-white mt-2 mb-2">{myGamerOffer.price.split('/')[0]}/<span className="text-2xl">bln</span></p>
+                      <p className="text-sm text-white/70 mb-6">Harga sudah termasuk PPN 11%</p>
+                      <ul className="space-y-3 text-purple-200/90">
+                        {myGamerOffer.features.map((feature) => (
+                          <li key={feature} className="flex items-center gap-3">
+                            <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                       <div className="mt-8 flex gap-4">
+                        <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white" size="lg" asChild>
+                          <Link href={`/register?plan=${myGamerOffer.id}`}>Jadi Pro Player</Link>
+                        </Button>
+                         <Button className="w-full" variant="outline" size="lg" asChild>
+                          <Link href="https://wa.me/6285184000800" target="_blank">Tanya Pro Player</Link>
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="relative h-64 md:h-full min-h-[400px]">
+                      <Image
+                          src={myGamerOffer.image.imageUrl}
+                          alt={myGamerOffer.image.description}
+                          fill
+                          className="object-cover"
+                          data-ai-hint={myGamerOffer.image.imageHint}
+                      />
+                       <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent md:bg-gradient-to-l"></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
             <TabsContent value="addons" className="mt-10 space-y-12">
               <div>
                 <h3 className="font-headline text-2xl font-bold mb-6 text-center">Add On Perangkat</h3>
