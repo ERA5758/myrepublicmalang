@@ -9,7 +9,6 @@ import {
   onSnapshot,
   doc,
   setDoc,
-  updateDoc,
   deleteDoc,
   query,
   orderBy,
@@ -37,7 +36,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader, PlusCircle, Trash2, Edit } from 'lucide-react';
-import type { Offer, OfferTV, ImagePlaceholder } from '@/lib/definitions';
+import type { Offer, OfferTV, ImagePlaceholder, MyGamerPackage } from '@/lib/definitions';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,12 +51,13 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 
-type PackageType = 'offers' | 'offersTV';
-type PackageData = Offer | OfferTV;
+type PackageType = 'offers' | 'offersTV' | 'myGamerPackages';
+type PackageData = Offer | OfferTV | MyGamerPackage;
 
 export default function ManagePackagesPage() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [offersTV, setOffersTV] = useState<OfferTV[]>([]);
+  const [myGamerPackages, setMyGamerPackages] = useState<MyGamerPackage[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingPackage, setEditingPackage] = useState<PackageData | null>(null);
@@ -72,6 +72,7 @@ export default function ManagePackagesPage() {
 
     const offersQuery = query(collection(firestore, 'offers'), orderBy('price'));
     const offersTVQuery = query(collection(firestore, 'offersTV'), orderBy('price'));
+    const myGamerQuery = query(collection(firestore, 'myGamerPackages'));
 
     const unsubscribeOffers = onSnapshot(offersQuery, (snapshot) => {
       const fetchedOffers = snapshot.docs.map(
@@ -89,9 +90,18 @@ export default function ManagePackagesPage() {
       setLoading(false);
     });
 
+    const unsubscribeMyGamer = onSnapshot(myGamerQuery, (snapshot) => {
+        const fetchedPackages = snapshot.docs.map(
+            (doc) => ({ id: doc.id, ...doc.data() }) as MyGamerPackage
+        );
+        setMyGamerPackages(fetchedPackages);
+        setLoading(false);
+    });
+
     return () => {
       unsubscribeOffers();
       unsubscribeOffersTV();
+      unsubscribeMyGamer();
     };
   }, [firestore]);
 
@@ -139,9 +149,10 @@ export default function ManagePackagesPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as PackageType)} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="offers">Internet Saja</TabsTrigger>
           <TabsTrigger value="offersTV">Internet + TV</TabsTrigger>
+          <TabsTrigger value="myGamerPackages">MyGamer</TabsTrigger>
         </TabsList>
         <TabsContent value="offers">
           <PackageTable
@@ -162,6 +173,16 @@ export default function ManagePackagesPage() {
             isTVPackage
           />
         </TabsContent>
+         <TabsContent value="myGamerPackages">
+          <PackageTable
+            packages={myGamerPackages}
+            type="myGamerPackages"
+            onEdit={(pkg) => handleOpenForm(pkg, 'myGamerPackages')}
+            onDelete={(id) => handleDelete(id, 'myGamerPackages')}
+            loading={loading}
+            isGamerPackage
+          />
+        </TabsContent>
       </Tabs>
       
       <PackageForm
@@ -175,7 +196,7 @@ export default function ManagePackagesPage() {
 }
 
 // @ts-ignore
-function PackageTable({ packages, type, onEdit, onDelete, loading, isTVPackage = false }) {
+function PackageTable({ packages, type, onEdit, onDelete, loading, isTVPackage = false, isGamerPackage = false }) {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -188,7 +209,7 @@ function PackageTable({ packages, type, onEdit, onDelete, loading, isTVPackage =
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Nama Paket</TableHead>
+                    <TableHead>{isGamerPackage ? 'Tier' : 'Nama Paket'}</TableHead>
                     <TableHead>Kecepatan</TableHead>
                     <TableHead>Harga</TableHead>
                     {isTVPackage && <TableHead>Channel</TableHead>}
@@ -198,7 +219,7 @@ function PackageTable({ packages, type, onEdit, onDelete, loading, isTVPackage =
             <TableBody>
                 {packages.map((pkg) => (
                     <TableRow key={pkg.id}>
-                        <TableCell className="font-medium">{pkg.title}</TableCell>
+                        <TableCell className="font-medium">{isGamerPackage ? (pkg as MyGamerPackage).tier : pkg.title}</TableCell>
                         <TableCell>{pkg.speed}</TableCell>
                         <TableCell>{pkg.price}</TableCell>
                         {isTVPackage && <TableCell>{(pkg as OfferTV).channels}</TableCell>}
@@ -240,16 +261,30 @@ function PackageForm({ isOpen, setIsOpen, pkg, type }: {
     type: PackageType;
 }) {
     const defaultImage: ImagePlaceholder = { id: '', imageUrl: '', imageHint: '', description: '' };
-    const [formData, setFormData] = useState<Partial<PackageData>>({ image: defaultImage });
+    
+    const getInitialFormData = () => {
+        if (!isOpen) return {};
+        if (pkg) return { ...pkg };
+
+        const base = { id: '', image: { ...defaultImage }, features: [] };
+        if (type === 'myGamerPackages') {
+            return { ...base, tier: '', speed: '', price: '' };
+        }
+        if (type === 'offersTV') {
+            return { ...base, title: '', speed: '', price: '', promo: '', channels: '', stb: '' };
+        }
+        return { ...base, title: '', speed: '', price: '', promo: '' };
+    };
+
+    const [formData, setFormData] = useState<Partial<PackageData>>(getInitialFormData());
     const [formLoading, setFormLoading] = useState(false);
     const firestore = useFirestore();
     const { toast } = useToast();
 
     useEffect(() => {
-        if (isOpen) {
-            setFormData(pkg ? { ...pkg } : { id: '', title: '', speed: '', price: '', features: [], promo: '', image: { ...defaultImage } });
-        }
-    }, [isOpen, pkg]);
+        setFormData(getInitialFormData());
+    }, [isOpen, pkg, type]);
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -275,19 +310,31 @@ function PackageForm({ isOpen, setIsOpen, pkg, type }: {
         setFormLoading(true);
 
         const dataToSave = { ...formData };
-        if (!dataToSave.id) {
-          dataToSave.id = dataToSave.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        
+        let docId: string;
+        if (pkg) {
+            docId = pkg.id;
+        } else {
+            if (dataToSave.id) {
+                docId = dataToSave.id;
+            } else if ((dataToSave as MyGamerPackage).tier) {
+                docId = `mygamer-${(dataToSave as MyGamerPackage).tier.toLowerCase()}`;
+            } else if ((dataToSave as Offer).title) {
+                 docId = (dataToSave as Offer).title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            } else {
+                 toast({ variant: 'destructive', title: 'Gagal Menyimpan', description: 'ID paket tidak bisa dibuat.' });
+                 setFormLoading(false);
+                 return;
+            }
+            dataToSave.id = docId;
         }
+
         if (dataToSave.image && !dataToSave.image.id) {
-            dataToSave.image.id = dataToSave.id!;
+            dataToSave.image.id = docId;
         }
 
         try {
-            const docId = pkg?.id || dataToSave.id;
-            if (!docId) throw new Error("ID paket tidak boleh kosong.");
-
             const docRef = doc(firestore, type, docId);
-            // Use setDoc with merge to either create or update the document.
             await setDoc(docRef, dataToSave, { merge: true });
 
             toast({
@@ -315,17 +362,24 @@ function PackageForm({ isOpen, setIsOpen, pkg, type }: {
                 </DialogHeader>
                 <ScrollArea className="max-h-[70vh] pr-6">
                     <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                        {!pkg && (
+                        {!pkg && type !== 'myGamerPackages' && (
                             <div className="space-y-2">
                                 <Label htmlFor="id">ID Paket</Label>
                                 <Input id="id" name="id" value={formData.id || ''} onChange={handleChange} required placeholder="cth: value-30mbps" />
-                                <p className="text-xs text-muted-foreground">Gunakan huruf kecil, angka, dan tanda hubung. Cth: `value-30mbps`</p>
+                                <p className="text-xs text-muted-foreground">Gunakan huruf kecil, angka, dan tanda hubung.</p>
                             </div>
                         )}
-                        <div className="space-y-2">
-                            <Label htmlFor="title">Nama Paket</Label>
-                            <Input id="title" name="title" value={formData.title || ''} onChange={handleChange} required />
-                        </div>
+                        {type === 'myGamerPackages' ? (
+                             <div className="space-y-2">
+                                <Label htmlFor="tier">Tier Paket</Label>
+                                <Input id="tier" name="tier" value={(formData as MyGamerPackage).tier || ''} onChange={handleChange} required />
+                            </div>
+                        ): (
+                             <div className="space-y-2">
+                                <Label htmlFor="title">Nama Paket</Label>
+                                <Input id="title" name="title" value={(formData as Offer).title || ''} onChange={handleChange} required />
+                            </div>
+                        )}
                         <div className="space-y-2">
                             <Label htmlFor="speed">Kecepatan</Label>
                             <Input id="speed" name="speed" value={formData.speed || ''} onChange={handleChange} required />
@@ -334,10 +388,14 @@ function PackageForm({ isOpen, setIsOpen, pkg, type }: {
                             <Label htmlFor="price">Harga</Label>
                             <Input id="price" name="price" value={formData.price || ''} onChange={handleChange} required />
                         </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="promo">Promo</Label>
-                            <Input id="promo" name="promo" value={formData.promo || ''} onChange={handleChange} />
-                        </div>
+
+                        {type !== 'myGamerPackages' && (
+                            <div className="space-y-2">
+                                <Label htmlFor="promo">Promo</Label>
+                                <Input id="promo" name="promo" value={(formData as Offer).promo || ''} onChange={handleChange} />
+                            </div>
+                        )}
+
                         <div className="space-y-2">
                             <Label htmlFor="features">Fitur (satu per baris)</Label>
                             <Textarea id="features" name="features" value={formData.features?.join('\n') || ''} onChange={handleChange} />
@@ -382,5 +440,3 @@ function PackageForm({ isOpen, setIsOpen, pkg, type }: {
         </Dialog>
     );
 }
-
-    
