@@ -1,7 +1,8 @@
 
+
 import type { ImagePlaceholder } from './placeholder-images';
 import { PlaceHolderImages } from './placeholder-images';
-import type { Offer, OfferTV, AddOn, CarouselSlide } from './definitions';
+import type { Offer, OfferTV, AddOn, CarouselSlide, MyGamerPackage } from './definitions';
 
 type NavLink = {
   href: string;
@@ -155,6 +156,41 @@ export const offersTV: OfferTV[] = [
         channels: '76 Channel',
         stb: 'Termasuk STB ANDROID 12',
     },
+];
+
+export const myGamerPackages: MyGamerPackage[] = [
+    {
+        id: 'mygamer-silver',
+        tier: 'Silver',
+        speed: '250 Mbps',
+        price: 'Rp 400.000',
+        features: ['Kecepatan Up to 250 Mbps', 'Wifi 5', 'Device 1 - 10', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
+        image: { id: 'gamersilver', imageUrl: 'https://picsum.photos/seed/gamersilver/800/600', description: 'MyGamer Silver Package', imageHint: 'gamer silver' }
+    },
+    {
+        id: 'mygamer-gold',
+        tier: 'Gold',
+        speed: '500 Mbps',
+        price: 'Rp 550.000',
+        features: ['Kecepatan Up to 500 Mbps', 'Wifi 6', 'Device 1 - 15', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
+        image: { id: 'gamergold', imageUrl: 'https://picsum.photos/seed/gamergold/800/600', description: 'MyGamer Gold Package', imageHint: 'gamer gold' }
+    },
+    {
+        id: 'mygamer-diamond',
+        tier: 'Diamond',
+        speed: '750 Mbps',
+        price: 'Rp 700.000',
+        features: ['Kecepatan Up to 750 Mbps', 'Wifi 6', 'Device 1 - 15', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
+        image: { id: 'gamerdiamond', imageUrl: 'https://picsum.photos/seed/gamerdiamond/800/600', description: 'MyGamer Diamond Package', imageHint: 'gamer diamond' }
+    },
+    {
+        id: 'mygamer-platinum',
+        tier: 'Platinum',
+        speed: '1 Gbps',
+        price: 'Rp 900.000',
+        features: ['Kecepatan Up to 1 Gbps', 'Wifi 6', 'Device 1 - 20', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
+        image: { id: 'gamerplatinum', imageUrl: 'https://picsum.photos/seed/gamerplatinum/800/600', description: 'MyGamer Platinum Package', imageHint: 'gamer platinum' }
+    }
 ];
 
 export const addOns: AddOn[] = [

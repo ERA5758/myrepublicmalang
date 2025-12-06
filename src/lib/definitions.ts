@@ -1,4 +1,5 @@
 
+
 import { z } from "zod";
 
 export const LeadStatusEnum = z.enum(["Proses", "Cancel", "Reject", "Tidak Cover", "Done"]);
@@ -85,6 +86,15 @@ export type OfferTV = {
   stb: string;
 };
 
+export type MyGamerPackage = {
+    id: string;
+    tier: string;
+    speed: string;
+    price: string;
+    features: string[];
+    image: ImagePlaceholder;
+};
+
 export type Article = {
   id: string;
   slug: string;
@@ -137,4 +147,3 @@ export type Lead = {
     promos?: string[];
     status: z.infer<typeof LeadStatusEnum>;
 };
-

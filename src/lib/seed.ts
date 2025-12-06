@@ -1,7 +1,7 @@
 'use server';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
-import { offers, offersTV, addOns, carouselSlides } from './data';
+import { offers, offersTV, addOns, carouselSlides, myGamerPackages } from './blog-data';
 
 async function seedCollection(collectionName: string, data: any[]) {
     const { firestore } = initializeFirebase();
@@ -47,4 +47,8 @@ export async function seedAddOns() {
 
 export async function seedCarouselSlides() {
     return seedCollection('carouselSlides', carouselSlides);
+}
+
+export async function seedMyGamerPackages() {
+    return seedCollection('myGamerPackages', myGamerPackages);
 }

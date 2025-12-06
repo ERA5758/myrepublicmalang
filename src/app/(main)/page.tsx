@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { faqs } from '@/lib/data';
 import { collection, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
-import type { Offer, OfferTV, AddOn, CarouselSlide, Article } from '@/lib/definitions';
+import type { Offer, OfferTV, AddOn, CarouselSlide, Article, MyGamerPackage } from '@/lib/definitions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TermsAndConditionsDialog } from '@/components/terms-dialog';
 import { useEffect, useRef, useState } from 'react';
@@ -54,47 +54,13 @@ const whyChooseUsFeatures = [
     },
 ];
 
-const myGamerPackages = [
-    {
-        id: 'mygamer-silver',
-        tier: 'Silver',
-        speed: '250 Mbps',
-        price: 'Rp 400.000',
-        features: ['Kecepatan Up to 250 Mbps', 'Wifi 5', 'Device 1 - 10', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
-        image: { imageUrl: 'https://picsum.photos/seed/gamersilver/800/600', description: 'MyGamer Silver Package', imageHint: 'gamer silver' }
-    },
-    {
-        id: 'mygamer-gold',
-        tier: 'Gold',
-        speed: '500 Mbps',
-        price: 'Rp 550.000',
-        features: ['Kecepatan Up to 500 Mbps', 'Wifi 6', 'Device 1 - 15', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
-        image: { imageUrl: 'https://picsum.photos/seed/gamergold/800/600', description: 'MyGamer Gold Package', imageHint: 'gamer gold' }
-    },
-    {
-        id: 'mygamer-diamond',
-        tier: 'Diamond',
-        speed: '750 Mbps',
-        price: 'Rp 700.000',
-        features: ['Kecepatan Up to 750 Mbps', 'Wifi 6', 'Device 1 - 15', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
-        image: { imageUrl: 'https://picsum.photos/seed/gamerdiamond/800/600', description: 'MyGamer Diamond Package', imageHint: 'gamer diamond' }
-    },
-    {
-        id: 'mygamer-platinum',
-        tier: 'Platinum',
-        speed: '1 Gbps',
-        price: 'Rp 900.000',
-        features: ['Kecepatan Up to 1 Gbps', 'Wifi 6', 'Device 1 - 20', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
-        image: { imageUrl: 'https://picsum.photos/seed/gamerplatinum/800/600', description: 'MyGamer Platinum Package', imageHint: 'gamer platinum' }
-    }
-];
-
 export default function Home() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [offersTV, setOffersTV] = useState<OfferTV[]>([]);
   const [addOns, setAddOns] = useState<AddOn[]>([]);
   const [carouselSlides, setCarouselSlides] = useState<CarouselSlide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
+  const [myGamerPackages, setMyGamerPackages] = useState<MyGamerPackage[]>([]);
   const firestore = useFirestore();
 
   const autoplayPlugin = useRef(
@@ -124,6 +90,16 @@ export default function Home() {
           fetchedOffersTV.push({ id: doc.id, ...doc.data() } as OfferTV);
       });
       setOffersTV(fetchedOffersTV);
+
+      // Fetch MyGamer Packages
+      const myGamerCollection = collection(firestore, 'myGamerPackages');
+      const myGamerQuery = query(myGamerCollection);
+      const myGamerSnapshot = await getDocs(myGamerQuery);
+      const fetchedMyGamerPackages: MyGamerPackage[] = [];
+      myGamerSnapshot.forEach((doc) => {
+          fetchedMyGamerPackages.push({ id: doc.id, ...doc.data() } as MyGamerPackage);
+      });
+      setMyGamerPackages(fetchedMyGamerPackages);
 
       // Fetch AddOns
       const addOnsCollection = collection(firestore, 'addOns');

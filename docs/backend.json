@@ -63,6 +63,27 @@
       },
       "required": ["id", "title", "price", "speed", "features", "channels", "stb"]
     },
+    "MyGamerPackage": {
+      "title": "MyGamerPackage",
+      "description": "Represents a dedicated internet plan for gamers.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tier": { "type": "string", "enum": ["Silver", "Gold", "Diamond", "Platinum"] },
+        "speed": { "type": "string" },
+        "price": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "image": {
+          "type": "object",
+          "properties": {
+            "imageUrl": { "type": "string" },
+            "imageHint": { "type": "string" },
+            "description": { "type": "string" }
+          }
+        }
+      },
+      "required": ["id", "tier", "speed", "price", "features"]
+    },
     "AddOn": {
         "title": "AddOn",
         "description": "Represents an add-on product or service.",
@@ -162,6 +183,10 @@
      "/offersTV/{offerTVId}": {
       "schema": { "$ref": "#/entities/OfferTV" },
       "description": "Collection of internet + TV plan offers."
+    },
+    "/myGamerPackages/{packageId}": {
+      "schema": { "$ref": "#/entities/MyGamerPackage" },
+      "description": "Collection of dedicated gamer packages."
     },
     "/addOns/{addOnId}": {
       "schema": { "$ref": "#/entities/AddOn" },
