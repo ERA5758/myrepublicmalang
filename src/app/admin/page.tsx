@@ -5,7 +5,7 @@ import { useAuth, useUser } from "@/firebase";
 import { signOut } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Database } from "lucide-react";
 
 export default function AdminDashboardPage() {
     const { user } = useUser();
@@ -84,6 +84,20 @@ export default function AdminDashboardPage() {
                         <CardContent>
                            <div className="flex items-center text-sm text-primary">
                                 Pergi ke Manajemen Ulasan
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </Link>
+                 <Link href="/admin/seed" passHref>
+                    <Card className="h-full hover:border-primary transition-colors">
+                        <CardHeader>
+                            <CardTitle>Database Seeding</CardTitle>
+                            <CardDescription>Isi koleksi database dengan data awal (mock).</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                           <div className="flex items-center text-sm text-primary">
+                                Pergi ke Halaman Seeding
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </div>
                         </CardContent>
