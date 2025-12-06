@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
 import { Loader } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export default function AdminLayout({
   children,
@@ -13,17 +13,19 @@ export default function AdminLayout({
   const { user, isLoading } = useUser();
   const router = useRouter();
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.replace('/login');
+    }
+  }, [isLoading, user, router]);
+
+
+  if (isLoading || !user) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader className="h-8 w-8 animate-spin" />
       </div>
     );
-  }
-
-  if (!user) {
-    router.replace('/login');
-    return null;
   }
 
   return <>{children}</>;
