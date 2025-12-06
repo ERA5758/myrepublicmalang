@@ -4,7 +4,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CircleCheckBig, ClipboardList, CreditCard, Headphones, Infinity, Shield, Tv, Wrench, Zap, Gauge, CloudOff, Gamepad2, Star } from 'lucide-react';
+import { ArrowRight, CircleCheckBig, ClipboardList, CreditCard, Headphones, Infinity, Shield, Tv, Wrench, Zap, Gauge, CloudOff, Gamepad2, Star, Wifi } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -52,6 +52,41 @@ const whyChooseUsFeatures = [
         title: 'Layanan Pengaduan 24/7 Gratis',
         description: 'Customer Call (Web Call)',
     },
+];
+
+const myGamerPackages = [
+    {
+        id: 'mygamer-silver',
+        tier: 'Silver',
+        speed: '250 Mbps',
+        price: 'Rp 400.000',
+        features: ['Kecepatan Up to 250 Mbps', 'Wifi 5', 'Device 1 - 10', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
+        image: { imageUrl: 'https://picsum.photos/seed/gamersilver/800/600', description: 'MyGamer Silver Package', imageHint: 'gamer silver' }
+    },
+    {
+        id: 'mygamer-gold',
+        tier: 'Gold',
+        speed: '500 Mbps',
+        price: 'Rp 550.000',
+        features: ['Kecepatan Up to 500 Mbps', 'Wifi 6', 'Device 1 - 15', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
+        image: { imageUrl: 'https://picsum.photos/seed/gamergold/800/600', description: 'MyGamer Gold Package', imageHint: 'gamer gold' }
+    },
+    {
+        id: 'mygamer-diamond',
+        tier: 'Diamond',
+        speed: '750 Mbps',
+        price: 'Rp 700.000',
+        features: ['Kecepatan Up to 750 Mbps', 'Wifi 6', 'Device 1 - 15', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
+        image: { imageUrl: 'https://picsum.photos/seed/gamerdiamond/800/600', description: 'MyGamer Diamond Package', imageHint: 'gamer diamond' }
+    },
+    {
+        id: 'mygamer-platinum',
+        tier: 'Platinum',
+        speed: '1 Gbps',
+        price: 'Rp 900.000',
+        features: ['Kecepatan Up to 1 Gbps', 'Wifi 6', 'Device 1 - 20', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
+        image: { imageUrl: 'https://picsum.photos/seed/gamerplatinum/800/600', description: 'MyGamer Platinum Package', imageHint: 'gamer platinum' }
+    }
 ];
 
 export default function Home() {
@@ -300,7 +335,7 @@ export default function Home() {
             <TabsList className="grid w-full grid-cols-4 md:w-fit md:mx-auto">
               <TabsTrigger value="internet-tv">Internet + TV</TabsTrigger>
               <TabsTrigger value="internet-only">Internet</TabsTrigger>
-              <TabsTrigger value="mygamer" className="hidden md:inline-flex items-center gap-2">
+              <TabsTrigger value="mygamer" className="flex items-center gap-2">
                 <Gamepad2 className="h-4 w-4" /> MyGamer
               </TabsTrigger>
               <TabsTrigger value="addons">Add On</TabsTrigger>
@@ -411,48 +446,39 @@ export default function Home() {
                 </div>
               </TabsContent>
             <TabsContent value="mygamer" className="mt-10">
-              <div className="rounded-xl overflow-hidden bg-gray-900 border border-purple-500/50 shadow-2xl shadow-purple-500/20">
-                {myGamerOffer && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 items-center">
-                    <div className="p-8 md:p-12 text-white">
-                      <Badge variant="destructive" className="mb-4 bg-purple-600 hover:bg-purple-700 text-white border-purple-400">
-                        <Gamepad2 className="mr-2 h-4 w-4" />
-                        PAKET GAMER TERBAIK
-                      </Badge>
-                      <h3 className="font-headline text-4xl font-bold text-purple-300">{myGamerOffer.title}</h3>
-                      <p className="text-lg text-purple-200/80 mb-4">{myGamerOffer.speed}</p>
-                      <p className="font-bold text-5xl text-white mt-2 mb-2">{myGamerOffer.price.split('/')[0]}/<span className="text-2xl">bln</span></p>
-                      <p className="text-sm text-white/70 mb-6">Harga sudah termasuk PPN 11%</p>
-                      <ul className="space-y-3 text-purple-200/90">
-                        {myGamerOffer.features.map((feature) => (
-                          <li key={feature} className="flex items-center gap-3">
-                            <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                       <div className="mt-8 flex gap-4">
-                        <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white" size="lg" asChild>
-                          <Link href={`/register?plan=${myGamerOffer.id}`}>Jadi Pro Player</Link>
-                        </Button>
-                         <Button className="w-full" variant="outline" size="lg" asChild>
-                          <Link href="https://wa.me/6285184000800" target="_blank">Tanya Pro Player</Link>
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="relative h-64 md:h-full min-h-[400px]">
-                      <Image
-                          src={myGamerOffer.image.imageUrl}
-                          alt={myGamerOffer.image.description}
-                          fill
-                          className="object-cover"
-                          data-ai-hint={myGamerOffer.image.imageHint}
-                      />
-                       <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent md:bg-gradient-to-l"></div>
-                    </div>
-                  </div>
-                )}
-              </div>
+                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                    {myGamerPackages.map((pkg, index) => (
+                    <Card key={pkg.id} className="flex flex-col overflow-hidden bg-gray-900 border border-purple-500/50 shadow-2xl shadow-purple-500/20 text-white transition-all duration-300 hover:shadow-purple-400/30 hover:-translate-y-2 animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
+                        <CardHeader className="text-center p-6">
+                           <Badge variant="destructive" className="mx-auto mb-2 bg-purple-600 hover:bg-purple-700 text-white border-purple-400 w-fit">{pkg.tier}</Badge>
+                           <CardTitle className="font-headline text-3xl text-purple-300">MyGamer</CardTitle>
+                           <p className="font-bold text-4xl text-white mt-2">{pkg.speed}</p>
+                        </CardHeader>
+                        <CardContent className="flex flex-1 flex-col justify-between p-6">
+                        <div>
+                            <p className="font-bold text-4xl text-center mb-4">{pkg.price}/<span className="text-xl">bln</span></p>
+                            <p className="text-xs text-white/70 mb-6 text-center">Harga sudah termasuk PPN 11%</p>
+                            <ul className="space-y-3 text-purple-200/90">
+                                {pkg.features.map((feature) => (
+                                <li key={feature} className="flex items-center gap-3">
+                                    <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+                                    <span>{feature}</span>
+                                </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="mt-8 space-y-2">
+                            <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white" size="lg" asChild>
+                            <Link href={`/register?plan=${pkg.id}`}>Langganan Sekarang</Link>
+                            </Button>
+                            <Button className="w-full" variant="outline" size="lg" asChild>
+                            <Link href="https://wa.me/6285184000800" target="_blank">Chat Sales</Link>
+                            </Button>
+                        </div>
+                        </CardContent>
+                    </Card>
+                    ))}
+                </div>
             </TabsContent>
             <TabsContent value="addons" className="mt-10 space-y-12">
               <div>
