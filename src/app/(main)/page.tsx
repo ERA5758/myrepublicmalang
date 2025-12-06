@@ -449,10 +449,24 @@ export default function Home() {
                  <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                     {myGamerPackages.map((pkg, index) => (
                     <Card key={pkg.id} className="flex flex-col overflow-hidden bg-gray-900 border border-purple-500/50 shadow-2xl shadow-purple-500/20 text-white transition-all duration-300 hover:shadow-purple-400/30 hover:-translate-y-2 animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
-                        <CardHeader className="text-center p-6">
-                           <Badge variant="destructive" className="mx-auto mb-2 bg-purple-600 hover:bg-purple-700 text-white border-purple-400 w-fit">{pkg.tier}</Badge>
-                           <CardTitle className="font-headline text-3xl text-purple-300">MyGamer</CardTitle>
-                           <p className="font-bold text-4xl text-white mt-2">{pkg.speed}</p>
+                        <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
+                            {pkg.image && (
+                                <>
+                                <Image
+                                    src={pkg.image.imageUrl}
+                                    alt={pkg.image.description}
+                                    fill
+                                    className="object-cover"
+                                    data-ai-hint={pkg.image.imageHint}
+                                />
+                                <div className="absolute inset-0 bg-black/60"></div>
+                                </>
+                            )}
+                            <div className="relative z-10">
+                               <Badge variant="destructive" className="mx-auto mb-2 bg-purple-600 hover:bg-purple-700 text-white border-purple-400 w-fit">{pkg.tier}</Badge>
+                               <CardTitle className="font-headline text-3xl text-purple-300">MyGamer</CardTitle>
+                               <p className="font-bold text-4xl text-white mt-2">{pkg.speed}</p>
+                            </div>
                         </CardHeader>
                         <CardContent className="flex flex-1 flex-col justify-between p-6">
                         <div>
