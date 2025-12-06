@@ -321,7 +321,7 @@ export default function Home() {
                          <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
                          <p className="text-sm text-white/80">{offer.speed}</p>
                          <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
-                         <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
+                         <p className="text-xs text-white/70">Harga sudah termasuk PPN 11%</p>
                       </div>
                     </CardHeader>
                     <CardContent className="flex flex-1 flex-col justify-between p-6">
@@ -371,7 +371,7 @@ export default function Home() {
                           <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
                           <p className="text-sm text-white/80">{offer.speed}</p>
                           <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
-                          <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
+                          <p className="text-xs text-white/70">Harga sudah termasuk PPN 11%</p>
                         </div>
                       </CardHeader>
                       <CardContent className="flex flex-1 flex-col justify-between p-6">
@@ -417,7 +417,7 @@ export default function Home() {
                       </CardHeader>
                       <CardContent className="flex-grow">
                         <p className="font-bold text-2xl">{addon.price}</p>
-                        <p className="text-xs text-muted-foreground">Harga belum termasuk PPN 11%</p>
+                        <p className="text-xs text-muted-foreground">Harga sudah termasuk PPN 11%</p>
                       </CardContent>
                       <div className="p-6 pt-0">
                         <Button className="w-full" variant="outline" asChild>
@@ -439,7 +439,7 @@ export default function Home() {
                         </CardHeader>
                         <CardContent className="flex-grow">
                             <p className="font-bold text-2xl">{addon.price}</p>
-                            <p className="text-xs text-muted-foreground">Harga belum termasuk PPN 11%</p>
+                            <p className="text-xs text-muted-foreground">Harga sudah termasuk PPN 11%</p>
                             {addon.features && (
                                 <>
                                 <h4 className="font-semibold mt-4 mb-2">Fitur dan Benefit</h4>
@@ -472,7 +472,7 @@ export default function Home() {
                             {addon.oldPrice && <p className="text-sm text-muted-foreground line-through">{addon.oldPrice}</p>}
                            </div>
                            <p className="font-bold text-2xl mt-1">{addon.price}</p>
-                           <p className="text-xs text-muted-foreground">Harga belum termasuk PPN 11%</p>
+                           <p className="text-xs text-muted-foreground">Harga sudah termasuk PPN 11%</p>
                            <div className="text-left mt-4">
                             <p className="font-semibold text-sm">Fitur dan Benefit:</p>
                             <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1 mt-1">
@@ -503,7 +503,7 @@ export default function Home() {
                       </CardHeader>
                       <CardContent className="flex-grow">
                         <p className="font-bold text-2xl">{addon.price}</p>
-                        <p className="text-xs text-muted-foreground">Harga belum termasuk PPN 11%</p>
+                        <p className="text-xs text-muted-foreground">Harga sudah termasuk PPN 11%</p>
                       </CardContent>
                       <div className="p-6 pt-0">
                         <Button className="w-full" variant="outline" asChild>

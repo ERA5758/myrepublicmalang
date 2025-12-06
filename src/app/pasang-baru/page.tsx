@@ -180,7 +180,7 @@ function PasangBaruForm() {
                             <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
                             <p className="text-sm text-white/80">{offer.speed}</p>
                             <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
-                            <p className="text-xs text-white/70">Harga belum termasuk PPN 11%</p>
+                            <p className="text-xs text-white/70">Harga sudah termasuk PPN 11%</p>
                         </div>
                         </CardHeader>
                         <CardContent className="flex flex-1 flex-col justify-between p-6">

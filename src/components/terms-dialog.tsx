@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -32,7 +33,7 @@ export function TermsAndConditionsDialog() {
             <li>Promo berlaku untuk paket Internet Only dan Combo TV.</li>
             <li>Promo berlaku selama 12 bulan berlangganan.</li>
             <li>Promo gratis speed upgrade berlaku selama 3 bulan berlangganan.</li>
-            <li>Harga tertera diatas belum termasuk PPN 11%.</li>
+            <li>Harga sudah termasuk PPN 11%.</li>
             <li>
                 Nikmati performa internet sesuai yang tertera hanya dengan koneksi kabel LAN. Lebih stabil, lebih cepat, tanpa gangguan.
             </li>
