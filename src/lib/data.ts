@@ -71,7 +71,12 @@ export const offers: Offer[] = [
     price: "Rp 444.000/bln",
     promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Latensi Terendah untuk Gaming", "Prioritas Jaringan Game", "Internet Super Cepat"],
-    image: PlaceHolderImages.find(img => img.id === 'gamer-pro')!,
+    image: {
+      id: 'gamer-pro-static',
+      description: 'Gamer profesional bermain game di depan komputer',
+      imageUrl: 'https://picsum.photos/seed/mygamer-pro/800/600',
+      imageHint: 'gamer pro'
+    },
   },
   {
     id: "prime",
@@ -141,7 +146,12 @@ export const offersTV: OfferTV[] = [
     price: "Rp 485.000/bln",
     promo: "Promo Bayar 5/9/12 Bulan Gratis s/d 6 Bulan",
     features: ["Vidio Platinum FREE 12 BULAN", "Genflix FREE 12 BULAN", "Internet UNLIMITED", "Include ONT/Modem", "IP Public Static", "Gratis Instalasi Rp500,000", "DL & UL 1:1 up to 250 Mbps", "Ideal untuk 1 - 10 Device", "Akses langsung ke server game"],
-    image: PlaceHolderImages.find(img => img.id === 'gamer-pro')!,
+    image: {
+      id: 'gamer-pro-static-tv',
+      description: 'Gamer profesional bermain game di depan komputer dengan logo TV',
+      imageUrl: 'https://picsum.photos/seed/mygamer-pro-tv/800/600',
+      imageHint: 'gamer tv'
+    },
     channels: "76 Channel",
     stb: "Termasuk STB ANDROID 12",
   },
@@ -232,6 +242,7 @@ export const faqs: Faq[] = [
     
 
     
+
 
 
 
