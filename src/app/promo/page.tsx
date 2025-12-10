@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useFormState, useFormStatus } from 'react-dom';
 import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -39,7 +38,7 @@ function SubmitButton() {
 
 function PromoForm() {
   const initialState: LeadCaptureFormState = null;
-  const [state, dispatch] = useActionState(captureLead, initialState);
+  const [state, dispatch] = useFormState(captureLead, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   

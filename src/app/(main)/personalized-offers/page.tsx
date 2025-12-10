@@ -1,7 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useFormState, useFormStatus } from 'react-dom';
 import { Loader, Sparkles, Wifi } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,7 +27,7 @@ function SubmitButton() {
 
 export default function PersonalizedOffersPage() {
   const initialState: PersonalizedOfferFormState = {};
-  const [state, dispatch] = useActionState(getPersonalizedOffer, initialState);
+  const [state, dispatch] = useFormState(getPersonalizedOffer, initialState);
 
   return (
     <div className="container mx-auto max-w-4xl py-12 sm:py-16">

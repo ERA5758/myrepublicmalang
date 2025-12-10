@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useFormState, useFormStatus } from 'react-dom';
 import { ArrowRight, Loader, Mail, MapPin, Phone, User, LocateFixed, Package, Map, Award, BadgeCheck, Zap, CircleCheckBig } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,7 +35,7 @@ function SubmitButton() {
 
 function PasangBaruForm() {
   const initialState: LeadCaptureFormState = null;
-  const [state, dispatch] = useActionState(captureLead, initialState);
+  const [state, dispatch] = useFormState(captureLead, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const searchParams = useSearchParams();
