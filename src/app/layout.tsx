@@ -66,6 +66,18 @@ export default function RootLayout({
         />
         <meta name="theme-color" content="#8B5CF6" />
         <link rel="apple-touch-icon" href="/icons/myrep.png" />
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17765192016"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-17765192016');
+            `,
+          }}
+        />
       </head>
       <body
         className={cn(
