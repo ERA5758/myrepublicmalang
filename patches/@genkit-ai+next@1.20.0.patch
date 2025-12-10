@@ -1,13 +1,13 @@
 diff --git a/node_modules/@genkit-ai/next/package.json b/node_modules/@genkit-ai/next/package.json
-index 39a6e29..053c829 100644
+index 54da586..b3524b0 100644
 --- a/node_modules/@genkit-ai/next/package.json
 +++ b/node_modules/@genkit-ai/next/package.json
-@@ -34,7 +34,7 @@
-   "peerDependencies": {
-     "@genkit-ai/google-genai": "workspace:^",
-     "genkit": "workspace:^",
--    "next": "^15.0.0",
-+    "next": "14.x || ^15.0.0",
-     "react": "^18.2.0",
-     "zod": "^3.23.0"
+@@ -29,7 +29,7 @@
+     "typescript": "^5.0.0"
    },
+   "peerDependencies": {
+-    "next": "^15.0.0",
++    "next": "^14.0.0 || ^15.0.0",
+     "react": "^18.2.0"
+   },
+   "peerDependenciesMeta": {
