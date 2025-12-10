@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useFormState, useFormStatus } from 'react-dom';
@@ -10,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { getPersonalizedOffer } from '@/lib/actions';
 import { type PersonalizedOfferFormState } from '@/lib/definitions';
 import Link from 'next/link';
+import { useActionState } from 'react';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -27,7 +29,7 @@ function SubmitButton() {
 
 export default function PersonalizedOffersPage() {
   const initialState: PersonalizedOfferFormState = {};
-  const [state, dispatch] = useFormState(getPersonalizedOffer, initialState);
+  const [state, dispatch] = useActionState(getPersonalizedOffer, initialState);
 
   return (
     <div className="container mx-auto max-w-4xl py-12 sm:py-16">

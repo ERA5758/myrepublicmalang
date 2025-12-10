@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { ArrowRight, Globe, Loader, Mail, MapPin, Phone, User, LocateFixed, Package, Map } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { captureLead } from '@/lib/actions';
 import { type LeadCaptureFormState, type Offer, type OfferTV } from '@/lib/definitions';
-import { useEffect, useRef, useState, Suspense } from 'react';
+import { useEffect, useRef, useState, Suspense, useActionState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import {
@@ -42,7 +42,7 @@ function SubmitButton() {
 
 function RegisterForm() {
   const initialState: LeadCaptureFormState = null;
-  const [state, dispatch] = useFormState(captureLead, initialState);
+  const [state, dispatch] = useActionState(captureLead, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const searchParams = useSearchParams();

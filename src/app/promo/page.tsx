@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle, Gift, Gamepad2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { useToast } from '@/hooks/use-toast';
 import { captureLead } from '@/lib/actions';
 import { type LeadCaptureFormState, type Offer, type OfferTV, type MyGamerPackage } from '@/lib/definitions';
-import { useEffect, useRef, useState, Suspense } from 'react';
+import { useEffect, useRef, useState, Suspense, useActionState } from 'react';
 import coverageData from '@/lib/coverage-area.json';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
@@ -39,7 +39,7 @@ function SubmitButton() {
 
 function PromoForm() {
   const initialState: LeadCaptureFormState = null;
-  const [state, dispatch] = useFormState(captureLead, initialState);
+  const [state, dispatch] = useActionState(captureLead, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   
@@ -244,7 +244,9 @@ function PromoForm() {
                <Tabs defaultValue="internet-only" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="internet-only">Internet Saja</TabsTrigger>
-                  <TabsTrigger value="mygamer" className="flex items-center gap-2">MyGamer</TabsTrigger>
+                  <TabsTrigger value="mygamer" className="flex items-center gap-2">
+                    <Gamepad2 className="h-4 w-4" /> MyGamer
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="internet-only" className="mt-6">
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1">

@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useEffect, useState, useRef, useActionState } from 'react';
 import { useFirestore, initializeFirebase } from '@/firebase';
 import { collection, query, where, orderBy, getDocs, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader, Star, User } from 'lucide-react';
+import { useFormStatus } from 'react-dom';
 import type { Review, ReviewFormState } from '@/lib/definitions';
 import { ReviewSchema } from '@/lib/definitions';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -117,7 +117,7 @@ function ReviewForm({ setDialogOpen }: { setDialogOpen: (open: boolean) => void 
     const [rating, setRating] = useState(0);
 
     const initialState: ReviewFormState = null;
-    const [state, dispatch] = useFormState(submitReview, initialState);
+    const [state, dispatch] = useActionState(submitReview, initialState);
 
     useEffect(() => {
         if (state?.message) {
