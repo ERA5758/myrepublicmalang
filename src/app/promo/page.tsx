@@ -2,7 +2,7 @@
 'use client';
 
 import { useFormState, useFormStatus } from 'react-dom';
-import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle, Gift } from 'lucide-react';
+import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle, Gift, Gamepad2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { captureLead } from '@/lib/actions';
-import { type LeadCaptureFormState, type Offer, type OfferTV } from '@/lib/definitions';
+import { type LeadCaptureFormState, type Offer, type OfferTV, type MyGamerPackage } from '@/lib/definitions';
 import { useEffect, useRef, useState, Suspense } from 'react';
 import coverageData from '@/lib/coverage-area.json';
 import { useFirestore } from '@/firebase';
@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CountdownTimer } from '@/components/countdown-timer';
 import Link from 'next/link';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 
 
 function SubmitButton() {
@@ -49,6 +50,7 @@ function PromoForm() {
   const [selectedPlanValue, setSelectedPlanValue] = useState("");
   const [offers, setOffers] = useState<Offer[]>([]);
   const [offersTV, setOffersTV] = useState<OfferTV[]>([]);
+  const [myGamerPackages, setMyGamerPackages] = useState<MyGamerPackage[]>([]);
   const firestore = useFirestore();
   const [promoEndTime, setPromoEndTime] = useState<string | null>(null);
   const [promoExpired, setPromoExpired] = useState(false);
@@ -78,10 +80,13 @@ function PromoForm() {
         if (!firestore) return;
         const offersCollection = collection(firestore, 'offers');
         const offersTVCollection = collection(firestore, 'offersTV');
+        const myGamerCollection = collection(firestore, 'myGamerPackages');
 
         const offersQuery = query(offersCollection, orderBy('price'));
         const offersTVSnapshot = await getDocs(offersTVCollection);
         const offersSnapshot = await getDocs(offersQuery);
+        const myGamerSnapshot = await getDocs(myGamerCollection);
+
 
         const fetchedOffers: Offer[] = [];
         offersSnapshot.forEach(doc => {
@@ -94,6 +99,12 @@ function PromoForm() {
           fetchedOffersTV.push({ id: doc.id, ...doc.data() } as OfferTV);
         });
         setOffersTV(fetchedOffersTV);
+
+        const fetchedMyGamerPackages: MyGamerPackage[] = [];
+        myGamerSnapshot.forEach((doc) => {
+            fetchedMyGamerPackages.push({ id: doc.id, ...doc.data() } as MyGamerPackage);
+        });
+        setMyGamerPackages(fetchedMyGamerPackages);
         
         if (fetchedOffers.some(o => o.id === 'jet-20mbps-12get3-umkm')) {
             setSelectedPlanValue('jet-20mbps-12get3-umkm');
@@ -233,7 +244,7 @@ function PromoForm() {
                <Tabs defaultValue="internet-only" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="internet-only">Internet Saja</TabsTrigger>
-                  <TabsTrigger value="internet-tv">Internet + TV</TabsTrigger>
+                  <TabsTrigger value="mygamer" className="flex items-center gap-2">MyGamer</TabsTrigger>
                 </TabsList>
                 <TabsContent value="internet-only" className="mt-6">
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1">
@@ -284,60 +295,54 @@ function PromoForm() {
                       ))}
                   </div>
                 </TabsContent>
-                 <TabsContent value="internet-tv" className="mt-6">
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1">
-                      {offersTV.map((offer) => (
-                      <Card key={offer.id} className="flex flex-col overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-                          <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
-                          {offer.image && (
-                              <>
-                              <Image
-                                  src={offer.image.imageUrl}
-                                  alt={offer.image.description}
-                                  fill
-                                  className="object-cover"
-                                  data-ai-hint={offer.image.imageHint}
-                              />
-                              <div className="absolute inset-0 bg-black/50"></div>
-                              </>
-                          )}
-                          <div className="relative z-10">
-                              <CardTitle className="font-headline text-2xl">{offer.title}</CardTitle>
-                              <p className="text-sm text-white/80">{offer.speed}</p>
-                              <p className="font-bold text-3xl mt-2">{offer.price.split('/')[0]}/<span className="text-lg">bln</span></p>
-                              <p className="text-xs text-white/70">Harga sudah termasuk PPN 11%</p>
-                          </div>
-                          </CardHeader>
-                          <CardContent className="flex flex-1 flex-col justify-between p-6">
-                          <div>
-                              <div className="text-center mb-4">
-                                <h4 className="font-semibold">Channel TV</h4>
-                                <p className="text-muted-foreground text-sm flex items-center justify-center gap-2"><Tv className="h-4 w-4" /> {offer.channels}</p>
-                                <p className="text-muted-foreground text-xs">{offer.stb}</p>
-                              </div>
-                              {offer.promo && <p className="text-sm font-bold text-destructive mb-4 text-center">{offer.promo}</p>}
-                              <h4 className="font-semibold mb-2">Fitur dan Benefit</h4>
-                              <ul className="space-y-2 text-sm text-muted-foreground">
-                                {offer.features.map((feature) => (
-                                  <li key={feature} className="flex items-center">
-                                    <CircleCheckBig className="mr-2 h-4 w-4 text-green-500" />
+                 <TabsContent value="mygamer" className="mt-6">
+                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-1">
+                    {myGamerPackages.map((pkg, index) => (
+                    <Card key={pkg.id} className="flex flex-col overflow-hidden bg-gray-900 border border-purple-500/50 shadow-2xl shadow-purple-500/20 text-white transition-all duration-300 hover:shadow-purple-400/30 hover:-translate-y-2 animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
+                        <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
+                            {pkg.image && (
+                                <>
+                                <Image
+                                    src={pkg.image.imageUrl}
+                                    alt={pkg.image.description}
+                                    fill
+                                    className="object-cover"
+                                    data-ai-hint={pkg.image.imageHint}
+                                />
+                                <div className="absolute inset-0 bg-black/60"></div>
+                                </>
+                            )}
+                            <div className="relative z-10">
+                               <Badge variant="destructive" className="mx-auto mb-2 bg-purple-600 hover:bg-purple-700 text-white border-purple-400 w-fit">{pkg.tier}</Badge>
+                               <CardTitle className="font-headline text-3xl text-purple-300">MyGamer</CardTitle>
+                               <p className="font-bold text-4xl text-white mt-2">{pkg.speed}</p>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="flex flex-1 flex-col justify-between p-6">
+                        <div>
+                            <p className="font-bold text-4xl text-center mb-4">{pkg.price}/<span className="text-xl">bln</span></p>
+                            <p className="text-xs text-white/70 mb-6 text-center">Harga sudah termasuk PPN 11%</p>
+                            <ul className="space-y-3 text-purple-200/90">
+                                {pkg.features.map((feature) => (
+                                <li key={feature} className="flex items-center gap-3">
+                                    <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
                                     <span>{feature}</span>
-                                  </li>
+                                </li>
                                 ))}
-                              </ul>
-                          </div>
-                          <div className="mt-6">
-                              <Button className="w-full" variant="outline" onClick={() => {
-                                  setSelectedPlanValue(offer.id);
-                                  document.getElementById('form-card')?.scrollIntoView({ behavior: 'smooth' });
-                              }}>
-                                  Pilih Paket Ini
-                              </Button>
-                          </div>
-                          </CardContent>
-                      </Card>
-                      ))}
-                  </div>
+                            </ul>
+                        </div>
+                        <div className="mt-8 space-y-2">
+                            <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white" size="lg" onClick={() => {
+                                setSelectedPlanValue(pkg.id);
+                                document.getElementById('form-card')?.scrollIntoView({ behavior: 'smooth' });
+                            }}>
+                                Pilih Paket Gamer Ini
+                            </Button>
+                        </div>
+                        </CardContent>
+                    </Card>
+                    ))}
+                </div>
                  </TabsContent>
               </Tabs>
             </div>
@@ -373,10 +378,10 @@ function PromoForm() {
                           ))}
                         </SelectGroup>
                          <SelectGroup>
-                          <SelectLabel>Internet + TV</SelectLabel>
-                           {offersTV.map(offer => (
-                            <SelectItem key={offer.id} value={offer.id}>
-                              {offer.title} - {offer.speed} ({offer.price})
+                          <SelectLabel>MyGamer</SelectLabel>
+                           {myGamerPackages.map(pkg => (
+                            <SelectItem key={pkg.id} value={pkg.id}>
+                              MyGamer {pkg.tier} - {pkg.speed} ({pkg.price})
                             </SelectItem>
                           ))}
                         </SelectGroup>
