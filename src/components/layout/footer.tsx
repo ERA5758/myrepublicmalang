@@ -53,7 +53,7 @@ export function Footer() {
             <div>
               <h3 className="font-semibold tracking-wider uppercase">Ikuti Kami</h3>
               <div className="mt-4 flex space-x-4">
-                <Link href="#" className="text-muted-foreground hover:text-primary"><span className="sr-only">Facebook</span><Facebook className="h-6 w-6" /></Link>
+                <Link href="https://www.facebook.com/share/1KG9Tk9rMw/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">Facebook</span><Facebook className="h-6 w-6" /></Link>
                 <Link href="https://www.instagram.com/myrepublickotamalang/" className="text-muted-foreground hover:text-primary"><span className="sr-only">Instagram</span><Instagram className="h-6 w-6" /></Link>
                 <Link href="https://www.youtube.com/@myrepublicmalang" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">YouTube</span><Youtube className="h-6 w-6" /></Link>
               </div>
