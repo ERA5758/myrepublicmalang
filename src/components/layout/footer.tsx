@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Facebook, Instagram, Phone, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Phone, Youtube } from 'lucide-react';
 import Image from 'next/image';
 
 export function Footer() {
@@ -55,7 +55,7 @@ export function Footer() {
               <div className="mt-4 flex space-x-4">
                 <Link href="#" className="text-muted-foreground hover:text-primary"><span className="sr-only">Facebook</span><Facebook className="h-6 w-6" /></Link>
                 <Link href="https://www.instagram.com/myrepublickotamalang/" className="text-muted-foreground hover:text-primary"><span className="sr-only">Instagram</span><Instagram className="h-6 w-6" /></Link>
-                <Link href="#" className="text-muted-foreground hover:text-primary"><span className="sr-only">Twitter</span><Twitter className="h-6 w-6" /></Link>
+                <Link href="https://www.youtube.com/@myrepublicmalang" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">YouTube</span><Youtube className="h-6 w-6" /></Link>
               </div>
             </div>
           </div>
