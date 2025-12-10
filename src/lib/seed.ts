@@ -50,5 +50,20 @@ export async function seedCarouselSlides() {
 }
 
 export async function seedMyGamerPackages() {
-    return seedCollection('myGamerPackages', myGamerPackages);
+    // Correcting the broken image URL before seeding
+    const correctedMyGamerPackages = myGamerPackages.map(pkg => {
+        if (pkg.id === 'mygamer-platinum') {
+            return {
+                ...pkg,
+                image: {
+                    id: 'gamerplatinum',
+                    imageUrl: 'https://picsum.photos/seed/gamerplatinum/800/600',
+                    description: 'MyGamer Platinum Package',
+                    imageHint: 'gamer platinum'
+                }
+            };
+        }
+        return pkg;
+    });
+    return seedCollection('myGamerPackages', correctedMyGamerPackages);
 }
