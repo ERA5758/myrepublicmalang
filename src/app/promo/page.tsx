@@ -115,16 +115,26 @@ function PromoForm() {
 
   useEffect(() => {
     if (state?.message && !state.fields) {
+      const isSuccess = state.message.startsWith('Terima kasih');
       toast({
-        title: state.message.startsWith('Terima kasih') ? 'Pendaftaran Terkirim!' : 'Terjadi Kesalahan',
+        title: isSuccess ? 'Pendaftaran Terkirim!' : 'Terjadi Kesalahan',
         description: state.message,
-        variant: state.message.startsWith('Terima kasih') ? 'default' : 'destructive',
+        variant: isSuccess ? 'default' : 'destructive',
       });
-      if(state.message.startsWith('Terima kasih')) {
+      if(isSuccess) {
         formRef.current?.reset();
         setSelectedArea("");
         setLocation(null);
         setLocationError(null);
+        
+        // Trigger Google Ads Conversion Event
+        if (typeof window.gtag === 'function') {
+            window.gtag('event', 'conversion', {
+                'send_to': 'AW-17765192016/vaXwCN_moMgbENCijZdC',
+                'value': 1.0,
+                'currency': 'IDR'
+            });
+        }
       }
     }
   }, [state, toast]);
