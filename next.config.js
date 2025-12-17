@@ -46,7 +46,7 @@ const nextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https',
+        protocol: 'https' ,
         hostname: 'www.promomyrepublicjogja.com',
         port: '',
         pathname: '/**',
@@ -60,6 +60,12 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'mygamer.myrepublic.co.id',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'sapi.myrepublic.net.id',
         port: '',
         pathname: '/**',
       }
