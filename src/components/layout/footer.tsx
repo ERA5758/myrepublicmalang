@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Facebook, Instagram, Phone, Youtube } from 'lucide-react';
+import { Instagram, Phone, Youtube } from 'lucide-react';
 import Image from 'next/image';
 
 export function Footer() {
@@ -53,8 +53,13 @@ export function Footer() {
             <div>
               <h3 className="font-semibold tracking-wider uppercase">Ikuti Kami</h3>
               <div className="mt-4 flex space-x-4">
-                <Link href="https://www.facebook.com/share/1KG9Tk9rMw/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">Facebook</span><Facebook className="h-6 w-6" /></Link>
-                <Link href="https://www.instagram.com/myrepublic.id/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">Instagram</span><Instagram className="h-6 w-6" /></Link>
+                <Link href="https://www.tiktok.com/@miramyrepublic" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary">
+                  <span className="sr-only">TikTok</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                    <path d="M21 7.917v4.034a9.948 9.948 0 0 1-5-1.951v4.5a6.5 6.5 0 1 1-8-6.326v4.326a2.5 2.5 0 1 0 4 2v-11.5h4.083a6.005 6.005 0 0 0 4.917 4.917z"></path>
+                  </svg>
+                </Link>
+                <Link href="https://www.instagram.com/miravelicia.mlg/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">Instagram</span><Instagram className="h-6 w-6" /></Link>
                 <Link href="https://www.youtube.com/@myrepublicindonesia" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">YouTube</span><Youtube className="h-6 w-6" /></Link>
               </div>
             </div>
