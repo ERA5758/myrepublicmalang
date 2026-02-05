@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useActionState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle, Gift, Gamepad2, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { useToast } from '@/hooks/use-toast';
 import { captureLead } from '@/lib/actions';
 import { type LeadCaptureFormState, type Offer, type OfferTV, type MyGamerPackage } from '@/lib/definitions';
-import { useEffect, useRef, useState, Suspense } from 'react';
+import { useActionState, useEffect, useRef, useState, Suspense } from 'react';
 import coverageData from '@/lib/coverage-area.json';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
@@ -309,7 +309,7 @@ function PromoForm() {
                  <TabsContent value="mygamer" className="mt-6">
                  <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-1">
                     {myGamerPackages.map((pkg, index) => (
-                    <Card key={pkg.id} className="flex flex-col overflow-hidden bg-gray-900 border border-purple-500/50 shadow-2xl shadow-purple-500/20 text-white transition-all duration-300 hover:shadow-purple-400/30 hover:-translate-y-2 animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
+                    <Card key={pkg.id} className="flex flex-col overflow-hidden bg-gray-900 border border-purple-500/50 shadow-2xl shadow-purple-500/20 text-white transition-all duration-300 hover:shadow-purple-400/30 hover:-translate-y-2 animate-fade-in-up" style={{ animationDelay: `${'\'\''}${index * 100}ms` }}>
                         <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
                             {pkg.image && (
                                 <>
@@ -486,7 +486,7 @@ function PromoForm() {
                   {state?.fields?.locationPin && <p className="text-sm text-destructive">{state.fields.locationPin}</p>}
                 </div>
 
-                <input type="hidden" name="locationPin" value={location ? `${location.lat},${location.lon}`: ''} required />
+                <input type="hidden" name="locationPin" value={location ? `${'\'\''}${location.lat},${location.lon}`: ''} required />
                 
                 {state?.issues && state.issues.map(issue => <p key={issue} className="text-sm text-destructive">{issue}</p>)}
                 
