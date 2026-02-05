@@ -11,8 +11,8 @@ const siteUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'Promo Spesial MyRepublic Malang - Gratis Instalasi!',
-  description: 'Daftar internet MyRepublic sekarang dan dapatkan gratis biaya instalasi senilai Rp500.000. Internet cepat, unlimited, dan stabil untuk warga Malang.',
+  title: 'Promo Spesial MyRepublic - Gratis Instalasi!',
+  description: 'Daftar internet MyRepublic sekarang dan dapatkan gratis biaya instalasi senilai Rp500.000. Internet cepat, unlimited, dan stabil untuk Anda.',
   robots: {
     index: false, // Disarankan untuk tidak mengindeks halaman landing page iklan
     follow: false,
@@ -25,7 +25,7 @@ function LandingPageHeader() {
             <div className="container mx-auto flex justify-between items-center">
                  <Image 
                     src="https://i.ibb.co/7MP29XK/Picsart-25-11-28-12-55-53-228.png"
-                    alt="MyRepublic Malang Logo"
+                    alt="MyRepublic Logo"
                     width={150}
                     height={40}
                     className="object-contain"
@@ -43,7 +43,7 @@ function LandingPageFooter() {
     return (
         <footer className="bg-muted py-4 mt-8">
             <div className="container mx-auto text-center text-muted-foreground text-sm">
-                <p>© {new Date().getFullYear()} MyRepublic Malang - Penawaran Khusus Pemasaran Online.</p>
+                <p>© {new Date().getFullYear()} MyRepublic - Penawaran Khusus Pemasaran Online.</p>
             </div>
         </footer>
     )

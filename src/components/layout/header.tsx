@@ -24,7 +24,7 @@ export function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <Image 
               src="https://i.ibb.co/7MP29XK/Picsart-25-11-28-12-55-53-228.png"
-              alt="MyRepublic Malang Logo"
+              alt="MyRepublic Logo"
               width={150}
               height={40}
               className="object-contain"
@@ -74,7 +74,7 @@ export function Header() {
                   >
                      <Image 
                         src="https://i.ibb.co/7MP29XK/Picsart-25-11-28-12-55-53-228.png"
-                        alt="MyRepublic Malang Logo"
+                        alt="MyRepublic Logo"
                         width={150}
                         height={40}
                         className="object-contain"

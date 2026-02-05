@@ -116,10 +116,10 @@ export default function BlogIndexPage() {
     <div className="container mx-auto max-w-5xl py-12 sm:py-16 px-4">
       <div className="text-center mb-12">
         <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">
-          Blog MyRepublic Malang
+          Blog MyRepublic
         </h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-          Wawasan, tips, dan pembaruan terbaru tentang internet cepat di Malang.
+          Wawasan, tips, dan pembaruan terbaru tentang internet super cepat.
         </p>
       </div>
 

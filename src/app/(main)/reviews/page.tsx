@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { useActionState } from 'react';
+import { useEffect, useState, useRef, useActionState } from 'react';
 import { useFirestore, initializeFirebase } from '@/firebase';
 import { collection, query, where, orderBy, getDocs, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -225,7 +224,7 @@ export default function ReviewsPage() {
             Ulasan Pelanggan
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-            Lihat apa kata mereka tentang layanan MyRepublic di Malang.
+            Lihat apa kata mereka tentang layanan MyRepublic.
           </p>
         </div>
          <div className="mb-8 text-center">

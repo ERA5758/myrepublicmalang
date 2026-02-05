@@ -15,7 +15,6 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { useSearchParams } from 'next/navigation';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
-import coverageData from '@/lib/coverage-area.json';
 import Image from 'next/image';
 
 
@@ -45,11 +44,8 @@ function PasangBaruForm() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [selectedPlanValue, setSelectedPlanValue] = useState(preselectedPlan || "");
-  const [selectedArea, setSelectedArea] = useState("");
   const [offers, setOffers] = useState<Offer[]>([]);
   const firestore = useFirestore();
-
-  const coverageAreas = Object.keys(coverageData).sort();
 
   useEffect(() => {
     async function fetchPackages() {
@@ -79,7 +75,6 @@ function PasangBaruForm() {
       if(isSuccess) {
         formRef.current?.reset();
         setSelectedPlanValue("");
-        setSelectedArea("");
         setLocation(null);
         setLocationError(null);
 
@@ -140,7 +135,7 @@ function PasangBaruForm() {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-start">
           <div className="space-y-8 lg:sticky lg:top-8">
             <div className='space-y-4 text-center lg:text-left'>
-                <h1 className="font-headline text-4xl font-bold tracking-tight text-primary sm:text-5xl lg:text-6xl">Promo Spesial MyRepublic Malang!</h1>
+                <h1 className="font-headline text-4xl font-bold tracking-tight text-primary sm:text-5xl lg:text-6xl">Promo Spesial MyRepublic!</h1>
                 <p className="text-xl text-muted-foreground">
                     Khusus untuk Anda yang melihat iklan ini, pasang internet fiber super cepat sekarang dan dapatkan <strong className="text-foreground">GRATIS BIAYA INSTALASI</strong> senilai Rp500.000!
                 </p>
@@ -258,21 +253,10 @@ function PasangBaruForm() {
                   {state?.fields?.email && <p className="text-sm text-destructive">{state.fields.email}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="area">Area/Kelurahan</Label>
+                  <Label htmlFor="area">Kota / Kabupaten</Label>
                   <div className="relative">
                     <Map className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Select name="area" required value={selectedArea} onValueChange={setSelectedArea}>
-                      <SelectTrigger className="pl-10">
-                        <SelectValue placeholder="Pilih area/kelurahan Anda" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {coverageAreas.map(area => (
-                          <SelectItem key={area} value={area}>
-                            {area}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Input id="area" name="area" placeholder="cth. Jakarta Selatan" required className="pl-10" />
                   </div>
                   {state?.fields?.area && <p className="text-sm text-destructive">{state.fields.area}</p>}
                 </div>
@@ -281,7 +265,7 @@ function PasangBaruForm() {
                   <Label htmlFor="address">Alamat Instalasi Lengkap</Label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input id="address" name="address" placeholder="Nama jalan, nomor rumah, RT/RW" required className="pl-10" />
+                    <Input id="address" name="address" placeholder="Nama jalan, nomor rumah, RT/RW, Kelurahan, Kecamatan" required className="pl-10" />
                   </div>
                   {state?.fields?.address && <p className="text-sm text-destructive">{state.fields.address}</p>}
                 </div>

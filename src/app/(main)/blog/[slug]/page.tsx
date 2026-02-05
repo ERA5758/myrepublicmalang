@@ -87,7 +87,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
                     alt: article.title,
                 },
             ],
-            authors: ['MyRepublic Malang'],
+            authors: ['MyRepublic'],
         },
          twitter: {
             card: 'summary_large_image',
@@ -121,12 +121,12 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     image: article.image.imageUrl,
     author: {
       '@type': 'Organization',
-      name: 'MyRepublic Malang',
+      name: 'MyRepublic',
       url: siteUrl
     },
     publisher: {
       '@type': 'Organization',
-      name: 'MyRepublic Malang',
+      name: 'MyRepublic',
       logo: {
         '@type': 'ImageObject',
         url: 'https://www.myrepublic.co.id/wp-content/uploads/2022/12/logo-myrepublic.png',

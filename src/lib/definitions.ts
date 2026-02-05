@@ -27,7 +27,7 @@ export type LeadCaptureFormState = {
 
 export const PersonalizedOfferSchema = z.object({
   address: z.string().min(10, {
-    message: "Silakan masukkan alamat yang valid di Malang.",
+    message: "Silakan masukkan alamat yang valid.",
   }),
   internetUsageHabits: z.string().min(10, {
     message: "Harap jelaskan penggunaan internet Anda (mis., bermain game, streaming, bekerja).",

@@ -23,7 +23,6 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { useSearchParams } from 'next/navigation';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
-import coverageData from '@/lib/coverage-area.json';
 
 
 function SubmitButton() {
@@ -52,12 +51,9 @@ function RegisterForm() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
   const [selectedPlanValue, setSelectedPlanValue] = useState(preselectedPlan || "");
-  const [selectedArea, setSelectedArea] = useState("");
   const [offers, setOffers] = useState<Offer[]>([]);
   const [offersTV, setOffersTV] = useState<OfferTV[]>([]);
   const firestore = useFirestore();
-
-  const coverageAreas = Object.keys(coverageData).sort();
 
   useEffect(() => {
     async function fetchPackages() {
@@ -76,7 +72,7 @@ function RegisterForm() {
         // Fetch Internet + TV offers
         const offersTVCollection = collection(firestore, 'offersTV');
         const offersTVQuery = query(offersTVCollection, orderBy('price'));
-        const offersTVSnapshot = await getDocs(offersTVQuery);
+        const offersTVSnapshot = await getDocs(offersTVCollection);
         const fetchedOffersTV: OfferTV[] = [];
         offersTVSnapshot.forEach(doc => {
             fetchedOffersTV.push({ id: doc.id, ...doc.data() } as OfferTV);
@@ -98,7 +94,6 @@ function RegisterForm() {
       if(isSuccess) {
         formRef.current?.reset();
         setSelectedPlanValue("");
-        setSelectedArea("");
         setLocation(null);
         setLocationError(null);
         
@@ -160,7 +155,7 @@ function RegisterForm() {
         <div className="space-y-6">
           <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">Bergabunglah dengan Revolusi</h1>
           <p className="text-xl text-muted-foreground">
-            Anda selangkah lagi untuk merasakan internet tercepat di Malang. Isi formulir untuk memulai, dan kami akan menangani sisanya.
+            Anda selangkah lagi untuk merasakan internet super cepat. Isi formulir untuk memulai, dan kami akan menangani sisanya.
           </p>
            <div className="space-y-4">
             <h2 className="font-headline text-2xl font-semibold">Belum Yakin?</h2>
@@ -218,21 +213,10 @@ function RegisterForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="area">Area/Kelurahan</Label>
-                 <div className="relative">
+                <Label htmlFor="area">Kota / Kabupaten</Label>
+                <div className="relative">
                   <Map className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Select name="area" required value={selectedArea} onValueChange={setSelectedArea}>
-                    <SelectTrigger className="pl-10">
-                      <SelectValue placeholder="Pilih area/kelurahan Anda" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {coverageAreas.map(area => (
-                        <SelectItem key={area} value={area}>
-                          {area}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Input id="area" name="area" placeholder="cth. Jakarta Selatan" required className="pl-10" />
                 </div>
                 {state?.fields?.area && <p className="text-sm text-destructive">{state.fields.area}</p>}
               </div>
@@ -241,7 +225,7 @@ function RegisterForm() {
                 <Label htmlFor="address">Alamat Instalasi Lengkap</Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="address" name="address" placeholder="cth. Jl. Ijen No. 25, RT 01/RW 02" required className="pl-10" />
+                  <Input id="address" name="address" placeholder="cth. Jl. Ijen No. 25, Kelurahan, Kecamatan" required className="pl-10" />
                 </div>
                 {state?.fields?.address && <p className="text-sm text-destructive">{state.fields.address}</p>}
               </div>

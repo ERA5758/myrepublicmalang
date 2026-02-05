@@ -12,8 +12,8 @@ const siteUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'Promo Spesial MyRepublic UMKM - Internet & POS Gratis!',
-  description: 'Dapatkan internet super cepat Jet 20Mbps dengan promo bayar di muka, gratis berbulan-bulan, plus bonus Aplikasi Kasir Chika POS Premium selama 3 bulan. Khusus UMKM Malang!',
+  title: 'Promo Spesial MyRepublic - Internet & Bonus Melimpah!',
+  description: 'Dapatkan internet super cepat dengan promo bayar di muka, gratis berbulan-bulan, plus bonus Speed Boost. Promo terbatas!',
   robots: {
     index: false,
     follow: false,
@@ -26,7 +26,7 @@ function LandingPageHeader() {
             <div className="container mx-auto flex h-16 justify-between items-center px-4">
                  <Image 
                     src="https://i.ibb.co/7MP29XK/Picsart-25-11-28-12-55-53-228.png"
-                    alt="MyRepublic Malang Logo"
+                    alt="MyRepublic Logo"
                     width={150}
                     height={40}
                     className="object-contain"

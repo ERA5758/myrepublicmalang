@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Phone, Instagram, Facebook, Twitter } from 'lucide-react';
+import { Phone, Instagram, Facebook, Youtube } from 'lucide-react';
 import Link from 'next/link';
 
 const contactMethods = [
@@ -15,23 +15,23 @@ const contactMethods = [
     {
         icon: <Instagram className="h-8 w-8 text-primary" />,
         title: 'Instagram',
-        value: '@myrepublickotamalang',
+        value: '@myrepublic.id',
         actionText: 'Kunjungi Profil',
-        href: 'https://www.instagram.com/myrepublickotamalang/'
+        href: 'https://www.instagram.com/myrepublic.id/'
     },
     {
         icon: <Facebook className="h-8 w-8 text-primary" />,
         title: 'Facebook',
-        value: 'MyRepublic Malang',
+        value: 'MyRepublic',
         actionText: 'Kunjungi Halaman',
-        href: '#'
+        href: 'https://www.facebook.com/share/1KG9Tk9rMw/'
     },
     {
-        icon: <Twitter className="h-8 w-8 text-primary" />,
-        title: 'Twitter',
-        value: '@myrepublicmlg',
-        actionText: 'Kunjungi Profil',
-        href: '#'
+        icon: <Youtube className="h-8 w-8 text-primary" />,
+        title: 'YouTube',
+        value: '@myrepublicindonesia',
+        actionText: 'Kunjungi Channel',
+        href: 'https://www.youtube.com/@myrepublicindonesia'
     }
 ]
 

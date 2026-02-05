@@ -1,72 +1,36 @@
 
-'use client';
-
-import { useState } from 'react';
-import coverageData from '@/lib/coverage-area.json';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { MapPin } from 'lucide-react';
+import { Phone } from 'lucide-react';
+import Link from 'next/link';
 
-export default function CoverageAreasPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  // Create a more structured data array
-  const areas = Object.entries(coverageData).map(([name, rws]) => ({
-    name,
-    rws
-  })).sort((a, b) => a.name.localeCompare(b.name));
-
-  const filteredAreas = areas.filter(area =>
-    area.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+export default function CoverageCheckPage() {
   return (
-    <div className="container mx-auto max-w-5xl py-12 sm:py-16 px-4">
+    <div className="container mx-auto max-w-4xl py-12 sm:py-16 px-4">
       <div className="text-center mb-12">
-        <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">Daftar Area Jangkauan</h1>
+        <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl">Cek Jangkauan Area Anda</h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-          Temukan apakah area Anda termasuk dalam jangkauan jaringan fiber MyRepublic. Kami terus berkembang setiap hari!
+          Jaringan fiber optik MyRepublic terus berkembang pesat di seluruh Indonesia. Untuk mendapatkan informasi ketersediaan layanan yang paling akurat dan terkini di lokasi Anda, cara terbaik adalah dengan menghubungi tim sales kami.
         </p>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Area Layanan di Malang dan Sekitarnya</CardTitle>
-          <CardDescription>Cari nama kelurahan Anda untuk melihat daftar RW yang ter-cover.</CardDescription>
+      <Card className="max-w-lg mx-auto">
+        <CardHeader className="text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+                <Phone className="h-8 w-8 text-primary"/>
+            </div>
+            <CardTitle>Hubungi Kami untuk Cek Coverage</CardTitle>
+            <CardDescription>
+                Tim kami siap membantu memeriksa apakah alamat Anda sudah ter-cover oleh jaringan super cepat kami.
+            </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="mb-8">
-            <Input
-              type="text"
-              placeholder="Cari kelurahan Anda..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full max-w-md mx-auto"
-            />
-          </div>
-          {filteredAreas.length > 0 ? (
-            <div className="space-y-4">
-              {filteredAreas.map((area) => (
-                <div key={area.name} className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
-                  <h3 className="font-semibold flex items-center gap-2 text-primary">
-                    <MapPin className="h-5 w-5" />
-                    {area.name}
-                  </h3>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {area.rws.map((rw) => (
-                      <Badge key={rw} variant="secondary">RW {rw}</Badge>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16 text-muted-foreground bg-muted/50 rounded-lg">
-                <p className="font-semibold">Area Tidak Ditemukan</p>
-                <p className="text-sm mt-1">Silakan coba kata kunci lain atau hubungi kami untuk informasi lebih lanjut.</p>
-            </div>
-          )}
+        <CardContent className="text-center">
+            <Button asChild size="lg">
+                <Link href="https://wa.me/6285184000800" target="_blank" rel="noopener noreferrer">
+                    <Phone className="mr-2 h-5 w-5" />
+                    Chat via WhatsApp
+                </Link>
+            </Button>
+            <p className="text-xs text-muted-foreground mt-4">Layanan 7 hari seminggu.</p>
         </CardContent>
       </Card>
     </div>

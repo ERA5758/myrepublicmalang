@@ -12,7 +12,6 @@ import { useToast } from '@/hooks/use-toast';
 import { captureLead } from '@/lib/actions';
 import { type LeadCaptureFormState, type Offer, type OfferTV, type MyGamerPackage } from '@/lib/definitions';
 import { useActionState, useEffect, useRef, useState, Suspense } from 'react';
-import coverageData from '@/lib/coverage-area.json';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import Image from 'next/image';
@@ -46,7 +45,6 @@ function PromoForm() {
   const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isLocating, setIsLocating] = useState(false);
-  const [selectedArea, setSelectedArea] = useState("");
   const [selectedPlanValue, setSelectedPlanValue] = useState("");
   const [offers, setOffers] = useState<Offer[]>([]);
   const [offersTV, setOffersTV] = useState<OfferTV[]>([]);
@@ -56,8 +54,6 @@ function PromoForm() {
   const [promoExpired, setPromoExpired] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
-
-  const coverageAreas = Object.keys(coverageData).sort();
 
   useEffect(() => {
     setIsClient(true);
@@ -123,7 +119,6 @@ function PromoForm() {
       });
       if(isSuccess) {
         formRef.current?.reset();
-        setSelectedArea("");
         setLocation(null);
         setLocationError(null);
         
@@ -178,7 +173,7 @@ function PromoForm() {
             <XCircle className="h-20 w-20 text-destructive mb-6" />
             <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">Promo Telah Berakhir</h1>
             <p className="mt-6 text-lg leading-8 text-muted-foreground">
-                Mohon maaf, penawaran khusus untuk UMKM telah selesai. Namun, Anda masih bisa mendaftar untuk paket reguler kami yang tidak kalah menarik.
+                Mohon maaf, penawaran khusus ini telah selesai. Namun, Anda masih bisa mendaftar untuk paket reguler kami yang tidak kalah menarik.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
                 <Button asChild>
@@ -451,21 +446,10 @@ function PromoForm() {
                   {state?.fields?.email && <p className="text-sm text-destructive">{state.fields.email}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="area">Area/Kelurahan</Label>
+                  <Label htmlFor="area">Kota / Kabupaten</Label>
                   <div className="relative">
                     <Map className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Select name="area" required value={selectedArea} onValueChange={setSelectedArea}>
-                      <SelectTrigger className="pl-10">
-                        <SelectValue placeholder="Pilih area/kelurahan Anda" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {coverageAreas.map(area => (
-                          <SelectItem key={area} value={area}>
-                            {area}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Input id="area" name="area" placeholder="cth. Jakarta Selatan" required className="pl-10" />
                   </div>
                   {state?.fields?.area && <p className="text-sm text-destructive">{state.fields.area}</p>}
                 </div>
@@ -474,7 +458,7 @@ function PromoForm() {
                   <Label htmlFor="address">Alamat Instalasi Lengkap</Label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input id="address" name="address" placeholder="Nama jalan, nomor rumah, RT/RW" required className="pl-10" />
+                    <Input id="address" name="address" placeholder="Nama jalan, nomor rumah, RT/RW, Kelurahan, Kecamatan" required className="pl-10" />
                   </div>
                   {state?.fields?.address && <p className="text-sm text-destructive">{state.fields.address}</p>}
                 </div>

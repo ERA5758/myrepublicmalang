@@ -172,7 +172,7 @@ export default function Home() {
                   <div className="container relative z-10 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-4 text-center">
                     <Badge variant="secondary" className="mb-4 shadow-md animate-fade-in-down">
                       <Zap className="mr-2 h-4 w-4 text-primary" />
-                      Internet Fiber Tercepat di Malang
+                      Internet Fiber Super Cepat
                     </Badge>
                     <h1 className="font-headline text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl animate-fade-in-down animation-delay-200">
                       {slide.title}
@@ -301,7 +301,7 @@ export default function Home() {
         <div className="container mx-auto max-w-7xl px-4">
           <div className="text-center mb-12">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
-              Penawaran Eksklusif untuk Warga Malang
+              Penawaran Eksklusif untuk Anda
             </h2>
             <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">
               Pilih paket sempurna yang sesuai dengan gaya hidup dan anggaran Anda.

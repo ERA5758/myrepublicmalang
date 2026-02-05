@@ -13,14 +13,14 @@ export function Footer() {
              <Link href="/" className="flex items-center space-x-2">
                 <Image 
                   src="https://i.ibb.co/7MP29XK/Picsart-25-11-28-12-55-53-228.png"
-                  alt="MyRepublic Malang Logo"
+                  alt="MyRepublic Logo"
                   width={180}
                   height={48}
                   className="object-contain"
                 />
             </Link>
             <p className="mt-4 text-muted-foreground text-sm">
-                Menyediakan koneksi internet fiber ultra-cepat, 100% unlimited, dan andal untuk wilayah Malang dan sekitarnya.
+                Menyediakan koneksi internet fiber ultra-cepat, 100% unlimited, dan andal untuk seluruh wilayah Indonesia.
             </p>
           </div>
 
@@ -54,8 +54,8 @@ export function Footer() {
               <h3 className="font-semibold tracking-wider uppercase">Ikuti Kami</h3>
               <div className="mt-4 flex space-x-4">
                 <Link href="https://www.facebook.com/share/1KG9Tk9rMw/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">Facebook</span><Facebook className="h-6 w-6" /></Link>
-                <Link href="https://www.instagram.com/myrepublickotamalang/" className="text-muted-foreground hover:text-primary"><span className="sr-only">Instagram</span><Instagram className="h-6 w-6" /></Link>
-                <Link href="https://www.youtube.com/@myrepublicmalang" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">YouTube</span><Youtube className="h-6 w-6" /></Link>
+                <Link href="https://www.instagram.com/myrepublic.id/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">Instagram</span><Instagram className="h-6 w-6" /></Link>
+                <Link href="https://www.youtube.com/@myrepublicindonesia" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">YouTube</span><Youtube className="h-6 w-6" /></Link>
               </div>
             </div>
           </div>
@@ -64,10 +64,10 @@ export function Footer() {
         
         <div className="border-t border-border/40 py-4 text-center text-sm text-muted-foreground">
           <p>
-            © {new Date().getFullYear()} MyRepublic Malang. Sales Executive khusus pasang baru.
+            © {new Date().getFullYear()} MyRepublic. Sales Executive khusus pasang baru.
           </p>
           <p className="mt-2">
-            Website ini dikelola oleh Sales/Mitra Resmi MyRepublic area Malang, bukan website resmi perusahaan pusat. Seluruh materi promosi mengacu pada kebijakan resmi MyRepublic.
+            Website ini dikelola oleh Sales/Mitra Resmi MyRepublic, bukan website resmi perusahaan pusat. Seluruh materi promosi mengacu pada kebijakan resmi MyRepublic.
           </p>
         </div>
       </div>

@@ -41,7 +41,7 @@ const prompt = ai.definePrompt({
   name: 'blogPostGeneratorPrompt',
   input: { schema: BlogPostGeneratorInputSchema },
   output: { schema: BlogPostGeneratorOutputSchema },
-  prompt: `Anda adalah seorang penulis konten profesional yang ahli dalam SEO untuk sebuah penyedia layanan internet bernama MyRepublic di Malang.
+  prompt: `Anda adalah seorang penulis konten profesional yang ahli dalam SEO untuk sebuah penyedia layanan internet bernama MyRepublic.
 Tugas Anda adalah menulis artikel blog yang informatif dan menarik berdasarkan topik yang diberikan.
 
 Topik: {{{topic}}}

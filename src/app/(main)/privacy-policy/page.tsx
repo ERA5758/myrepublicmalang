@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Kebijakan Privasi',
-  description: 'Kebijakan Privasi untuk penggunaan data di situs MyRepublic Malang. Kami menghargai dan melindungi privasi Anda.',
+  description: 'Kebijakan Privasi untuk penggunaan data di situs MyRepublic ini. Kami menghargai dan melindungi privasi Anda.',
   robots: {
     index: true,
     follow: true,
@@ -21,7 +21,7 @@ export default function PrivacyPolicyPage() {
 
         <h2>Pendahuluan</h2>
         <p>
-          Selamat datang di situs MyRepublic Malang yang dikelola oleh Sales/Mitra Resmi. Kami menghargai privasi pengunjung kami dan berkomitmen untuk melindungi informasi pribadi Anda. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi data yang Anda berikan saat menggunakan situs ini.
+          Selamat datang di situs Sales Resmi MyRepublic. Kami menghargai privasi pengunjung kami dan berkomitmen untuk melindungi informasi pribadi Anda. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi data yang Anda berikan saat menggunakan situs ini.
         </p>
 
         <h2>Informasi yang Kami Kumpulkan</h2>

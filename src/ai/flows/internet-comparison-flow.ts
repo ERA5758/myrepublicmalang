@@ -38,7 +38,7 @@ const prompt = ai.definePrompt({
   name: 'internetComparisonPrompt',
   input: { schema: InternetComparisonInputSchema },
   output: { schema: InternetComparisonOutputSchema },
-  prompt: `Anda adalah seorang analis teknis dan sales expert untuk MyRepublic Malang.
+  prompt: `Anda adalah seorang analis teknis dan sales expert untuk MyRepublic.
 Tugas Anda adalah menganalisis data provider internet pengguna saat ini dan membandingkannya dengan keunggulan MyRepublic untuk meyakinkan mereka beralih.
 
 Data Pengguna Saat Ini:

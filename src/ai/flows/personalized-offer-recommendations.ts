@@ -14,7 +14,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const PersonalizedOfferRecommendationsInputSchema = z.object({
-  address: z.string().describe('Alamat pengguna di Malang.'),
+  address: z.string().describe('Alamat lengkap pengguna.'),
   internetUsageHabits: z
     .string()
     .describe(
@@ -37,7 +37,7 @@ const prompt = ai.definePrompt({
   name: 'personalizedOfferRecommendationsPrompt',
   input: {schema: PersonalizedOfferRecommendationsInputSchema},
   output: {schema: PersonalizedOfferRecommendationsOutputSchema},
-  prompt: `Anda adalah asisten AI yang berspesialisasi dalam merekomendasikan paket internet MyRepublic kepada pengguna di Malang.
+  prompt: `Anda adalah asisten AI yang berspesialisasi dalam merekomendasikan paket internet MyRepublic kepada pengguna.
 
   Berdasarkan alamat pengguna dan kebiasaan penggunaan internet, rekomendasikan paket MyRepublic yang paling sesuai.
 
@@ -45,7 +45,7 @@ const prompt = ai.definePrompt({
   Kebiasaan Penggunaan Internet: {{{internetUsageHabits}}}
 
   Pertimbangkan faktor-faktor berikut saat membuat rekomendasi Anda:
-  - Paket MyRepublic yang tersedia di Malang
+  - Paket MyRepublic yang tersedia
   - Kebiasaan penggunaan internet pengguna (mis., streaming, bermain game, browsing)
   - Anggaran pengguna
 

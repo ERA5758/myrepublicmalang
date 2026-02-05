@@ -49,11 +49,11 @@ export default function PersonalizedOffersPage() {
           <form action={dispatch}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="address">Alamat Anda di Malang</Label>
+                <Label htmlFor="address">Alamat Anda</Label>
                 <Input
                   id="address"
                   name="address"
-                  placeholder="cth., Jl. Veteran, Malang"
+                  placeholder="cth., Jl. Veteran, Jakarta Selatan"
                   required
                 />
                 {state?.fields?.address && <p className="text-sm text-destructive">{state.fields.address}</p>}

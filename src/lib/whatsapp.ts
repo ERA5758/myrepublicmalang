@@ -88,7 +88,7 @@ ${selectedPromos.map(p => `- ${p}`).join('\n')}`;
     // Pesan untuk grup admin
     if (settings.adminGroup) {
         const adminMessage = `
-*🔔 Prospek Baru MyRepublic Malang!*
+*🔔 Prospek Baru MyRepublic!*
 
 Ada pendaftaran baru telah masuk melalui website.
 
@@ -96,7 +96,7 @@ Ada pendaftaran baru telah masuk melalui website.
 - *Nama:* ${lead.name}
 - *No. Telepon:* ${lead.phone}
 - *Email:* ${lead.email}
-- *Area/Kelurahan:* ${lead.area}
+- *Kota/Kabupaten:* ${lead.area}
 - *Alamat Lengkap:* ${lead.address}
 - *Paket Dipilih:* ${lead.selectedPlan}
 ${lead.locationPin ? `- *Koordinat GPS:* https://www.google.com/maps?q=${lead.locationPin}` : ''}
@@ -115,12 +115,12 @@ Harap segera tindak lanjuti.
         const customerMessage = `
 Halo ${lead.name},
 
-Terima kasih telah mendaftar di MyRepublic Malang! Kami telah menerima data pendaftaran Anda untuk paket *${lead.selectedPlan}*.
+Terima kasih telah mendaftar di MyRepublic! Kami telah menerima data pendaftaran Anda untuk paket *${lead.selectedPlan}*.
 
 Tim kami akan segera menghubungi Anda untuk proses verifikasi dan penjadwalan instalasi.
 
 Salam hangat,
-Tim MyRepublic Malang
+Tim MyRepublic
         `.trim();
         await internalSendWhatsapp(settings.deviceId, customerNumber, customerMessage, false);
     } else {
