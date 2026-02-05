@@ -60,7 +60,7 @@ export function Footer() {
                   </svg>
                 </Link>
                 <Link href="https://www.instagram.com/miravelicia.mlg/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">Instagram</span><Instagram className="h-6 w-6" /></Link>
-                <Link href="https://www.youtube.com/@myrepublicindonesia" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">YouTube</span><Youtube className="h-6 w-6" /></Link>
+                <Link href="https://www.youtube.com/@myrepublicmalang" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><span className="sr-only">YouTube</span><Youtube className="h-6 w-6" /></Link>
               </div>
             </div>
           </div>
