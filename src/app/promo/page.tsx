@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormStatus, useActionState } from 'react';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle, Gift, Gamepad2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -508,3 +509,5 @@ export default function PromoPage() {
     </Suspense>
   )
 }
+
+    
