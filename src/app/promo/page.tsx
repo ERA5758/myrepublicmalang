@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useFormStatus } from 'react-dom';
+import { useFormStatus, useActionState } from 'react';
 import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle, Gift, Gamepad2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +10,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { useToast } from '@/hooks/use-toast';
 import { captureLead } from '@/lib/actions';
 import { type LeadCaptureFormState, type Offer, type OfferTV, type MyGamerPackage } from '@/lib/definitions';
-import { useEffect, useRef, useState, Suspense, useActionState } from 'react';
+import { useEffect, useRef, useState, Suspense } from 'react';
 import coverageData from '@/lib/coverage-area.json';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
@@ -201,9 +200,9 @@ function PromoForm() {
           {/* Left Side - Offer Details */}
           <div className="space-y-8 lg:sticky lg:top-8">
             <div className='space-y-3'>
-                <h1 className="font-headline text-4xl font-bold tracking-tight text-primary sm:text-5xl">Promo Spesial UMKM Malang</h1>
+                <h1 className="font-headline text-4xl font-bold tracking-tight text-primary sm:text-5xl">Promo Spesial Pasang Baru</h1>
                 <p className="text-xl text-muted-foreground">
-                    Tingkatkan bisnis Anda dengan internet super cepat plus <strong className="text-foreground">GRATIS Aplikasi Kasir Premium</strong> untuk setiap pembayaran di muka.
+                    Bonus Upgrade Speed selama 6 bulan untuk paket tertentu.
                 </p>
             </div>
             
