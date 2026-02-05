@@ -412,9 +412,9 @@ function PromoForm() {
                         </label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Checkbox id="promo_pos" name="promo_pos" value="Gratis Aplikasi Kasir POS" />
-                        <label htmlFor="promo_pos" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Gratis Aplikasi Kasir POS
+                        <Checkbox id="promo_speed_boost" name="promo_speed_boost" value="Bonus Upgrade Speed Selama 6 Bulan" />
+                        <label htmlFor="promo_speed_boost" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Bonus Upgrade Speed Selama 6 Bulan
                         </label>
                     </div>
                   </div>

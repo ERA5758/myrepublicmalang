@@ -13,7 +13,7 @@ export const LeadCaptureSchema = z.object({
   locationPin: z.string().min(1, { message: "Silakan ambil pin lokasi GPS Anda." }),
   selectedPlan: z.string({ required_error: "Silakan pilih salah satu paket." }).min(1, { message: "Silakan pilih salah satu paket." }),
   promo_prepaid: z.string().optional(),
-  promo_pos: z.string().optional(),
+  promo_speed_boost: z.string().optional(),
   status: LeadStatusEnum.default("Proses"),
 });
 
