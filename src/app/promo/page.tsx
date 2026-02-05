@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useActionState, useFormStatus } from 'react-dom';
 import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle, Gift, Gamepad2, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -227,10 +226,9 @@ function PromoForm() {
                 </CardHeader>
                  <CardContent>
                     <ul className="space-y-2 text-sm text-muted-foreground list-disc list-inside">
-                        <li><span className="font-semibold text-foreground">Bayar 5 Bulan, Gratis 1 Bulan</span> (Khusus paket 30 Mbps ke atas)</li>
-                        <li><span className="font-semibold text-foreground">Bayar 9 Bulan, Gratis 3 Bulan</span> (Khusus paket 30 Mbps ke atas)</li>
-                        <li><span className="font-semibold text-foreground">Bayar 12 Bulan, Gratis 6 Bulan</span> (Khusus paket 30 Mbps ke atas)</li>
-                        <li><span className="font-semibold text-foreground">Bayar 12 Bulan, Gratis 3 Bulan</span> (Khusus paket 20 Mbps)</li>
+                        <li><span className="font-semibold text-foreground">Bayar 5 Bulan, Gratis 1 Bulan</span> (Khusus paket Prime ke atas)</li>
+                        <li><span className="font-semibold text-foreground">Bayar 9 Bulan, Gratis 3 Bulan</span> (Khusus paket Velo ke atas)</li>
+                        <li><span className="font-semibold text-foreground">Bayar 12 Bulan, Gratis 6 Bulan</span> (Khusus paket Velo ke atas)</li>
                     </ul>
                 </CardContent>
             </Card>
