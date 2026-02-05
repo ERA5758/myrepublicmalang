@@ -309,7 +309,7 @@ function PromoForm() {
                  <TabsContent value="mygamer" className="mt-6">
                  <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-1">
                     {myGamerPackages.map((pkg, index) => (
-                    <Card key={pkg.id} className="flex flex-col overflow-hidden bg-gray-900 border border-purple-500/50 shadow-2xl shadow-purple-500/20 text-white transition-all duration-300 hover:shadow-purple-400/30 hover:-translate-y-2 animate-fade-in-up" style={{ animationDelay: `${'\'\''}${index * 100}ms` }}>
+                    <Card key={pkg.id} className="flex flex-col overflow-hidden bg-gray-900 border border-purple-500/50 shadow-2xl shadow-purple-500/20 text-white transition-all duration-300 hover:shadow-purple-400/30 hover:-translate-y-2 animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
                         <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5">
                             {pkg.image && (
                                 <>
@@ -417,6 +417,12 @@ function PromoForm() {
                         Bonus Upgrade Speed Selama 6 Bulan
                         </label>
                     </div>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox id="promo_free_installation" name="promo_free_installation" value="Gratis Biaya Pemasangan" />
+                        <label htmlFor="promo_free_installation" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Gratis Biaya Pemasangan
+                        </label>
+                    </div>
                   </div>
                 </div>
 
@@ -486,7 +492,7 @@ function PromoForm() {
                   {state?.fields?.locationPin && <p className="text-sm text-destructive">{state.fields.locationPin}</p>}
                 </div>
 
-                <input type="hidden" name="locationPin" value={location ? `${'\'\''}${location.lat},${location.lon}`: ''} required />
+                <input type="hidden" name="locationPin" value={location ? `${location.lat},${location.lon}`: ''} required />
                 
                 {state?.issues && state.issues.map(issue => <p key={issue} className="text-sm text-destructive">{issue}</p>)}
                 

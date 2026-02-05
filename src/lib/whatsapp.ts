@@ -61,6 +61,7 @@ type LeadData = {
     locationPin?: string;
     promo_prepaid?: string;
     promo_speed_boost?: string;
+    promo_free_installation?: string;
 }
 
 export async function sendLeadNotification(lead: LeadData) {
@@ -74,6 +75,7 @@ export async function sendLeadNotification(lead: LeadData) {
     const selectedPromos = [
         lead.promo_prepaid,
         lead.promo_speed_boost,
+        lead.promo_free_installation,
     ].filter(Boolean); // Filter out undefined/empty values
 
     let promoText = '';

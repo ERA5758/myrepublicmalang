@@ -139,7 +139,7 @@ export default function ViewLeadsPage() {
                     });
                 }
                 
-                const promos = [data.promo_prepaid, data.promo_speed_boost].filter(Boolean);
+                const promos = [data.promo_prepaid, data.promo_speed_boost, data.promo_free_installation].filter(Boolean);
                 
                 return {
                     id: doc.id,
