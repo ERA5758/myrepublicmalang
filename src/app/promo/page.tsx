@@ -1,8 +1,9 @@
+
 'use client';
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle, Gift, Gamepad2 } from 'lucide-react';
+import { Loader, User, Phone, Mail, Map, MapPin, LocateFixed, Package, ArrowRight, Store, ShoppingCart, Gem, CircleCheckBig, Tv, Star, XCircle, Gift, Gamepad2, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -237,14 +238,14 @@ function PromoForm() {
             <Card className="border-green-500/50 bg-green-500/5">
                 <CardHeader>
                     <CardTitle className='flex items-center gap-3 text-green-700'>
-                        <Gem className="h-6 w-6"/>
-                        Bonus Eksklusif Untuk Bisnis Anda
+                        <Zap className="h-6 w-6"/>
+                        Bonus Eksklusif Speed Boost
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                    <p className="font-bold text-lg text-foreground">GRATIS Aplikasi Kasir Chika POS Premium (3 Bulan)</p>
+                    <p className="font-bold text-lg text-foreground">Upgrade selama 6 Bulan</p>
                     <p className='text-muted-foreground'>
-                        Kelola usaha jadi lebih mudah dengan fitur kasir canggih dan <strong className='text-foreground'>Katalog Digital</strong> untuk memamerkan produk Anda secara online. Senilai <span className='font-bold'>Rp 450.000! (Inisiatif Pribadi)</span>
+                        Gratis Upgrade speed selama 6 bulan Khusus Paket Neo, Velo, dan Nexus.
                     </p>
                 </CardContent>
             </Card>
@@ -509,5 +510,3 @@ export default function PromoPage() {
     </Suspense>
   )
 }
-
-    
