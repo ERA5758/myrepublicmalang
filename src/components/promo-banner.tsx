@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { AlarmClock, ArrowRight, Tag, Gift } from 'lucide-react';
+import { AlarmClock, ArrowRight, Gift } from 'lucide-react';
 import { CountdownTimer } from './countdown-timer';
 
 export function FlashSaleBanner() {
@@ -42,17 +42,18 @@ export function FlashSaleBanner() {
           
           <div className="lg:col-span-2 space-y-3">
             <div className="flex items-center gap-3">
-              <Tag className="h-6 w-6 text-primary" />
+              <Gift className="h-6 w-6 text-primary" />
               <h2 className="font-headline text-2xl font-bold tracking-tight text-primary">
-                PROMO SPESIAL UNTUK BISNIS ANDA!
+                PROMO SPESIAL PASANG BARU!
               </h2>
             </div>
             <p className="text-muted-foreground">
-              Daftar sekarang dan dapatkan bonus eksklusif untuk UMKM! Promo ini hanya berlaku dalam waktu terbatas.
+              Daftar sekarang dan dapatkan bonus eksklusif! Promo ini hanya berlaku dalam waktu terbatas.
             </p>
             <ul className="space-y-2 text-sm list-inside list-disc text-foreground/80 pl-2">
               <li><span className="font-semibold">Promo Bayar di Muka:</span> Dapatkan gratis langganan hingga 6 bulan.</li>
-              <li><span className="font-semibold">GRATIS Aplikasi Kasir POS Premium</span> selama 3 bulan (inisiatif pribadi).</li>
+              <li><span className="font-semibold">Bonus Upgrade Speed:</span> Nikmati kecepatan lebih tinggi selama 6 bulan untuk paket tertentu.</li>
+              <li><span className="font-semibold">Gratis Biaya Pemasangan:</span> Hemat biaya instalasi senilai Rp500.000.</li>
             </ul>
              <Button asChild className="mt-4 animate-fade-in-up">
                 <Link href="/promo">
