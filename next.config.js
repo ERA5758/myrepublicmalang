@@ -68,6 +68,12 @@ const nextConfig = {
         hostname: 'sapi.myrepublic.net.id',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },

@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -8,7 +7,7 @@ export function FloatingWhatsApp() {
   const phoneNumber = "6285184000800";
   const message = "Halo, saya tertarik untuk berlangganan MyRepublic. Bisa minta informasinya?";
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-  const profileImageUrl = "https://instagram.fmlg9-1.fna.fbcdn.net/v/t51.2885-19/191792427_915546175966090_4882543682695670340_n.jpg?stp=dst-jpg_s150x150_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4xMDgwLmMyIn0&_nc_ht=instagram.fmlg9-1.fna.fbcdn.net&_nc_cat=110&_nc_oc=Q6cZ2QEOX4mVXJQYybe59nKAZnd8vWLzKECTCKWanPdEG-1nrU9u5mwamVlF4R0-PdakXzddoKMS7-PdYhPmIunXoFOG&_nc_ohc=pRNPP7uTmIAQ7kNvwGS5jZK&_nc_gid=AXUZAbpWQPitq_9Ez5juBQ&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfhTyqGiysh1Pa6_S6zZhR8eKmQKjtcAJX8RNLLBQ73Rsg&oe=6929C825&_nc_sid=8b3546";
+  const profileImageUrl = "https://lh3.googleusercontent.com/d/1RBUDc24cfVAivO-fXO2-Q64Xt3aRv9k1";
 
   return (
     <Link 
