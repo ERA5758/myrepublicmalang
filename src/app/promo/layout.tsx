@@ -7,6 +7,7 @@ import { FirebaseProvider } from '@/firebase/provider';
 import Image from 'next/image';
 import { FloatingWhatsApp } from '@/components/floating-whatsapp';
 import { Footer } from '@/components/layout/footer';
+import Script from 'next/script';
 
 const siteUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
 
@@ -47,6 +48,16 @@ export default function PromoLayout({
 }>) {
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Google tag (gtag.js) for Promo Page */}
+      <Script async src="https://www.googletagmanager.com/gtag/js?id=AW-17791377719" strategy="afterInteractive" />
+      <Script id="google-tag-promo" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'AW-17791377719');
+        `}
+      </Script>
       <FirebaseProvider>
           <LandingPageHeader />
           <main className="flex-grow">{children}</main>
