@@ -1,5 +1,4 @@
 
-
 import { z } from "zod";
 
 export const LeadStatusEnum = z.enum(["Proses", "Cancel", "Reject", "Tidak Cover", "Done"]);
@@ -92,6 +91,16 @@ export type MyGamerPackage = {
     tier: string;
     speed: string;
     price: string;
+    features: string[];
+    image: ImagePlaceholder;
+};
+
+export type ParallelPackage = {
+    id: string;
+    title: string;
+    price: string;
+    speed: string;
+    requirement: string;
     features: string[];
     image: ImagePlaceholder;
 };

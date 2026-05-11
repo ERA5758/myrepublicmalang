@@ -1,7 +1,7 @@
 
 import type { ImagePlaceholder } from './placeholder-images';
 import { PlaceHolderImages } from './placeholder-images';
-import type { Offer, OfferTV, AddOn, CarouselSlide, MyGamerPackage } from './definitions';
+import type { Offer, OfferTV, AddOn, CarouselSlide, MyGamerPackage, ParallelPackage } from './definitions';
 
 type NavLink = {
   href: string;
@@ -189,6 +189,35 @@ export const myGamerPackages: MyGamerPackage[] = [
         price: 'Rp 900.000',
         features: ['Kecepatan Up to 1 Gbps', 'Wifi 6', 'Device 1 - 20', 'IP Public Static', 'Routing Khusus Game', 'Gratis Vidio Lite'],
         image: { id: 'gamerplatinum', imageUrl: 'https://picsum.photos/seed/gamerplatinum/800/600', description: 'MyGamer Platinum Package', imageHint: 'gamer platinum' }
+    }
+];
+
+export const parallelPackages: ParallelPackage[] = [
+    {
+        id: 'parallel-wifi-kost',
+        title: 'PARALLEL HOME (Wifi Kost)',
+        price: 'Rp 75.000',
+        speed: 'Simetris 1:1',
+        requirement: 'Minimal 3 kamar berlangganan',
+        features: [
+            'After sales sat-set (langsung via sales)',
+            'Upload/download simetris',
+            'Biaya Pasang: Rp 150.000 per kamar (Sudah termasuk langganan bulan pertama)'
+        ],
+        image: { id: 'wifikost', imageUrl: 'https://picsum.photos/seed/wifikost/800/600', description: 'Parallel Home Wifi Kost', imageHint: 'dorm wifi' }
+    },
+    {
+        id: 'parallel-rumah-hemat',
+        title: 'PARALLEL HOME (Rumah Hemat)',
+        price: 'Rp 120.000',
+        speed: 'Simetris 1:1',
+        requirement: 'Minimal 2 rumah berlangganan',
+        features: [
+            'Solusi tetangga kompak',
+            'Harga paling kompetitif di kelasnya',
+            'Biaya Pasang: Rp 240.000 per rumah (Sudah termasuk langganan bulan pertama)'
+        ],
+        image: { id: 'rumahhemat', imageUrl: 'https://picsum.photos/seed/rumahhemat/800/600', description: 'Parallel Home Rumah Hemat', imageHint: 'house network' }
     }
 ];
 

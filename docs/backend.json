@@ -9,6 +9,7 @@
         "name": { "type": "string" },
         "email": { "type": "string", "format": "email" },
         "phone": { "type": "string" },
+        "area": { "type": "string" },
         "address": { "type": "string" },
         "locationPin": { "type": "string" },
         "selectedPlan": { "type": "string" },
@@ -83,6 +84,28 @@
         }
       },
       "required": ["id", "tier", "speed", "price", "features"]
+    },
+    "ParallelPackage": {
+      "title": "ParallelPackage",
+      "description": "Represents a low-price parallel internet plan managed by sales.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "price": { "type": "string" },
+        "speed": { "type": "string" },
+        "requirement": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "image": {
+          "type": "object",
+          "properties": {
+            "imageUrl": { "type": "string" },
+            "imageHint": { "type": "string" },
+            "description": { "type": "string" }
+          }
+        }
+      },
+      "required": ["id", "title", "price", "speed", "requirement", "features"]
     },
     "AddOn": {
         "title": "AddOn",
@@ -187,6 +210,10 @@
     "/myGamerPackages/{packageId}": {
       "schema": { "$ref": "#/entities/MyGamerPackage" },
       "description": "Collection of dedicated gamer packages."
+    },
+    "/parallelPackages/{packageId}": {
+      "schema": { "$ref": "#/entities/ParallelPackage" },
+      "description": "Collection of low-price parallel packages."
     },
     "/addOns/{addOnId}": {
       "schema": { "$ref": "#/entities/AddOn" },

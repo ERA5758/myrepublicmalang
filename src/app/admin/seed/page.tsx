@@ -1,16 +1,17 @@
+
 'use client';
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { seedOffers, seedOffersTV, seedAddOns, seedCarouselSlides, seedMyGamerPackages } from '@/lib/seed';
+import { seedOffers, seedOffersTV, seedAddOns, seedCarouselSlides, seedMyGamerPackages, seedParallelPackages } from '@/lib/seed';
 import { Loader } from 'lucide-react';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
 
-type SeedOperation = 'offers' | 'offersTV' | 'addOns' | 'carousel' | 'myGamer';
+type SeedOperation = 'offers' | 'offersTV' | 'addOns' | 'carousel' | 'myGamer' | 'parallel';
 
 export default function SeedPage() {
   const [loading, setLoading] = useState<SeedOperation | null>(null);
@@ -35,6 +36,9 @@ export default function SeedPage() {
                 break;
             case 'myGamer':
                 count = await seedMyGamerPackages();
+                break;
+            case 'parallel':
+                count = await seedParallelPackages();
                 break;
         }
       toast({
@@ -123,6 +127,23 @@ export default function SeedPage() {
               className="w-full"
             >
               {loading === 'myGamer' ? <Loader className="animate-spin" /> : 'Seed Paket MyGamer'}
+            </Button>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Seed Paket Parallel</CardTitle>
+            <CardDescription>
+                Isi koleksi `parallelPackages` dengan paket hemat parallel.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              onClick={() => handleSeed('parallel')}
+              disabled={!!loading}
+              className="w-full"
+            >
+              {loading === 'parallel' ? <Loader className="animate-spin" /> : 'Seed Paket Parallel'}
             </Button>
           </CardContent>
         </Card>

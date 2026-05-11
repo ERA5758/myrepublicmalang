@@ -1,10 +1,9 @@
 
-
 'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CircleCheckBig, ClipboardList, CreditCard, Headphones, Infinity, Shield, Tv, Wrench, Zap, Gauge, CloudOff, Gamepad2, Star, Wifi } from 'lucide-react';
+import { ArrowRight, CircleCheckBig, ClipboardList, CreditCard, Headphones, Infinity, Shield, Tv, Wrench, Zap, Gauge, CloudOff, Gamepad2, Star, Wifi, Gem, ShoppingCart } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { faqs } from '@/lib/data';
 import { collection, getDocs, orderBy, query, Timestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
-import type { Offer, OfferTV, AddOn, CarouselSlide, Article, MyGamerPackage } from '@/lib/definitions';
+import type { Offer, OfferTV, AddOn, CarouselSlide, Article, MyGamerPackage, ParallelPackage } from '@/lib/definitions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TermsAndConditionsDialog } from '@/components/terms-dialog';
 import { useEffect, useRef, useState } from 'react';
@@ -61,6 +60,7 @@ export default function Home() {
   const [carouselSlides, setCarouselSlides] = useState<CarouselSlide[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
   const [myGamerPackages, setMyGamerPackages] = useState<MyGamerPackage[]>([]);
+  const [parallelPackages, setParallelPackages] = useState<ParallelPackage[]>([]);
   const firestore = useFirestore();
 
   const autoplayPlugin = useRef(
@@ -75,70 +75,43 @@ export default function Home() {
       const offersCollection = collection(firestore, 'offers');
       const offersQuery = query(offersCollection, orderBy('price'));
       const offersSnapshot = await getDocs(offersQuery);
-      const fetchedOffers: Offer[] = [];
-      offersSnapshot.forEach((doc) => {
-          fetchedOffers.push({ id: doc.id, ...doc.data() } as Offer);
-      });
-      setOffers(fetchedOffers);
+      setOffers(offersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Offer)));
 
       // Fetch Offers (Internet + TV)
       const offersTVCollection = collection(firestore, 'offersTV');
       const offersTVQuery = query(offersTVCollection, orderBy('price'));
       const offersTVSnapshot = await getDocs(offersTVQuery);
-      const fetchedOffersTV: OfferTV[] = [];
-      offersTVSnapshot.forEach((doc) => {
-          fetchedOffersTV.push({ id: doc.id, ...doc.data() } as OfferTV);
-      });
-      setOffersTV(fetchedOffersTV);
+      setOffersTV(offersTVSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as OfferTV)));
 
       // Fetch MyGamer Packages
       const myGamerCollection = collection(firestore, 'myGamerPackages');
-      const myGamerQuery = query(myGamerCollection);
-      const myGamerSnapshot = await getDocs(myGamerQuery);
-      const fetchedMyGamerPackages: MyGamerPackage[] = [];
-      myGamerSnapshot.forEach((doc) => {
-          fetchedMyGamerPackages.push({ id: doc.id, ...doc.data() } as MyGamerPackage);
-      });
-      setMyGamerPackages(fetchedMyGamerPackages);
+      const myGamerSnapshot = await getDocs(query(myGamerCollection));
+      setMyGamerPackages(myGamerSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MyGamerPackage)));
+
+      // Fetch Parallel Packages
+      const parallelCollection = collection(firestore, 'parallelPackages');
+      const parallelSnapshot = await getDocs(query(parallelCollection));
+      setParallelPackages(parallelSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ParallelPackage)));
 
       // Fetch AddOns
       const addOnsCollection = collection(firestore, 'addOns');
       const addOnsSnapshot = await getDocs(addOnsCollection);
-      const fetchedAddOns: AddOn[] = [];
-      addOnsSnapshot.forEach((doc) => {
-        fetchedAddOns.push({ id: doc.id, ...doc.data() } as AddOn);
-      });
-      setAddOns(fetchedAddOns);
+      setAddOns(addOnsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AddOn)));
 
       // Fetch Carousel Slides
       const carouselCollection = collection(firestore, 'carouselSlides');
       const carouselSnapshot = await getDocs(carouselCollection);
-      const fetchedSlides: CarouselSlide[] = [];
-      carouselSnapshot.forEach((doc) => {
-        fetchedSlides.push({ id: doc.id, ...doc.data() } as CarouselSlide);
-      });
-      setCarouselSlides(fetchedSlides);
+      setCarouselSlides(carouselSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CarouselSlide)));
 
       // Fetch Articles
         const articlesCollection = collection(firestore, 'articles');
         const q = query(articlesCollection, orderBy('publishedAt', 'desc'));
         const articlesSnapshot = await getDocs(q);
-        const fetchedArticles: Article[] = [];
-        articlesSnapshot.forEach(doc => {
+        setArticles(articlesSnapshot.docs.map(doc => {
             const data = doc.data();
-            let publishedAt: string;
-            if (data.publishedAt instanceof Timestamp) {
-                publishedAt = data.publishedAt.toDate().toISOString();
-            } else {
-                publishedAt = new Date().toISOString();
-            }
-            fetchedArticles.push({
-                id: doc.id,
-                ...data,
-                publishedAt,
-            } as Article);
-        });
-        setArticles(fetchedArticles);
+            const publishedAt = data.publishedAt instanceof Timestamp ? data.publishedAt.toDate().toISOString() : new Date().toISOString();
+            return { id: doc.id, ...data, publishedAt } as Article;
+        }));
     }
     getData();
   }, [firestore]);
@@ -148,7 +121,11 @@ export default function Home() {
   const addOnTV = addOns.filter(a => a.category === 'tv');
   const addOnSmartHome = addOns.filter(a => a.category === 'smart-home');
   const addOnSpeedBooster = addOns.filter(a => a.category === 'speed-booster');
-  const myGamerOffer = offers.find(offer => offer.id === 'mygamer');
+
+  const handleWhatsAppChat = (packageName: string) => {
+      const message = `Halo, saya tertarik dengan paket [${packageName}] Budget Friendly. Bisa minta informasinya?`;
+      window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(message)}`, '_blank');
+  };
 
 
   return (
@@ -308,7 +285,10 @@ export default function Home() {
             </p>
           </div>
           <Tabs defaultValue="internet-only" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 md:w-fit md:mx-auto">
+            <TabsList className="grid w-full grid-cols-5 md:w-fit md:mx-auto">
+              <TabsTrigger value="hemat" className="flex items-center gap-2">
+                <Gem className="h-4 w-4" /> Hemat
+              </TabsTrigger>
               <TabsTrigger value="internet-tv">Internet + TV</TabsTrigger>
               <TabsTrigger value="internet-only">Internet</TabsTrigger>
               <TabsTrigger value="mygamer" className="flex items-center gap-2">
@@ -316,6 +296,62 @@ export default function Home() {
               </TabsTrigger>
               <TabsTrigger value="addons">Add On</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="hemat" className="mt-10">
+                <div className="text-center mb-8 bg-orange-50 border border-orange-200 p-4 rounded-lg max-w-3xl mx-auto">
+                    <p className="text-orange-800 text-sm font-semibold flex items-center justify-center gap-2">
+                        <Shield className="h-4 w-4" /> PENTING: Paket Parallel dikelola langsung oleh Sales Executive, bukan melalui MyRepublic pusat.
+                    </p>
+                    <p className="text-orange-700 text-xs mt-1">Wajib cek ketersediaan area khusus paket ini melalui Sales Executive kami.</p>
+                </div>
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+                    {parallelPackages.map((pkg, index) => (
+                    <Card key={pkg.id} className="flex flex-col overflow-hidden border-orange-200 shadow-xl transition-all duration-300 hover:shadow-orange-200 hover:-translate-y-2 animate-fade-in-up" style={{ animationDelay: `${index * 100}ms` }}>
+                        <CardHeader className="relative text-center p-6 text-white flex flex-col space-y-1.5 bg-orange-600">
+                             {pkg.image && (
+                                <>
+                                <Image
+                                    src={pkg.image.imageUrl}
+                                    alt={pkg.image.description}
+                                    fill
+                                    className="object-cover opacity-30"
+                                />
+                                </>
+                            )}
+                            <div className="relative z-10">
+                                <Badge variant="secondary" className="mx-auto mb-2 bg-white text-orange-700 hover:bg-orange-50 font-bold uppercase tracking-widest text-[10px]">Budget Friendly</Badge>
+                                <CardTitle className="font-headline text-2xl">{pkg.title}</CardTitle>
+                                <p className="text-sm font-medium text-white/90 mt-1">{pkg.requirement}</p>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="flex flex-1 flex-col justify-between p-6">
+                            <div>
+                                <div className="text-center mb-6">
+                                    <p className="text-4xl font-extrabold text-orange-600">{pkg.price}/<span className="text-lg">bln</span></p>
+                                    <p className="text-xs text-muted-foreground mt-1">Harga Flat, No Hidden Fees</p>
+                                </div>
+                                <h4 className="font-bold text-sm mb-3 text-foreground uppercase tracking-wide">Benefit Paket Hemat:</h4>
+                                <ul className="space-y-3 text-sm text-muted-foreground">
+                                    {pkg.features.map((feature) => (
+                                    <li key={feature} className="flex items-start">
+                                        <Zap className="mr-2 h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
+                                        <span>{feature}</span>
+                                    </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className="mt-8 space-y-2">
+                                <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold" size="lg" onClick={() => handleWhatsAppChat(pkg.title)}>
+                                    <ShoppingCart className="mr-2 h-4 w-4" /> Hubungi Sales (Cek Area)
+                                </Button>
+                                <p className="text-[10px] text-center text-muted-foreground">*Syarat & Ketentuan berlaku untuk berlangganan parallel.</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    ))}
+                </div>
+            </TabsContent>
+
             <TabsContent value="internet-only" className="mt-10">
                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {offers.map((offer, index) => (

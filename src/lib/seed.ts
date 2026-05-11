@@ -1,7 +1,8 @@
+
 'use server';
 import { collection, writeBatch, getDocs, doc } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
-import { offers, offersTV, addOns, carouselSlides, myGamerPackages } from './blog-data';
+import { offers, offersTV, addOns, carouselSlides, myGamerPackages, parallelPackages } from './blog-data';
 
 async function seedCollection(collectionName: string, data: any[]) {
     const { firestore } = initializeFirebase();
@@ -50,20 +51,9 @@ export async function seedCarouselSlides() {
 }
 
 export async function seedMyGamerPackages() {
-    // Correcting the broken image URL before seeding
-    const correctedMyGamerPackages = myGamerPackages.map(pkg => {
-        if (pkg.id === 'mygamer-platinum') {
-            return {
-                ...pkg,
-                image: {
-                    id: 'gamerplatinum',
-                    imageUrl: 'https://picsum.photos/seed/gamerplatinum/800/600',
-                    description: 'MyGamer Platinum Package',
-                    imageHint: 'gamer platinum'
-                }
-            };
-        }
-        return pkg;
-    });
-    return seedCollection('myGamerPackages', correctedMyGamerPackages);
+    return seedCollection('myGamerPackages', myGamerPackages);
+}
+
+export async function seedParallelPackages() {
+    return seedCollection('parallelPackages', parallelPackages);
 }
