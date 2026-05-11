@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -287,7 +286,7 @@ export default function Home() {
           <Tabs defaultValue="internet-only" className="w-full">
             <TabsList className="grid w-full grid-cols-5 md:w-fit md:mx-auto">
               <TabsTrigger value="hemat" className="flex items-center gap-2">
-                <Gem className="h-4 w-4" /> Hemat
+                <Gem className="h-4 w-4" /> Parallel Hemat
               </TabsTrigger>
               <TabsTrigger value="internet-tv">Internet + TV</TabsTrigger>
               <TabsTrigger value="internet-only">Internet</TabsTrigger>
