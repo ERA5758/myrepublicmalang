@@ -11,6 +11,7 @@ type NavLink = {
 
 export const navLinks: NavLink[] = [
   { href: "/", label: "Beranda" },
+  { href: "/parallel", label: "Parallel Hemat" },
   { href: "/reviews", label: "Ulasan" },
   { href: "/blog", label: "Blog"},
   { href: "/compare", label: "Bandingkan" },
@@ -242,6 +243,7 @@ export const faqs: Faq[] = [
     
 
     
+
 
 
 
