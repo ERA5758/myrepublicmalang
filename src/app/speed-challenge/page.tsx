@@ -15,7 +15,8 @@ import {
   Send,
   Zap,
   Gauge,
-  Loader
+  Loader,
+  MessageSquare
 } from 'lucide-react';
 import { generateSpeedRoast, type SpeedRoastOutput } from '@/ai/flows/speed-challenge-roast';
 
@@ -477,10 +478,15 @@ export default function SpeedChallengePage() {
                             <span className="text-[10px] text-[#e21a83] font-bold uppercase tracking-widest block mb-1">Paket Ultra-Fast Sesuai Kebutuhan</span>
                             <h2 className="text-2xl font-black text-white mb-1" id="rec-package-name">{recommendedPackage.name}</h2>
                             {recommendedPackage.bonus && (
-                                <p className="text-[10px] font-bold text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded inline-block mb-3 border border-yellow-400/20">
+                                <p className="text-[10px] font-bold text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded inline-block mb-2 border border-yellow-400/20">
                                     🎁 {recommendedPackage.bonus}
                                 </p>
                             )}
+
+                            <div className="flex items-center gap-2 mb-2 text-[10px] text-green-400 font-bold uppercase tracking-wider">
+                                <CircleCheck className="w-3.5 h-3.5" /> 
+                                <span>GRATIS BIAYA PEMASANGAN (Hemat Rp 500.000)</span>
+                            </div>
                             
                             <div className="flex items-center gap-2 mb-4 text-xs text-yellow-300 font-bold">
                                 <Zap className="w-4 h-4 animate-bounce" /> 
@@ -517,7 +523,7 @@ export default function SpeedChallengePage() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3 mb-4">
+                        <div className="grid grid-cols-2 gap-3 mb-3">
                             <button 
                                 onClick={() => setIsModalOpen(true)}
                                 className="bg-gradient-to-r from-[#622599] to-[#e21a83] hover:from-[#622599]/90 hover:to-[#e21a83]/90 text-white font-black text-sm py-3.5 px-4 rounded-xl shadow-[0_0_20px_rgba(226,26,131,0.5)] transition-all flex items-center justify-center gap-2"
@@ -531,6 +537,16 @@ export default function SpeedChallengePage() {
                                 <RotateCcw className="w-4 h-4" /> Ulangi Game
                             </button>
                         </div>
+
+                        <button 
+                            onClick={() => {
+                                const msg = `Halo Sales MyRepublic! Saya ingin konsultasi gratis mengenai pemasangan wifi baru di rumah saya. Tadi saya coba Speed Challenge dan hasilnya ${realSpeed} Mbps. Mohon dibantu pengecekan area ya! Terima kasih.`;
+                                window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
+                            }}
+                            className="w-full bg-white/5 border border-white/20 hover:bg-white/10 text-white font-bold text-sm py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 mb-4"
+                        >
+                            <MessageSquare className="w-4 h-4 text-green-400" /> Konsultasi Gratis via WhatsApp
+                        </button>
                     </div>
                 )}
 
