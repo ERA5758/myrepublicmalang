@@ -17,7 +17,8 @@ import {
   Loader,
   MessageSquare,
   Trophy,
-  ChevronDown
+  ChevronDown,
+  Gift
 } from 'lucide-react';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -39,7 +40,7 @@ const myRepublicPackages = [
         price: "Rp 233.100", 
         maxSpeed: 45, 
         speedVal: 100, 
-        bonus: "Bonus Upgrade speed up to 200 Mbps selama 1 tahun" 
+        bonus: "Gratis Upgrade speed Up to 200 Mbps selama 1 tahun" 
     },
     { 
         id: 'velo-150',
@@ -47,7 +48,7 @@ const myRepublicPackages = [
         price: "Rp 277.500", 
         maxSpeed: 9999, 
         speedVal: 150, 
-        bonus: "Bonus Upgrade speed up to 300 Mbps selama 1 tahun" 
+        bonus: "Gratis Upgrade speed Up to 300 Mbps selama 1 tahun" 
     }
 ];
 
@@ -465,6 +466,15 @@ export default function SpeedChallengePage() {
                                 <div className="absolute top-0 right-0 rounded-bl-2xl bg-yellow-400 px-3 py-1.5 text-[8px] font-black uppercase tracking-widest text-slate-900">REKOMENDASI</div>
                                 <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#e21a83] mb-1">Paket Ultra-Fast Pilihan AI</h3>
                                 <h2 className="text-2xl font-black text-white mb-2">{recommendedPackage.name}</h2>
+                                
+                                {/* Bonus Info for Neo & Velo */}
+                                {recommendedPackage.bonus && (
+                                    <div className="mb-4 flex items-center gap-2 rounded-xl bg-green-500/20 border border-green-500/30 p-3 text-[11px] font-black text-green-400 animate-pulse">
+                                        <Gift className="h-4 w-4 shrink-0" />
+                                        <span>{recommendedPackage.bonus}</span>
+                                    </div>
+                                )}
+
                                 <div className="flex items-center gap-2 mb-4 text-[10px] font-black text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 px-3 py-1 rounded-full w-fit">
                                     <Zap className="h-3 w-3 animate-pulse" /> HINGGA {multiplier}X LEBIH KENCANG DARI WIFI SEKARANG!
                                 </div>
