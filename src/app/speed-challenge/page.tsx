@@ -8,11 +8,6 @@ import {
   RotateCcw, 
   ShoppingCart, 
   X, 
-  Smartphone, 
-  Wifi, 
-  MapPin, 
-  Trophy, 
-  ChevronDown, 
   Bot, 
   CircleCheck, 
   Star, 
@@ -20,18 +15,36 @@ import {
   Send,
   Zap,
   Gauge,
-  Loader2,
-  CheckSquare,
-  Square
+  Loader
 } from 'lucide-react';
 import { generateSpeedRoast, type SpeedRoastOutput } from '@/ai/flows/speed-challenge-roast';
 
-// Database Paket MyRepublic 2026
+// Database Paket MyRepublic Fokus 2026
 const myRepublicPackages = [
-    { name: "MyRepublic NEO 100 Mbps", price: "Rp 233.100", maxSpeed: 30, speedVal: 100, upgradeTarget: "200 Mbps" },
-    { name: "MyRepublic VELO 150 Mbps", price: "Rp 277.500", maxSpeed: 70, speedVal: 150, upgradeTarget: "300 Mbps" },
-    { name: "MyRepublic NEXUS 300 Mbps", price: "Rp 333.000", maxSpeed: 150, speedVal: 300, upgradeTarget: "400 Mbps" },
-    { name: "MyRepublic PRIME 500 Mbps", price: "Rp 555.000", maxSpeed: 9999, speedVal: 500, upgradeTarget: "Hingga 1 Gbps" }
+    { 
+        id: 'sahabat-75',
+        name: "MyRepublic SAHABAT 75 Mbps", 
+        price: "Rp 205.000", 
+        maxSpeed: 20, 
+        speedVal: 75, 
+        bonus: "" 
+    },
+    { 
+        id: 'neo-100',
+        name: "MyRepublic NEO 100 Mbps", 
+        price: "Rp 233.100", 
+        maxSpeed: 45, 
+        speedVal: 100, 
+        bonus: "Bonus Upgrade speed up to 200 Mbps selama 1 tahun" 
+    },
+    { 
+        id: 'velo-150',
+        name: "MyRepublic VELO 150 Mbps", 
+        price: "Rp 277.500", 
+        maxSpeed: 9999, 
+        speedVal: 150, 
+        bonus: "Bonus Upgrade speed up to 300 Mbps selama 1 tahun" 
+    }
 ];
 
 const CITY_LIST = [
@@ -74,7 +87,6 @@ export default function SpeedChallengePage() {
     const audioCtx = useRef<AudioContext | null>(null);
     const gameInterval = useRef<NodeJS.Timeout | null>(null);
     const speedTestInterval = useRef<NodeJS.Timeout | null>(null);
-    const router = useRouter();
 
     // Particle System
     class Particle {
@@ -158,7 +170,6 @@ export default function SpeedChallengePage() {
         particles.current = [];
         setScreen('game');
 
-        // Start Speed Test Simulation
         const targetSpeed = Math.floor(Math.random() * 45) + 8;
         let currentSpeed = 0.0;
         
@@ -170,7 +181,6 @@ export default function SpeedChallengePage() {
             }, 100);
         }, 1000);
 
-        // Start Timer
         const intervalTime = 100;
         gameInterval.current = setInterval(() => {
             setTimeLeft((prev) => {
@@ -204,11 +214,10 @@ export default function SpeedChallengePage() {
                 setAiResult(roast);
                 setScreen('result');
             } catch (e) {
-                // Fallback roast
                 setAiResult({
                     roast: "Waduh! Internetmu lagi mode istirahat ya? Lambat banget kayak siput lagi sakit flu. Ganti ke MyRepublic sekarang biar ga darah tinggi tiap hari!",
                     diagnosis: "Terdeteksi gejala kelebihan beban jaringan dan kurangnya simetri.",
-                    recommendedAction: "Beralih ke MyRepublic Prime sekarang."
+                    recommendedAction: "Beralih ke MyRepublic Velo sekarang."
                 });
                 setScreen('result');
             }
@@ -465,9 +474,14 @@ export default function SpeedChallengePage() {
                             </div>
                             
                             <span className="text-[10px] text-[#e21a83] font-bold uppercase tracking-widest block mb-1">Paket Ultra-Fast Sesuai Kebutuhan</span>
-                            <h2 className="text-2xl font-black text-white mb-2">{recommendedPackage.name}</h2>
+                            <h2 className="text-2xl font-black text-white mb-1" id="rec-package-name">{recommendedPackage.name}</h2>
+                            {recommendedPackage.bonus && (
+                                <p className="text-[10px] font-bold text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded inline-block mb-3 border border-yellow-400/20">
+                                    🎁 {recommendedPackage.bonus}
+                                </p>
+                            )}
                             
-                            <div className="flex items-center gap-2 mb-4 text-xs text-yellow-400 font-bold">
+                            <div className="flex items-center gap-2 mb-4 text-xs text-yellow-300 font-bold">
                                 <Zap className="w-4 h-4 animate-bounce" /> 
                                 <span>Hingga {multiplier}x Lebih Cepat & Stabil dari WiFi lama Anda!</span>
                             </div>
@@ -495,19 +509,9 @@ export default function SpeedChallengePage() {
                             </h3>
                             <div className="space-y-3">
                                 <PromoOption 
-                                    label="Jaminan Harga tetap selama 2 tahun" 
-                                    isSelected={selectedPromos.includes("Harga Tetap 2 Tahun")} 
-                                    onToggle={() => togglePromo("Harga Tetap 2 Tahun")} 
-                                />
-                                <PromoOption 
-                                    label="Jaminan Harga tetap selama 3 tahun" 
-                                    isSelected={selectedPromos.includes("Harga Tetap 3 Tahun")} 
-                                    onToggle={() => togglePromo("Harga Tetap 3 Tahun")} 
-                                />
-                                <PromoOption 
-                                    label={`Free Upgrade Kecepatan ke ${recommendedPackage.upgradeTarget} (1 Tahun)`} 
-                                    isSelected={selectedPromos.includes("Free Upgrade Speed 1 Tahun")} 
-                                    onToggle={() => togglePromo("Free Upgrade Speed 1 Tahun")} 
+                                    label="Jaminan harga tetap selama 2 atau 3 tahun" 
+                                    isSelected={selectedPromos.includes("Jaminan Harga Tetap 2/3 Tahun")} 
+                                    onToggle={() => togglePromo("Jaminan Harga Tetap 2/3 Tahun")} 
                                 />
                             </div>
                         </div>
@@ -536,10 +540,10 @@ export default function SpeedChallengePage() {
                         className="w-full flex items-center justify-between text-xs text-gray-400 font-bold uppercase tracking-widest hover:text-white transition-colors focus:outline-none"
                     >
                         <span className="flex items-center gap-2">
-                            <Trophy className="text-yellow-400 w-3 h-3" />
+                            <Star className="text-yellow-400 w-3 h-3" />
                             Skor Tantangan Terkini (Nasional)
                         </span>
-                        <ChevronDown className={`transition-transform duration-300 w-4 h-4 ${isLeaderboardOpen ? 'rotate-180' : ''}`} />
+                        <Info className={`transition-transform duration-300 w-4 h-4 ${isLeaderboardOpen ? 'rotate-180' : ''}`} />
                     </button>
                     
                     {isLeaderboardOpen && (
@@ -547,7 +551,6 @@ export default function SpeedChallengePage() {
                             <LeaderboardItem rank={1} name="Andi W." meta="Jakarta • WiFi Tetangga" taps={54} speed="4.2 Mbps" isHighlight />
                             <LeaderboardItem rank={2} name="Siti Rahma" meta="Surabaya • WiFi Rumah" taps={48} speed="12.8 Mbps" />
                             <LeaderboardItem rank={3} name="Rian K." meta="Bandung • Mobile Data" taps={45} speed="21.0 Mbps" />
-                            <LeaderboardItem rank={4} name="Budi S." meta="Malang • WiFi Rumah" taps={42} speed="15.5 Mbps" />
                         </div>
                     )}
                 </div>
@@ -599,7 +602,9 @@ export default function SpeedChallengePage() {
                                         ? `\n\n*Promo yang dipilih:* \n${selectedPromos.map(p => `- ${p}`).join('\n')}`
                                         : '';
 
-                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Speed Asli: *${realSpeed} Mbps*).${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
+                                    const bonusText = recommendedPackage.bonus ? `\n*Bonus:* ${recommendedPackage.bonus}` : '';
+
+                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Speed Asli: *${realSpeed} Mbps*).${bonusText}${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
                                     window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
                                     setIsModalOpen(false);
                                 }}
@@ -612,8 +617,6 @@ export default function SpeedChallengePage() {
                 </div>
             )}
             
-            <p className="fixed bottom-6 text-[10px] text-white/20 uppercase tracking-[0.3em] font-bold">MyRepublic Speed Challenge 2026</p>
-
             <style jsx global>{`
                 .custom-scrollbar::-webkit-scrollbar {
                     width: 4px;
@@ -647,7 +650,7 @@ function PromoOption({ label, isSelected, onToggle }: { label: string, isSelecte
 
 function LeaderboardItem({ rank, name, meta, taps, speed, isHighlight = false }: { rank: number, name: string, meta: string, taps: number, speed: string, isHighlight?: boolean }) {
     return (
-        <div className={`flex items-center justify-between border rounded-xl p-2 text-xs ${isHighlight ? 'bg-[#e21a83]/10 border-[#e21a83]/20 animate-pulse' : 'bg-white/5 border-white/5'}`}>
+        <div className={`flex items-center justify-between border rounded-xl p-2 text-xs ${isHighlight ? 'bg-[#e21a83]/10 border-[#e21a83]/20' : 'bg-white/5 border-white/5'}`}>
             <div className="flex items-center gap-2">
                 <span className={`w-5 text-center font-black ${rank === 1 ? 'text-[#e21a83]' : 'text-gray-400'}`}>
                     {rank === 1 ? <Star className="w-3 h-3 text-yellow-400 inline" /> : rank}
