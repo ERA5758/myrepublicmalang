@@ -74,7 +74,7 @@ export default function SpeedChallengePage() {
     const [timeLeft, setTimeLeft] = useState(5000); // 5 seconds
     const [realSpeed, setRealSpeed] = useState(0.0);
     const [selectedCity, setSelectedCity] = useState('Jakarta Selatan');
-    const [selectedConn, setSelectedConn] = useState('WiFi Rumah');
+    const [selectedConn, setSelectedConn] = useState('WiFi Provider Lain');
     const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [aiResult, setAiResult] = useState<SpeedRoastOutput | null>(null);
@@ -325,8 +325,9 @@ export default function SpeedChallengePage() {
                                         value={selectedConn}
                                         onChange={(e) => setSelectedConn(e.target.value)}
                                     >
-                                        <option value="WiFi Rumah" className="bg-[#0e081b]">WiFi Rumah</option>
-                                        <option value="Mobile Data" className="bg-[#0e081b]">Mobile Data/Paketan</option>
+                                        <option value="WiFi Provider Lain" className="bg-[#0e081b]">WiFi Provider Lain</option>
+                                        <option value="Paket Data Seluler" className="bg-[#0e081b]">Paket Data Seluler</option>
+                                        <option value="RT RW Net" className="bg-[#0e081b]">Pakai RT RW Net</option>
                                         <option value="Internet Tetangga" className="bg-[#0e081b]">Internet Tetangga 🤫</option>
                                     </select>
                                 </div>
