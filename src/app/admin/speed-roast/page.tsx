@@ -33,7 +33,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader, PlusCircle, Trash2, Edit, Info } from 'lucide-react';
+import { Loader, PlusCircle, Trash2, Edit, Info, Sparkles, MessageSquareQuote } from 'lucide-react';
 import type { SpeedRoastTemplate } from '@/lib/definitions';
 import {
   AlertDialog,
@@ -48,6 +48,15 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { generateRoastContent } from '@/ai/flows/speed-roast-generator';
+
+const AI_TOPICS = [
+    { label: "Sarkas & Pedas", value: "Sarkasme tajam khas sosmed" },
+    { label: "Gamer Banget", value: "Istilah gaming, lag, ping, ping gede" },
+    { label: "Anak Gaul Sosmed", value: "Bahasa gaul, FYP, viral, FOMO" },
+    { label: "Profesional/WFH", value: "Zoom meeting, upload file, deadline" },
+    { label: "Lucu & Jenaka", value: "Komedi ringan dan perumpamaan kocak" }
+];
 
 export default function ManageSpeedRoastPage() {
   const [templates, setTemplates] = useState<SpeedRoastTemplate[]>([]);
@@ -107,7 +116,7 @@ export default function ManageSpeedRoastPage() {
             Kelola Kalimat Roasting
           </h1>
           <p className="mt-2 max-w-2xl text-lg text-muted-foreground">
-            Sesuaikan sindiran cerdas AI untuk Speed Challenge MyRepublic.
+            Sesuaikan sindiran cerdas AI untuk Speed Challenge MyRepublic secara dinamis.
           </p>
            <Button asChild variant="link" className="p-0 mt-2">
                 <Link href="/admin">Kembali ke dasbor</Link>
@@ -196,6 +205,9 @@ function RoastForm({ isOpen, setIsOpen, template }: { isOpen: boolean; setIsOpen
         action: ''
     });
     const [formLoading, setFormLoading] = useState(false);
+    const [aiLoading, setAiLoading] = useState(false);
+    const [selectedAiTopic, setSelectedAiTopic] = useState(AI_TOPICS[0].value);
+    
     const firestore = useFirestore();
     const { toast } = useToast();
 
@@ -211,6 +223,28 @@ function RoastForm({ isOpen, setIsOpen, template }: { isOpen: boolean; setIsOpen
             });
         }
     }, [isOpen, template]);
+
+    const handleGenerateAI = async () => {
+        setAiLoading(true);
+        try {
+            const result = await generateRoastContent({
+                category: formData.category as any,
+                topic: selectedAiTopic
+            });
+            setFormData({
+                ...formData,
+                roast: result.roast,
+                diagnosis: result.diagnosis,
+                action: result.action
+            });
+            toast({ title: 'AI Berhasil!', description: 'Kalimat roasting baru telah dihasilkan.' });
+        } catch (error) {
+            console.error(error);
+            toast({ variant: 'destructive', title: 'Gagal', description: 'AI gagal menghasilkan kalimat. Silakan coba lagi.' });
+        } finally {
+            setAiLoading(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -234,12 +268,45 @@ function RoastForm({ isOpen, setIsOpen, template }: { isOpen: boolean; setIsOpen
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="sm:max-w-lg">
+            <DialogContent className="sm:max-w-xl">
                 <DialogHeader>
                     <DialogTitle>{template ? 'Edit Kalimat Roasting' : 'Tambah Kalimat Roasting'}</DialogTitle>
-                    <DialogDescription>Gunakan bahasa gaul Indonesia yang asik dan menyinggung koneksi lemot.</DialogDescription>
+                    <DialogDescription>Gunakan AI untuk membuat kalimat sindiran secara otomatis atau tulis secara manual.</DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4 py-4">
+                
+                <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl mb-2">
+                    <div className="flex items-center justify-between mb-4">
+                        <Label className="flex items-center gap-2 text-primary">
+                            <Sparkles className="h-4 w-4" /> Hasilkan dengan AI
+                        </Label>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <Select 
+                            value={selectedAiTopic} 
+                            onValueChange={setSelectedAiTopic}
+                        >
+                            <SelectTrigger className="sm:flex-1 bg-white">
+                                <SelectValue placeholder="Pilih topik AI..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {AI_TOPICS.map(t => (
+                                    <SelectItem key={t.label} value={t.value}>{t.label}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <Button 
+                            type="button" 
+                            onClick={handleGenerateAI} 
+                            disabled={aiLoading}
+                            className="bg-primary hover:bg-primary/90"
+                        >
+                            {aiLoading ? <Loader className="animate-spin mr-2 h-4 w-4" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                            Generate
+                        </Button>
+                    </div>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-4 py-2">
                     <div className="space-y-2">
                         <Label>Kategori Kecepatan</Label>
                         <Select 
@@ -270,7 +337,7 @@ function RoastForm({ isOpen, setIsOpen, template }: { isOpen: boolean; setIsOpen
                             <Info className="h-3 w-3 shrink-0 mt-0.5" />
                             <p>
                                 <strong>Gunakan Placeholder:</strong><br />
-                                <code>[CITY]</code> = Nama Kota, <code>[SPEED]</code> = Mbps, <code>[TAPS]</code> = Jumlah Klik, <code>[CONN]</code> = Jenis Koneksi.
+                                <code>[CITY]</code> = Kota, <code>[SPEED]</code> = Mbps, <code>[TAPS]</code> = Ketukan, <code>[CONN]</code> = Jenis Koneksi.
                             </p>
                         </div>
                     </div>
@@ -299,7 +366,7 @@ function RoastForm({ isOpen, setIsOpen, template }: { isOpen: boolean; setIsOpen
                     <DialogFooter>
                         <Button type="submit" disabled={formLoading} className="w-full">
                             {formLoading ? <Loader className="animate-spin mr-2 h-4 w-4" /> : null}
-                            Simpan Perubahan
+                            Simpan Template
                         </Button>
                     </DialogFooter>
                 </form>
