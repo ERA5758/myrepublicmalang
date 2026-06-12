@@ -189,6 +189,19 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["uid", "email", "role", "createdAt"]
+    },
+    "SpeedRoastTemplate": {
+      "title": "SpeedRoastTemplate",
+      "description": "Templates for AI roasting based on speed categories.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "category": { "type": "string", "enum": ["siput", "kurakura", "kelinci"] },
+        "roast": { "type": "string" },
+        "diagnosis": { "type": "string" },
+        "action": { "type": "string" }
+      },
+      "required": ["id", "category", "roast", "diagnosis", "action"]
     }
   },
   "auth": {
@@ -234,6 +247,10 @@
     "/admins/{adminId}": {
       "schema": { "$ref": "#/entities/Admin" },
       "description": "Collection of administrator users. The document ID should be the user's UID."
+    },
+    "/speedRoastTemplates/{templateId}": {
+      "schema": { "$ref": "#/entities/SpeedRoastTemplate" },
+      "description": "Collection of templates for speed roasts."
     }
   }
 }

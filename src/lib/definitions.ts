@@ -157,3 +157,11 @@ export type Lead = {
     promos?: string[];
     status: z.infer<typeof LeadStatusEnum>;
 };
+
+export type SpeedRoastTemplate = {
+  id: string;
+  category: 'siput' | 'kurakura' | 'kelinci';
+  roast: string;
+  diagnosis: string;
+  action: string;
+};

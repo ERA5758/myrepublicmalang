@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -15,8 +16,13 @@ import {
   Zap,
   Gauge,
   Loader,
-  MessageSquare
+  MessageSquare,
+  Trophy,
+  ChevronDown
 } from 'lucide-react';
+import { useFirestore } from '@/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import type { SpeedRoastTemplate } from '@/lib/definitions';
 
 // Database Paket MyRepublic Fokus 2026
 const myRepublicPackages = [
@@ -46,51 +52,6 @@ const myRepublicPackages = [
     }
 ];
 
-// Mock Roasting Database - Menggunakan placeholder [CITY] dan [SPEED]
-const MOCK_ROASTS = {
-    siput: [
-        {
-            roast: "Waduh! Internetmu di [CITY] cuma [SPEED] Mbps? Apa ini obat tidur? Lemot banget! Ngetik 'P' di WhatsApp aja nunggunya kayak nunggu hilal. Pantesan tadi tap roketmu banyak yang sia-sia!",
-            diagnosis: "Terdeteksi gejala anemia jaringan kronis.",
-            action: "Segera donor bandwidth dari MyRepublic."
-        },
-        {
-            roast: "Koneksi siput [SPEED] Mbps begini kok masih dipelihara warga [CITY]? Download drama Korea satu episode aja bisa ganti presiden. Kasihan roketnya gak meluncur-meluncur!",
-            diagnosis: "Kapasitas kabel sudah mencapai batas kesabaran manusia.",
-            action: "Ganti ke MyRepublic biar hidup lebih berwarna."
-        },
-        {
-            roast: "Ini internet rumah di [CITY] atau dispenser? Kok cuma dapet [SPEED] Mbps dan putus-nyambung terus? Tadi tap roketmu banyak yang hang gara-gara ping yang setinggi gunung Semeru!",
-            diagnosis: "Lag spike terdeteksi setiap 2 detik sekali.",
-            action: "Instal MyRepublic sekarang juga."
-        }
-    ],
-    kurakura: [
-        {
-            roast: "Lumayan sih dapet [SPEED] Mbps di [CITY], tapi kalau dipake mabar sekeluarga langsung rebutan bandwidth kayak antre sembako. Roketmu meluncur tapi oleng ditiup angin!",
-            diagnosis: "Rasio upload dan download yang tidak seimbang.",
-            action: "Butuh koneksi simetris 1:1 MyRepublic."
-        },
-        {
-            roast: "Kecepatan [SPEED] Mbps di [CITY] emang cukup buat scroll TikTok, tapi buat upload konten? Bisa ditinggal tidur siang dulu. Kecepatan nanggung bikin darah tinggi naik pelan-pelan.",
-            diagnosis: "Terkena kutukan asimetris provider lama.",
-            action: "Pindah ke paket Neo MyRepublic."
-        }
-    ],
-    kelinci: [
-        {
-            roast: "Wah, warga [CITY] satu ini dapet [SPEED] Mbps, stabil sih. Tapi yakin kuotanya nggak kena FUP di akhir bulan? Jangan mau diphp-in provider lama yang ngakunya unlimited tapi bohong!",
-            diagnosis: "Potensi kecepatan tinggi yang dibatasi aturan FUP kaku.",
-            action: "Jadilah bebas tanpa batas dengan MyRepublic."
-        },
-        {
-            roast: "Punya potensi refleks dewa nih! [SPEED] Mbps di [CITY] emang kenceng, tapi sayang provider kamu pasti rawan gangguan cuaca kan? Yuk beralih ke full fiber sejati.",
-            diagnosis: "Jaringan saat ini rawan gangguan interferensi cuaca.",
-            action: "Upgrade ke koneksi 100% fiber optic."
-        }
-    ]
-};
-
 const CITY_LIST = [
   "Aceh", "Aceh Besar", "Badung", "Bali", "Balikpapan", "Bandung", "Bandung Barat", "Bangli", "Banjar", "Banjarmasin", 
   "Banyuasin", "Banyumas", "Banyuwangi", "Barito Kuala", "Batam", "Batanghari", "Bekasi", "Bengkulu", "Bengkulu Tengah", 
@@ -115,7 +76,7 @@ type Screen = 'start' | 'game' | 'loading' | 'result';
 export default function SpeedChallengePage() {
     const [screen, setScreen] = useState<Screen>('start');
     const [tapCount, setTapCount] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(5000); // 5 seconds
+    const [timeLeft, setTimeLeft] = useState(5000);
     const [realSpeed, setRealSpeed] = useState(0.0);
     const [selectedCity, setSelectedCity] = useState('Jakarta Selatan');
     const [selectedConn, setSelectedConn] = useState('WiFi Provider Lain');
@@ -124,88 +85,70 @@ export default function SpeedChallengePage() {
     const [aiResult, setAiResult] = useState<{ roast: string; diagnosis: string; recommendedAction: string } | null>(null);
     const [loadingLogs, setLoadingLogs] = useState<string[]>([]);
     const [selectedPromos, setSelectedPromos] = useState<string[]>([]);
+    const [roastTemplates, setRoastTemplates] = useState<SpeedRoastTemplate[]>([]);
     
-    // Refs for persistent values during game (prevents closure trap)
     const speedRef = useRef(0.0);
     const tapCountRef = useRef(0);
     const cityRef = useRef('Jakarta Selatan');
-
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const particles = useRef<any[]>([]);
     const audioCtx = useRef<AudioContext | null>(null);
     const gameInterval = useRef<NodeJS.Timeout | null>(null);
     const speedTestInterval = useRef<NodeJS.Timeout | null>(null);
+    const firestore = useFirestore();
 
-    // Particle System
+    // Fetch roasting templates from Firestore
+    useEffect(() => {
+        async function fetchTemplates() {
+            if (!firestore) return;
+            try {
+                const snapshot = await getDocs(collection(firestore, 'speedRoastTemplates'));
+                const templates = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SpeedRoastTemplate));
+                setRoastTemplates(templates);
+            } catch (e) {
+                console.error("Failed to fetch roast templates:", e);
+            }
+        }
+        fetchTemplates();
+    }, [firestore]);
+
+    // Particle System logic
     class Particle {
-        x: number;
-        y: number;
-        size: number;
-        speedX: number;
-        speedY: number;
-        color: string;
-        alpha: number;
-
+        x: number; y: number; size: number; speedX: number; speedY: number; color: string; alpha: number;
         constructor(x: number, y: number) {
-            this.x = x;
-            this.y = y;
-            this.size = Math.random() * 6 + 2;
-            this.speedX = Math.random() * 6 - 3;
-            this.speedY = Math.random() * -6 - 1;
-            this.color = Math.random() > 0.5 ? '#622599' : '#e21a83';
-            this.alpha = 1;
+            this.x = x; this.y = y; this.size = Math.random() * 6 + 2;
+            this.speedX = Math.random() * 6 - 3; this.speedY = Math.random() * -6 - 1;
+            this.color = Math.random() > 0.5 ? '#622599' : '#e21a83'; this.alpha = 1;
         }
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            this.alpha -= 0.02;
-        }
+        update() { this.x += this.speedX; this.y += this.speedY; this.alpha -= 0.02; }
         draw(ctx: CanvasRenderingContext2D) {
-            ctx.save();
-            ctx.globalAlpha = this.alpha;
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+            ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); ctx.restore();
         }
     }
 
     const handleParticles = useCallback(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
+        const canvas = canvasRef.current; if (!canvas) return;
+        const ctx = canvas.getContext('2d'); if (!ctx) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (let i = particles.current.length - 1; i >= 0; i--) {
             particles.current[i].update();
             particles.current[i].draw(ctx);
-            if (particles.current[i].alpha <= 0) {
-                particles.current.splice(i, 1);
-            }
+            if (particles.current[i].alpha <= 0) particles.current.splice(i, 1);
         }
-        // Use a continuous loop during game
-        if (particles.current.length > 0) {
-            requestAnimationFrame(handleParticles);
-        }
+        if (particles.current.length > 0) requestAnimationFrame(handleParticles);
     }, []);
 
     const playSound = (freq: number, duration: number, type: OscillatorType = "sine") => {
         try {
-            if (!audioCtx.current) {
-                audioCtx.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-            }
+            if (!audioCtx.current) audioCtx.current = new (window.AudioContext || (window as any).webkitAudioContext)();
             const osc = audioCtx.current.createOscillator();
             const gain = audioCtx.current.createGain();
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.current.currentTime);
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.current.currentTime);
             gain.gain.setValueAtTime(0.1, audioCtx.current.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.current.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(audioCtx.current.destination);
-            osc.start();
-            osc.stop(audioCtx.current.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.current.destination);
+            osc.start(); osc.stop(audioCtx.current.currentTime + duration);
         } catch(e) {}
     };
 
@@ -213,67 +156,50 @@ export default function SpeedChallengePage() {
         setScreen('loading');
         setLoadingLogs(["> Memfinalisasi data latency..."]);
         
-        // Use Refs for latest data to avoid displaying old results
         const finalSpeed = speedRef.current;
         const currentCity = cityRef.current;
 
         setTimeout(() => setLoadingLogs(prev => [...prev, `> Menganalisis kecepatan ${finalSpeed} Mbps...`]), 600);
         setTimeout(() => setLoadingLogs(prev => [...prev, `> Menghitung rasio kompresi jaringan ${currentCity}...`]), 1200);
         setTimeout(() => {
-            setLoadingLogs(prev => [...prev, "> Konsultasi dengan Gemini AI Engine (Mock Mode)..."]);
+            setLoadingLogs(prev => [...prev, "> Konsultasi dengan AI Engine (Firestore Mode)..."]);
             
-            // Logika pemilihan Mock Roast berdasarkan kecepatan terbaru
             let category: 'siput' | 'kurakura' | 'kelinci' = 'siput';
             if (finalSpeed >= 15 && finalSpeed < 40) category = 'kurakura';
             else if (finalSpeed >= 40) category = 'kelinci';
 
-            const pool = MOCK_ROASTS[category];
-            const selected = pool[Math.floor(Math.random() * pool.length)];
+            // Filter templates from Firestore state
+            const pool = roastTemplates.filter(t => t.category === category);
+            const selected = pool.length > 0 
+                ? pool[Math.floor(Math.random() * pool.length)]
+                : { roast: `Waduh! Internetmu di [CITY] cuma [SPEED] Mbps? Ganti ke MyRepublic sekarang!`, diagnosis: "Jaringan tidak stabil.", action: "Pindah ke MyRepublic." };
 
-            // Injeksi nama kota dan kecepatan ke dalam kalimat roasting
             const personalizedRoast = selected.roast
                 .replace(/\[CITY\]/g, currentCity)
                 .replace(/\[SPEED\]/g, finalSpeed.toString());
 
-            setAiResult({
-                roast: personalizedRoast,
-                diagnosis: selected.diagnosis,
-                recommendedAction: selected.action
-            });
+            setAiResult({ roast: personalizedRoast, diagnosis: selected.diagnosis, recommendedAction: selected.action });
             setScreen('result');
         }, 1800);
-    }, []);
+    }, [roastTemplates]);
 
     const initiateGame = () => {
-        // Reset everything
-        setTapCount(0);
-        tapCountRef.current = 0;
-        setTimeLeft(5000);
-        setRealSpeed(0.0);
-        speedRef.current = 0.0;
-        cityRef.current = selectedCity;
-        setAiResult(null);
-        setLoadingLogs([]);
-        setSelectedPromos([]);
-        particles.current = [];
-        
-        setScreen('game');
+        setTapCount(0); tapCountRef.current = 0; setTimeLeft(5000); setRealSpeed(0.0); speedRef.current = 0.0;
+        cityRef.current = selectedCity; setAiResult(null); setLoadingLogs([]); setSelectedPromos([]);
+        particles.current = []; setScreen('game');
 
         const targetSpeed = Math.floor(Math.random() * 45) + 8;
         let currentSpeed = 0.0;
         
-        // Speed Test simulation logic
         setTimeout(() => {
             speedTestInterval.current = setInterval(() => {
                 currentSpeed += (targetSpeed - currentSpeed) * 0.15 + (Math.random() * 2 - 1);
                 if (currentSpeed < 0) currentSpeed = 0.1;
                 const rounded = parseFloat(currentSpeed.toFixed(1));
-                setRealSpeed(rounded);
-                speedRef.current = rounded; // Update ref for diagnosis logic
+                setRealSpeed(rounded); speedRef.current = rounded;
             }, 100);
         }, 1000);
 
-        // Timer Logic
         const intervalTime = 100;
         gameInterval.current = setInterval(() => {
             setTimeLeft((prev) => {
@@ -291,28 +217,21 @@ export default function SpeedChallengePage() {
 
     const handleTap = (e: React.MouseEvent | React.TouchEvent) => {
         if (timeLeft <= 0) return;
-        
         const newCount = tapCountRef.current + 1;
-        setTapCount(newCount);
-        tapCountRef.current = newCount;
+        setTapCount(newCount); tapCountRef.current = newCount;
         
         const canvas = canvasRef.current;
         if (canvas) {
             const rect = canvas.getBoundingClientRect();
             let x, y;
             if ('touches' in e && e.touches.length > 0) {
-                x = e.touches[0].clientX - rect.left;
-                y = e.touches[0].clientY - rect.top;
+                x = e.touches[0].clientX - rect.left; y = e.touches[0].clientY - rect.top;
             } else {
                 const mouseEvt = e as React.MouseEvent;
-                x = mouseEvt.clientX - rect.left;
-                y = mouseEvt.clientY - rect.top;
+                x = mouseEvt.clientX - rect.left; y = mouseEvt.clientY - rect.top;
             }
-            for (let i = 0; i < 8; i++) {
-                particles.current.push(new Particle(x, y));
-            }
+            for (let i = 0; i < 8; i++) particles.current.push(new Particle(x, y));
         }
-
         playSound(300 + (newCount * 8), 0.1, "square");
         requestAnimationFrame(handleParticles);
     };
@@ -331,352 +250,359 @@ export default function SpeedChallengePage() {
     const multiplier = (recommendedPackage.speedVal / (realSpeed || 1)).toFixed(1);
 
     const togglePromo = (promo: string) => {
-        setSelectedPromos(prev => 
-            prev.includes(promo) ? prev.filter(p => p !== promo) : [...prev, promo]
-        );
+        setSelectedPromos(prev => prev.includes(promo) ? prev.filter(p => p !== promo) : [...prev, promo]);
     };
 
-    const toggleLeaderboard = () => setIsLeaderboardOpen(!isLeaderboardOpen);
-
     return (
-        <div className="min-h-screen text-white flex flex-col items-center justify-center p-4 bg-[#080312] selection:bg-[#e21a83]/30">
-            <div className="w-full max-w-lg bg-[#0e081b]/85 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
-                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#622599] via-[#e21a83] to-[#622599]"></div>
+        <div className="flex min-h-screen w-full flex-col items-center justify-center bg-[#080312] p-0 sm:p-4 transition-all duration-500 overflow-hidden font-body">
+            {/* Desktop Frame Container */}
+            <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#0e081b] border-x-0 border-y-0 sm:h-[95vh] sm:max-w-md sm:rounded-[3rem] sm:border-8 sm:border-slate-900 sm:shadow-[0_0_80px_rgba(98,37,153,0.3)] shadow-2xl">
                 
-                {/* Header */}
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#622599] to-[#e21a83] flex items-center justify-center shadow-lg">
-                            <Bolt className="text-white w-4 h-4" />
-                        </div>
-                        <div>
-                            <h3 className="font-extrabold text-sm tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#622599] to-[#e21a83]">MYREPUBLIC</h3>
-                            <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Speed Challenge</p>
-                        </div>
-                    </div>
-                    <div className="bg-white/10 px-3 py-1 rounded-full text-xs font-semibold text-[#e21a83] border border-white/5 flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
-                        <span>AI Live Diagnose</span>
-                    </div>
-                </div>
-
-                {/* Screens */}
-                {screen === 'start' && (
-                    <div className="animate-in fade-in zoom-in duration-300">
-                        <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight mb-2 text-center">
-                            WiFi Rumah Sering <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">Lemot Kayak Siput? 🐌</span>
-                        </h1>
-                        <p className="text-sm text-gray-400 text-center mb-6">
-                            Bantu Roket MyRepublic meluncur sembari AI memindai, menganalisis, dan membandingkan kecepatan internet Anda saat ini!
-                        </p>
-
-                        <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-6">
-                            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                <Zap className="text-[#e21a83] w-3 h-3" /> Pengaturan Penyelidikan
-                            </h4>
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="block text-[10px] text-gray-400 uppercase font-bold mb-1">Kota Anda</label>
-                                    <select 
-                                        className="w-full text-xs rounded-lg p-2.5 bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[#e21a83]"
-                                        value={selectedCity}
-                                        onChange={(e) => setSelectedCity(e.target.value)}
-                                    >
-                                        {CITY_LIST.map(city => (
-                                            <option key={city} value={city} className="bg-[#0e081b]">{city}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] text-gray-400 uppercase font-bold mb-1">Koneksi Saat Ini</label>
-                                    <select 
-                                        className="w-full text-xs rounded-lg p-2.5 bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[#e21a83]"
-                                        value={selectedConn}
-                                        onChange={(e) => setSelectedConn(e.target.value)}
-                                    >
-                                        <option value="WiFi Provider Lain" className="bg-[#0e081b]">WiFi Provider Lain</option>
-                                        <option value="Paket Data Seluler" className="bg-[#0e081b]">Paket Data Seluler</option>
-                                        <option value="RT RW Net" className="bg-[#0e081b]">RT RW Net</option>
-                                        <option value="Internet Tetangga" className="bg-[#0e081b]">Internet Tetangga 🤫</option>
-                                    </select>
-                                </div>
+                {/* Visual Accent - Top Bar Gradient */}
+                <div className="absolute top-0 left-0 h-1.5 w-full bg-gradient-to-r from-[#622599] via-[#e21a83] to-[#622599] z-50"></div>
+                
+                {/* Main Content Area */}
+                <div className="flex h-full w-full flex-col p-6 sm:p-8 overflow-y-auto custom-scrollbar">
+                    
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-8 mt-2">
+                        <div className="flex items-center gap-2">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#622599] to-[#e21a83] shadow-lg shadow-purple-500/20">
+                                <Bolt className="h-5 w-5 text-white" />
+                            </div>
+                            <div className="leading-none">
+                                <h3 className="text-sm font-black tracking-widest text-white">MYREPUBLIC</h3>
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Speed Challenge</p>
                             </div>
                         </div>
-
-                        <div className="relative h-44 flex items-center justify-center mb-6 overflow-hidden rounded-2xl bg-gradient-to-b from-[#622599]/10 to-transparent border border-white/5">
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(226,26,131,0.1)_0%,transparent_70%)] animate-pulse"></div>
-                            <div className="text-7xl select-none animate-bounce filter drop-shadow-[0_10px_15px_rgba(98,37,153,0.3)]">🚀</div>
-                        </div>
-
-                        <button 
-                            onClick={initiateGame}
-                            className="w-full bg-gradient-to-r from-[#622599] to-[#e21a83] hover:from-[#622599]/90 hover:to-[#e21a83]/90 text-white font-extrabold text-base py-4 px-6 rounded-2xl transition-all shadow-[0_0_20px_rgba(226,26,131,0.5)] flex items-center justify-center gap-3 group"
-                        >
-                            MULAI TANTANGAN KECEPATAN
-                            <ArrowRight className="group-hover:translate-x-1 transition-transform w-5 h-5" />
-                        </button>
-                    </div>
-                )}
-
-                {screen === 'game' && (
-                    <div className="animate-in fade-in duration-300">
-                        <div className="text-center mb-4">
-                            <h2 className="text-xl font-black text-white flex items-center justify-center gap-2 uppercase tracking-tighter">
-                                <span className="animate-bounce">⚡</span> KETUK SECEPAT MUNGKIN!
-                            </h2>
-                            <p className="text-xs text-gray-400 mt-1">Pompa roket & biarkan AI mendeteksi kecepatan asli WiFi Anda...</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-3 flex flex-col items-center justify-center">
-                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Energi Roket</span>
-                                <div className="text-3xl font-black text-yellow-400">{tapCount}</div>
-                                <span className="text-[9px] text-yellow-400/80 mt-0.5">Taps Terkumpul</span>
-                            </div>
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-3 flex flex-col items-center justify-center relative overflow-hidden">
-                                <div className="absolute top-1 right-2">
-                                    <span className="text-[8px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded font-bold uppercase tracking-widest animate-pulse">Scanning</span>
-                                </div>
-                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Kecepatan Internet</span>
-                                <div className="text-3xl font-black text-[#e21a83] flex items-baseline gap-0.5">
-                                    <span>{realSpeed.toFixed(1)}</span>
-                                    <span className="text-xs font-normal text-gray-400">Mbps</span>
-                                </div>
-                                <span className="text-[9px] text-[#e21a83]/80 mt-0.5">Mengukur Unduhan...</span>
-                            </div>
-                        </div>
-
-                        <div className="relative mb-4">
-                            <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none rounded-2xl z-10"></canvas>
-                            <div 
-                                id="tap-zone" 
-                                onMouseDown={handleTap}
-                                onTouchStart={(e) => { e.preventDefault(); handleTap(e); }}
-                                className="relative z-0 h-48 bg-gradient-to-b from-[#622599]/20 to-[#0e081b]/40 border-2 border-dashed border-[#e21a83]/60 hover:border-[#e21a83] rounded-2xl flex flex-col items-center justify-center cursor-pointer select-none transition-all p-4 active:scale-[0.98]"
-                            >
-                                <div className="text-6xl mb-3 transform transition-transform duration-75">🚀</div>
-                                <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-400 animate-pulse">TAP DISINI!</h3>
-                                <p className="text-[10px] text-gray-400 mt-1">Gunakan beberapa jari untuk kecepatan ekstra!</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-white/5 border border-white/10 rounded-xl p-3">
-                            <div className="flex justify-between items-center text-xs mb-1">
-                                <span className="font-bold text-gray-400 uppercase tracking-widest">Waktu Tersisa</span>
-                                <span className="font-extrabold text-[#e21a83]">{(timeLeft / 1000).toFixed(1)} Detik</span>
-                            </div>
-                            <div className="w-full bg-white/5 h-2.5 rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-[#622599] to-[#e21a83] transition-all duration-100" style={{ width: `${(timeLeft / 5000) * 100}%` }}></div>
-                            </div>
+                        <div className="flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-bold text-[#e21a83]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping"></span>
+                            AI LIVE DIAGNOSE
                         </div>
                     </div>
-                )}
 
-                {screen === 'loading' && (
-                    <div className="animate-in fade-in duration-300 text-center py-8">
-                        <div className="relative w-24 h-24 mx-auto mb-6">
-                            <div className="absolute inset-0 rounded-full border-4 border-[#622599]/20"></div>
-                            <div className="absolute inset-0 rounded-full border-4 border-t-[#e21a83] animate-spin"></div>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <Bot className="text-[#e21a83] w-8 h-8 animate-bounce" />
-                            </div>
-                        </div>
-                        <h2 className="text-xl font-black mb-2">Konsultasi dengan AI Engine...</h2>
-                        <p className="text-sm text-gray-400 max-w-xs mx-auto mb-6">Gemini AI sedang mendiagnosis jaringan internet rumah Anda serta menganalisis kekuatan ketukan tangan Anda.</p>
-                        
-                        <div className="max-w-xs mx-auto bg-white/5 border border-white/10 rounded-xl p-3 text-left">
-                            <div className="flex items-center gap-2 text-xs text-gray-400 mb-1.5">
-                                <Bolt className="text-yellow-400 w-3 h-3" />
-                                <span>Proses Komputasi:</span>
-                            </div>
-                            <div className="text-xs space-y-1 font-mono text-gray-500">
-                                {loadingLogs.map((log, i) => <div key={i}>{log}</div>)}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {screen === 'result' && aiResult && (
-                    <div className="animate-in fade-in zoom-in duration-500 max-h-[75vh] overflow-y-auto pr-2 custom-scrollbar">
-                        <div className="text-center mb-6">
-                            <div className="w-12 h-12 bg-green-500/10 border border-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-2 text-xl shadow-lg">
-                                <CircleCheck className="w-6 h-6" />
-                            </div>
-                            <h1 className="text-2xl font-black">Analisis AI Selesai!</h1>
-                            <p className="text-xs text-gray-400">Kondisi riil internet dan solusi paket terbaik untuk Anda</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3 mb-4">
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
-                                <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider block mb-1">Kecepatan Anda</span>
-                                <div className="text-2xl font-black text-[#e21a83] flex items-center justify-center gap-1">
-                                    <span>{speedRef.current}</span>
-                                    <span className="text-xs font-normal text-gray-400">Mbps</span>
-                                </div>
-                                <span className={`inline-block mt-1 text-[9px] px-2 py-0.5 rounded font-black uppercase ${speedRef.current < 15 ? 'bg-red-500/10 text-red-400' : speedRef.current < 40 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
-                                    {speedRef.current < 15 ? 'Kategori Siput 🐌' : speedRef.current < 40 ? 'Kategori Kura-kura 🐢' : 'Kategori Kelinci 🐰'}
-                                </span>
-                            </div>
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
-                                <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider block mb-1">Ketukan Jari</span>
-                                <div className="text-2xl font-black text-yellow-400 flex items-center justify-center gap-1">
-                                    <span>{tapCountRef.current}</span>
-                                    <span className="text-xs font-normal text-gray-400">Taps</span>
-                                </div>
-                                <span className="inline-block mt-1 text-[9px] px-2 py-0.5 rounded font-black uppercase bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-                                    {tapCountRef.current < 20 ? 'Tukang Santuy ☕' : tapCountRef.current < 40 ? 'Pro Tapper ⚡' : 'Refleks Dewa 👑'}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="bg-gradient-to-r from-red-950/20 to-[#622599]/20 border border-red-500/20 rounded-2xl p-4 mb-4 relative">
-                            <div className="absolute -top-2.5 left-4 bg-[#e21a83] text-[9px] text-white font-extrabold px-2 py-0.5 rounded-md tracking-wider uppercase shadow-md flex items-center gap-1">
-                                <Bot className="w-2.5 h-2.5" /> AI Roast & Diagnosis
-                            </div>
-                            <p className="text-sm italic leading-relaxed text-gray-200 mt-2">
-                                &quot;{aiResult.roast}&quot;
+                    {/* SCREEN: START */}
+                    {screen === 'start' && (
+                        <div className="flex flex-1 flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <h1 className="text-center text-3xl font-black leading-tight tracking-tight text-white mb-2">
+                                WiFi Rumah Sering <br />
+                                <span className="bg-gradient-to-r from-yellow-400 to-red-500 bg-clip-text text-transparent">Lemot Kayak Siput? 🐌</span>
+                            </h1>
+                            <p className="mb-8 text-center text-xs font-medium text-gray-400">
+                                Bantu Roket MyRepublic meluncur sembari AI memindai kecepatan internet Anda!
                             </p>
-                        </div>
 
-                        <div className="bg-gradient-to-br from-[#622599]/30 to-[#e21a83]/10 border-2 border-[#e21a83]/40 rounded-2xl p-5 mb-5 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 bg-yellow-400 text-[#0e081b] font-black text-[9px] px-3 py-1 rounded-bl-xl tracking-wider uppercase">
-                                Rekomendasi Utama
-                            </div>
-                            
-                            <span className="text-[10px] text-[#e21a83] font-bold uppercase tracking-widest block mb-1">Paket Ultra-Fast Sesuai Kebutuhan</span>
-                            <h2 className="text-2xl font-black text-white mb-1">{recommendedPackage.name}</h2>
-                            {recommendedPackage.bonus && (
-                                <p className="text-[10px] font-bold text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded inline-block mb-2 border border-yellow-400/20">
-                                    🎁 {recommendedPackage.bonus}
-                                </p>
-                            )}
-
-                            <div className="flex items-center gap-2 mb-2 text-[10px] text-green-400 font-bold uppercase tracking-wider">
-                                <CircleCheck className="w-3.5 h-3.5" /> 
-                                <span>GRATIS BIAYA PEMASANGAN (Hemat Rp 500.000)</span>
-                            </div>
-                            
-                            <div className="flex items-center gap-2 mb-4 text-xs text-yellow-300 font-bold">
-                                <Zap className="w-4 h-4 animate-bounce" /> 
-                                <span>Hingga {multiplier}x Lebih Cepat & Stabil dari WiFi lama Anda!</span>
-                            </div>
-
-                            <div className="border-t border-white/10 pt-3 flex items-center justify-between">
-                                <div>
-                                    <span className="text-[9px] text-gray-400 block uppercase font-bold">Harga Spesial</span>
-                                    <div className="flex items-baseline gap-1">
-                                        <span className="text-lg font-black text-green-400">{recommendedPackage.price}</span>
-                                        <span className="text-[9px] text-gray-400">/bln</span>
+                            <div className="mb-8 space-y-4 rounded-3xl bg-white/5 border border-white/10 p-5 backdrop-blur-sm">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <Zap className="h-3 w-3 text-[#e21a83]" />
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400">Pengaturan Penyelidikan</h4>
+                                </div>
+                                <div className="grid grid-cols-1 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-[9px] font-black uppercase text-gray-500 ml-1">KOTA ANDA</label>
+                                        <select 
+                                            value={selectedCity} 
+                                            onChange={(e) => setSelectedCity(e.target.value)}
+                                            className="w-full rounded-xl bg-slate-900 border border-white/10 p-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#e21a83] transition-all"
+                                        >
+                                            {CITY_LIST.map(city => <option key={city} value={city}>{city}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[9px] font-black uppercase text-gray-500 ml-1">KONEKSI SAAT INI</label>
+                                        <select 
+                                            value={selectedConn} 
+                                            onChange={(e) => setSelectedConn(e.target.value)}
+                                            className="w-full rounded-xl bg-slate-900 border border-white/10 p-3 text-xs text-white focus:outline-none focus:ring-1 focus:ring-[#e21a83] transition-all"
+                                        >
+                                            <option value="WiFi Provider Lain">WiFi Provider Lain</option>
+                                            <option value="Paket Data Seluler">Paket Data Seluler</option>
+                                            <option value="RT RW Net">RT RW Net</option>
+                                            <option value="Internet Tetangga">Internet Tetangga 🤫</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <span className="text-[9px] text-gray-400 block uppercase font-bold">Keunggulan Utama</span>
-                                    <span className="text-xs text-white font-bold block"><Gauge className="inline w-3 h-3 text-[#e21a83] mr-1" /> Simetris 1:1 & No FUP</span>
+                            </div>
+
+                            <div className="relative mb-10 flex h-48 items-center justify-center rounded-3xl bg-gradient-to-b from-purple-500/10 to-transparent border border-white/5 overflow-hidden">
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(226,26,131,0.15)_0%,transparent_70%)] animate-pulse"></div>
+                                <div className="text-8xl animate-bounce drop-shadow-[0_20px_25px_rgba(226,26,131,0.4)]">🚀</div>
+                            </div>
+
+                            <button 
+                                onClick={initiateGame}
+                                className="group relative mt-auto flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-[#622599] to-[#e21a83] p-5 text-sm font-black text-white shadow-[0_15px_30px_rgba(226,26,131,0.3)] transition-all hover:scale-[1.02] active:scale-95"
+                            >
+                                MULAI TANTANGAN
+                                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                            </button>
+                        </div>
+                    )}
+
+                    {/* SCREEN: GAME */}
+                    {screen === 'game' && (
+                        <div className="flex flex-1 flex-col animate-in fade-in duration-300">
+                            <div className="text-center mb-6">
+                                <h2 className="flex items-center justify-center gap-2 text-xl font-black text-white uppercase tracking-tighter">
+                                    <Zap className="h-5 w-5 text-yellow-400 animate-pulse" /> KETUK SECEPATNYA!
+                                </h2>
+                                <p className="text-[10px] text-gray-400 mt-1">Pompa roket sembari AI mendeteksi WiFi Anda...</p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 mb-6">
+                                <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md">
+                                    <span className="text-[9px] font-black uppercase tracking-wider text-gray-500 mb-1">Energi Roket</span>
+                                    <div className="text-4xl font-black text-yellow-400">{tapCount}</div>
+                                </div>
+                                <div className="relative flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md overflow-hidden">
+                                    <div className="absolute top-1 right-2 rounded bg-red-500/20 px-1.5 py-0.5 text-[8px] font-black uppercase text-red-400 animate-pulse">Scanning</div>
+                                    <span className="text-[9px] font-black uppercase tracking-wider text-gray-500 mb-1">Speed Internet</span>
+                                    <div className="flex items-baseline gap-0.5 text-4xl font-black text-[#e21a83]">
+                                        {realSpeed.toFixed(1)}<span className="text-xs font-medium text-gray-400 ml-1">Mbps</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="relative flex-1 mb-6">
+                                <canvas ref={canvasRef} className="absolute inset-0 z-10 pointer-events-none rounded-3xl h-full w-full"></canvas>
+                                <div 
+                                    onMouseDown={handleTap}
+                                    onTouchStart={(e) => { e.preventDefault(); handleTap(e); }}
+                                    className="relative flex h-full min-h-[300px] cursor-pointer flex-col items-center justify-center rounded-[2.5rem] border-4 border-dashed border-[#e21a83]/30 bg-gradient-to-b from-purple-900/20 to-slate-950/40 p-10 transition-all active:scale-[0.98] select-none group"
+                                >
+                                    <div className="mb-4 text-8xl transition-transform duration-75 group-active:scale-110 group-active:-translate-y-4">🚀</div>
+                                    <h3 className="text-2xl font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500 animate-pulse">TAP DISINI!</h3>
+                                    <p className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Multi-finger Power!</p>
+                                </div>
+                            </div>
+
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 mb-2">
+                                <div className="flex justify-between items-center text-[10px] font-black uppercase mb-1.5 tracking-wider">
+                                    <span className="text-gray-400">Waktu Tersisa</span>
+                                    <span className="text-[#e21a83]">{(timeLeft / 1000).toFixed(1)} Detik</span>
+                                </div>
+                                <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
+                                    <div className="h-full bg-gradient-to-r from-[#622599] to-[#e21a83] transition-all duration-100" style={{ width: `${(timeLeft / 5000) * 100}%` }}></div>
                                 </div>
                             </div>
                         </div>
+                    )}
 
-                        {/* Promo Bonus Selection */}
-                        <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6">
-                            <h3 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-[#e21a83] uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <Star className="w-4 h-4 text-yellow-400" />
-                                Pilih Promo Bonus (Bisa &gt; 1)
-                            </h3>
-                            <div className="space-y-3">
-                                <PromoOption 
-                                    label="Jaminan harga tetap selama 2 atau 3 tahun" 
-                                    isSelected={selectedPromos.includes("Jaminan Harga Tetap 2/3 Tahun")} 
-                                    onToggle={() => togglePromo("Jaminan Harga Tetap 2/3 Tahun")} 
-                                />
+                    {/* SCREEN: LOADING */}
+                    {screen === 'loading' && (
+                        <div className="flex flex-1 flex-col items-center justify-center animate-in fade-in duration-300 py-10">
+                            <div className="relative mb-8 h-32 w-32">
+                                <div className="absolute inset-0 rounded-full border-8 border-[#622599]/20"></div>
+                                <div className="absolute inset-0 rounded-full border-8 border-t-[#e21a83] animate-spin"></div>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <Bot className="h-12 w-12 text-[#e21a83] animate-bounce" />
+                                </div>
+                            </div>
+                            <h2 className="text-2xl font-black text-white mb-2">Konsultasi AI...</h2>
+                            <p className="text-center text-xs text-gray-400 max-w-[200px] mb-8">Gemini AI sedang mendiagnosis jaringan internet rumah Anda.</p>
+                            
+                            <div className="w-full max-w-[280px] rounded-2xl border border-white/10 bg-white/5 p-4 text-left backdrop-blur-md">
+                                <div className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-500 mb-3 tracking-widest">
+                                    <Zap className="h-3 w-3 text-yellow-400" /> PROSES KOMPUTASI
+                                </div>
+                                <div className="space-y-1.5 font-mono text-[10px] text-gray-500">
+                                    {loadingLogs.map((log, i) => <div key={i}>{log}</div>)}
+                                </div>
                             </div>
                         </div>
+                    )}
 
-                        <div className="grid grid-cols-2 gap-3 mb-3">
+                    {/* SCREEN: RESULT */}
+                    {screen === 'result' && aiResult && (
+                        <div className="flex flex-1 flex-col animate-in zoom-in-95 duration-500">
+                            <div className="text-center mb-8">
+                                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-green-500/10 border border-green-500/30 text-green-400 shadow-[0_0_30px_rgba(34,197,94,0.2)]">
+                                    <CircleCheck className="h-8 w-8" />
+                                </div>
+                                <h1 className="text-3xl font-black text-white tracking-tight">Analisis AI Selesai!</h1>
+                                <p className="text-[11px] text-gray-400 mt-1 uppercase font-bold tracking-wider">Laporan Diagnosis MyRepublic</p>
+                            </div>
+
+                            {/* Stat Grid */}
+                            <div className="grid grid-cols-2 gap-4 mb-6">
+                                <div className="flex flex-col items-center rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md text-center">
+                                    <span className="text-[9px] font-black uppercase text-gray-500 mb-2 tracking-widest">KECEPATAN ANDA</span>
+                                    <div className="text-3xl font-black text-[#e21a83] flex items-baseline gap-1">
+                                        {speedRef.current}<span className="text-xs font-normal text-gray-400">Mbps</span>
+                                    </div>
+                                    <div className={`mt-3 rounded-lg px-2 py-1 text-[8px] font-black uppercase tracking-wider ${speedRef.current < 15 ? 'bg-red-500/10 text-red-400' : speedRef.current < 40 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
+                                        {speedRef.current < 15 ? 'KATEGORI SIPUT 🐌' : speedRef.current < 40 ? 'KATEGORI KURA-KURA 🐢' : 'KATEGORI KELINCI 🐰'}
+                                    </div>
+                                </div>
+                                <div className="flex flex-col items-center rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md text-center">
+                                    <span className="text-[9px] font-black uppercase text-gray-500 mb-2 tracking-widest">KETUKAN JARI</span>
+                                    <div className="text-3xl font-black text-yellow-400 flex items-baseline gap-1">
+                                        {tapCountRef.current}<span className="text-xs font-normal text-gray-400">Taps</span>
+                                    </div>
+                                    <div className="mt-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 px-2 py-1 text-[8px] font-black uppercase tracking-wider text-yellow-400">
+                                        {tapCountRef.current < 40 ? 'PEMULA' : tapCountRef.current < 80 ? 'JARI KILAT' : 'REFLEKS DEWA 👑'}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* AI Roast Box */}
+                            <div className="relative mb-6 rounded-3xl bg-gradient-to-br from-brandPurple/40 via-[#e21a83]/5 to-transparent border border-red-500/20 p-6 shadow-xl">
+                                <div className="absolute -top-3 left-6 flex items-center gap-1.5 rounded-full bg-[#e21a83] px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white shadow-lg">
+                                    <Bot className="h-2.5 w-2.5" /> AI ROAST & DIAGNOSIS
+                                </div>
+                                <p className="mt-2 text-sm italic leading-relaxed text-gray-100 font-medium">
+                                    &quot;{aiResult.roast}&quot;
+                                </p>
+                            </div>
+
+                            {/* Plan Card */}
+                            <div className="relative mb-8 rounded-[2rem] bg-gradient-to-br from-slate-900 via-[#622599]/30 to-[#e21a83]/10 border-2 border-[#e21a83]/40 p-6 overflow-hidden">
+                                <div className="absolute top-0 right-0 rounded-bl-2xl bg-yellow-400 px-3 py-1.5 text-[8px] font-black uppercase tracking-widest text-slate-900">REKOMENDASI</div>
+                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#e21a83] mb-1">Paket Ultra-Fast Pilihan AI</h3>
+                                <h2 className="text-2xl font-black text-white mb-2">{recommendedPackage.name}</h2>
+                                <div className="flex items-center gap-2 mb-4 text-[10px] font-black text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 px-3 py-1 rounded-full w-fit">
+                                    <Zap className="h-3 w-3 animate-pulse" /> HINGGA {multiplier}X LEBIH KENCANG DARI WIFI SEKARANG!
+                                </div>
+
+                                <div className="flex items-center justify-between border-t border-white/10 pt-4">
+                                    <div className="flex flex-col">
+                                        <span className="text-[8px] font-black uppercase text-gray-500">HARGA SPESIAL</span>
+                                        <div className="flex items-baseline gap-0.5">
+                                            <span className="text-xl font-black text-green-400">{recommendedPackage.price}</span>
+                                            <span className="text-[9px] font-bold text-gray-400">/bln</span>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="flex items-center gap-1.5 text-[10px] font-black text-green-400 uppercase tracking-widest">
+                                            <CircleCheck className="h-3 w-3" /> GRATIS INSTALASI
+                                        </div>
+                                        <span className="text-[8px] font-bold text-gray-500 mt-0.5 block uppercase tracking-wider">HEMAT RP 500.000</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Promo Multi Select */}
+                            <div className="mb-8 rounded-3xl border border-white/10 bg-white/5 p-6">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <Star className="h-4 w-4 text-yellow-400" />
+                                    <h4 className="text-xs font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-[#e21a83]">PILIH PROMO BONUS (BISA &gt; 1)</h4>
+                                </div>
+                                <button 
+                                    onClick={() => togglePromo("Jaminan Harga Tetap 2/3 Tahun")}
+                                    className={`flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all ${selectedPromos.includes("Jaminan Harga Tetap 2/3 Tahun") ? 'border-[#e21a83] bg-[#e21a83]/20 shadow-[0_0_20px_rgba(226,26,131,0.2)]' : 'border-white/10 bg-white/5 hover:border-white/20'}`}
+                                >
+                                    <div className={`flex h-6 w-6 items-center justify-center rounded-lg border transition-colors ${selectedPromos.includes("Jaminan Harga Tetap 2/3 Tahun") ? 'bg-[#e21a83] border-[#e21a83]' : 'border-gray-600 bg-black/40'}`}>
+                                        {selectedPromos.includes("Jaminan Harga Tetap 2/3 Tahun") && <CircleCheck className="h-4 w-4 text-white" />}
+                                    </div>
+                                    <span className="text-xs font-bold text-white leading-tight">Jaminan Harga Tetap Selama 2 atau 3 Tahun</span>
+                                </button>
+                            </div>
+
+                            <div className="mt-auto grid grid-cols-1 gap-4 mb-4">
+                                <button 
+                                    onClick={() => setIsModalOpen(true)}
+                                    className="flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-[#622599] to-[#e21a83] p-5 text-sm font-black text-white shadow-[0_15px_40px_rgba(226,26,131,0.4)] transition-all hover:scale-[1.02] active:scale-95"
+                                >
+                                    <ShoppingCart className="h-5 w-5" /> KLAIM PROMO SEKARANG
+                                </button>
+                                <button 
+                                    onClick={() => setScreen('start')}
+                                    className="flex w-full items-center justify-center gap-3 rounded-2xl bg-white/5 border border-white/10 p-4 text-xs font-black text-white transition-all hover:bg-white/10 active:scale-95"
+                                >
+                                    <RotateCcw className="h-4 w-4" /> ULANGI TANTANGAN
+                                </button>
+                            </div>
+
                             <button 
-                                onClick={() => setIsModalOpen(true)}
-                                className="bg-gradient-to-r from-[#622599] to-[#e21a83] hover:from-[#622599]/90 hover:to-[#e21a83]/90 text-white font-black text-sm py-3.5 px-4 rounded-xl shadow-[0_0_20px_rgba(226,26,131,0.5)] transition-all flex items-center justify-center gap-2"
+                                onClick={() => {
+                                    const msg = `Halo Sales MyRepublic! Saya ingin konsultasi gratis mengenai pemasangan wifi baru. Tadi saya coba Speed Challenge dan hasilnya ${speedRef.current} Mbps. Mohon dibantu pengecekan area ya! Terima kasih.`;
+                                    window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
+                                }}
+                                className="flex w-full items-center justify-center gap-3 rounded-2xl border border-green-500/30 bg-green-500/5 p-4 text-xs font-black text-green-400 transition-all hover:bg-green-500/10 mb-2"
                             >
-                                <ShoppingCart className="w-4 h-4" /> Ambil Promo
-                            </button>
-                            <button 
-                                onClick={() => setScreen('start')}
-                                className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-sm py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2"
-                            >
-                                <RotateCcw className="w-4 h-4" /> Ulangi Game
+                                <MessageSquare className="h-4 w-4" /> KONSULTASI GRATIS (WHATSAPP)
                             </button>
                         </div>
+                    )}
 
-                        <button 
-                            onClick={() => {
-                                const msg = `Halo Sales MyRepublic! Saya ingin konsultasi gratis mengenai pemasangan wifi baru di rumah saya. Tadi saya coba Speed Challenge dan hasilnya ${speedRef.current} Mbps. Mohon dibantu pengecekan area ya! Terima kasih.`;
-                                window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
-                            }}
-                            className="w-full bg-white/5 border border-white/20 hover:bg-white/10 text-white font-bold text-sm py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 mb-4"
-                        >
-                            <MessageSquare className="w-4 h-4 text-green-400" /> Konsultasi Gratis via WhatsApp
-                        </button>
-                    </div>
-                )}
+                </div>
 
-                {/* Leaderboard */}
-                <div className="mt-6 border-t border-white/5 pt-6">
+                {/* Leaderboard - Bottom Drawer Component Style */}
+                <div className="mt-auto border-t border-white/5 bg-black/20 p-6 transition-all duration-300">
                     <button 
-                        onClick={toggleLeaderboard}
-                        className="w-full flex items-center justify-between text-xs text-gray-400 font-bold uppercase tracking-widest hover:text-white transition-colors focus:outline-none"
+                        onClick={() => setIsLeaderboardOpen(!isLeaderboardOpen)}
+                        className="flex w-full items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 hover:text-white"
                     >
                         <span className="flex items-center gap-2">
-                            <Star className="text-yellow-400 w-3 h-3" />
-                            Skor Tantangan Terkini (Nasional)
+                            <Trophy className="h-3 w-3 text-yellow-500" /> SKOR TANTANGAN TERKINI (NASIONAL)
                         </span>
-                        <Info className={`transition-transform duration-300 w-4 h-4 ${isLeaderboardOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${isLeaderboardOpen ? 'rotate-180' : ''}`} />
                     </button>
-                    
                     {isLeaderboardOpen && (
-                        <div className="mt-3 max-h-40 overflow-y-auto space-y-2 pr-1 animate-in slide-in-from-top-2 duration-300">
-                            <LeaderboardItem rank={1} name="Andi W." meta="Jakarta • WiFi Tetangga" taps={54} speed="4.2 Mbps" isHighlight />
-                            <LeaderboardItem rank={2} name="Siti Rahma" meta="Surabaya • WiFi Rumah" taps={48} speed="12.8 Mbps" />
-                            <LeaderboardItem rank={3} name="Rian K." meta="Bandung • Mobile Data" taps={45} speed="21.0 Mbps" />
+                        <div className="mt-4 space-y-3 animate-in slide-in-from-bottom-2 duration-300">
+                            <div className="flex items-center justify-between rounded-xl bg-white/5 p-3 text-[10px]">
+                                <div className="flex items-center gap-3">
+                                    <span className="font-black text-yellow-500">1</span>
+                                    <div className="leading-tight">
+                                        <div className="font-black text-white uppercase">Andi W.</div>
+                                        <div className="text-[8px] font-bold text-gray-500">JAKARTA • WIFI PROVIDER LAIN</div>
+                                    </div>
+                                </div>
+                                <div className="text-right leading-tight">
+                                    <div className="font-black text-yellow-400">154 TAPS</div>
+                                    <div className="text-[8px] font-bold text-gray-500 uppercase">SPEED: 4.2 MBPS</div>
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between rounded-xl bg-white/5 p-3 text-[10px]">
+                                <div className="flex items-center gap-3">
+                                    <span className="font-black text-gray-500">2</span>
+                                    <div className="leading-tight">
+                                        <div className="font-black text-white uppercase">Siti Rahma</div>
+                                        <div className="text-[8px] font-bold text-gray-500">SURABAYA • WIFI RUMAH</div>
+                                    </div>
+                                </div>
+                                <div className="text-right leading-tight">
+                                    <div className="font-black text-yellow-400">148 TAPS</div>
+                                    <div className="text-[8px] font-bold text-gray-500 uppercase">SPEED: 12.8 MBPS</div>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Modal */}
+            {/* Registration Modal Overlay */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-                    <div className="bg-[#0e081b] border border-white/10 w-full max-w-md rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in duration-300">
-                        <div className="p-6 pb-4 border-b border-white/5 flex justify-between items-center bg-gradient-to-r from-[#622599]/20 to-[#e21a83]/10">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="w-full max-w-sm rounded-[2.5rem] overflow-hidden bg-[#0e081b] border border-white/10 shadow-2xl animate-in zoom-in-95 duration-300">
+                        <div className="flex items-center justify-between bg-gradient-to-r from-[#622599]/30 to-[#e21a83]/30 p-6 pb-4 border-b border-white/5">
                             <div>
-                                <h3 className="text-lg font-black">Formulir Klaim Promo</h3>
-                                <p className="text-xs text-gray-400">Isi data singkat untuk klaim diskon khusus</p>
+                                <h3 className="text-lg font-black text-white">KLAIM PROMO</h3>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amankan kuota diskon Anda</p>
                             </div>
-                            <button onClick={() => setIsModalOpen(false)} className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
-                                <X className="w-4 h-4" />
+                            <button onClick={() => setIsModalOpen(false)} className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10">
+                                <X className="h-4 w-4 text-gray-400" />
                             </button>
                         </div>
-                        
                         <div className="p-6 space-y-4">
                             <div className="space-y-1.5">
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Nama Lengkap</label>
-                                <input type="text" id="lead-name" placeholder="Contoh: Budi Santoso" className="w-full text-sm rounded-xl p-3 bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[#e21a83]" />
+                                <label className="text-[9px] font-black uppercase text-gray-500 ml-1">NAMA LENGKAP</label>
+                                <input type="text" id="lead-name" placeholder="Contoh: Budi Santoso" className="w-full rounded-xl bg-slate-900 border border-white/10 p-3.5 text-xs text-white focus:outline-none focus:border-[#e21a83]" />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Nomor WhatsApp / HP</label>
-                                <input type="tel" id="lead-phone" placeholder="Contoh: 081234567890" className="w-full text-sm rounded-xl p-3 bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[#e21a83]" />
+                                <label className="text-[9px] font-black uppercase text-gray-500 ml-1">NOMOR WHATSAPP</label>
+                                <input type="tel" id="lead-phone" placeholder="Contoh: 081234567890" className="w-full rounded-xl bg-slate-900 border border-white/10 p-3.5 text-xs text-white focus:outline-none focus:border-[#e21a83]" />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Alamat / Area Pemasangan</label>
-                                <input type="text" id="lead-address" placeholder="Contoh: Jl. Ijen No. 12" className="w-full text-sm rounded-xl p-3 bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[#e21a83]" />
+                                <label className="text-[9px] font-black uppercase text-gray-500 ml-1">ALAMAT / AREA</label>
+                                <input type="text" id="lead-address" placeholder="Contoh: Jl. Ijen No. 12" className="w-full rounded-xl bg-slate-900 border border-white/10 p-3.5 text-xs text-white focus:outline-none focus:border-[#e21a83]" />
                             </div>
-                            
-                            <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex gap-2 items-start text-[11px] text-gray-400 leading-normal">
-                                <Info className="text-[#e21a83] w-4 h-4 mt-0.5 shrink-0" />
-                                <span>Setelah menekan tombol kirim, Anda akan diarahkan ke WhatsApp Sales untuk melakukan pengecekan tiang jaringan terdekat di lokasi Anda.</span>
+                            <div className="flex gap-3 items-start rounded-xl bg-white/5 p-3 text-[10px] text-gray-400 border border-white/5 leading-tight">
+                                <Info className="h-4 w-4 text-[#e21a83] shrink-0" />
+                                <span>Data akan diteruskan ke tim Sales MyRepublic untuk pengecekan tiang jaringan terdekat di lokasi Anda.</span>
                             </div>
                         </div>
-
-                        <div className="p-6 pt-0 border-t border-white/5 bg-white/[0.01] flex gap-3">
+                        <div className="p-6 pt-0">
                             <button 
                                 onClick={() => {
                                     const name = (document.getElementById('lead-name') as HTMLInputElement).value;
@@ -684,72 +610,25 @@ export default function SpeedChallengePage() {
                                     const addr = (document.getElementById('lead-address') as HTMLInputElement).value;
                                     if(!name || !phone || !addr) return alert("Harap isi semua kolom!");
                                     
-                                    const promoText = selectedPromos.length > 0 
-                                        ? `\n\n*Promo yang dipilih:* \n${selectedPromos.map(p => `- ${p}`).join('\n')}`
-                                        : '';
-
-                                    const bonusText = recommendedPackage.bonus ? `\n*Bonus:* ${recommendedPackage.bonus}` : '';
-
-                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Speed Asli: *${speedRef.current} Mbps*).${bonusText}${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
+                                    const promoText = selectedPromos.length > 0 ? `\n\n*Promo yang dipilih:* \n${selectedPromos.map(p => `- ${p}`).join('\n')}` : '';
+                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Asli: *${speedRef.current} Mbps*).${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
                                     window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
                                     setIsModalOpen(false);
                                 }}
-                                className="w-full bg-gradient-to-r from-[#622599] to-[#e21a83] hover:from-[#622599]/90 hover:to-[#e21a83]/90 text-white font-extrabold text-sm py-4 rounded-xl shadow-[0_0_20px_rgba(226,26,131,0.5)] transition-all flex items-center justify-center gap-2"
+                                className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#622599] to-[#e21a83] p-4 text-sm font-black text-white shadow-lg active:scale-95"
                             >
-                                <Send className="w-4 h-4" /> Kirim & Konsultasi Sekarang
+                                <Send className="h-4 w-4" /> KIRIM & KONSULTASI
                             </button>
                         </div>
                     </div>
                 </div>
             )}
-            
+
             <style jsx global>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: rgba(255, 255, 255, 0.05);
-                    border-radius: 10px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: rgba(226, 26, 131, 0.3);
-                    border-radius: 10px;
-                }
+                .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(226, 26, 131, 0.2); border-radius: 10px; }
             `}</style>
-        </div>
-    );
-}
-
-function PromoOption({ label, isSelected, onToggle }: { label: string, isSelected: boolean, onToggle: () => void }) {
-    return (
-        <button 
-            onClick={onToggle}
-            className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${isSelected ? 'bg-[#e21a83]/20 border-[#e21a83] text-white' : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'}`}
-        >
-            <div className={`shrink-0 h-5 w-5 rounded-md flex items-center justify-center transition-colors ${isSelected ? 'bg-[#e21a83]' : 'bg-white/10'}`}>
-                {isSelected && <CircleCheck className="h-4 w-4 text-white" />}
-            </div>
-            <span className="text-xs font-semibold">{label}</span>
-        </button>
-    );
-}
-
-function LeaderboardItem({ rank, name, meta, taps, speed, isHighlight = false }: { rank: number, name: string, meta: string, taps: number, speed: string, isHighlight?: boolean }) {
-    return (
-        <div className={`flex items-center justify-between border rounded-xl p-2 text-xs ${isHighlight ? 'bg-[#e21a83]/10 border-[#e21a83]/20' : 'bg-white/5 border-white/5'}`}>
-            <div className="flex items-center gap-2">
-                <span className={`w-5 text-center font-black ${rank === 1 ? 'text-[#e21a83]' : 'text-gray-400'}`}>
-                    {rank === 1 ? <Star className="w-3 h-3 text-yellow-400 inline" /> : rank}
-                </span>
-                <div>
-                    <div className={`font-bold ${isHighlight ? 'text-white' : ''}`}>{name}</div>
-                    <div className="text-[9px] text-gray-400">{meta}</div>
-                </div>
-            </div>
-            <div className="text-right">
-                <div className="font-bold text-yellow-400">{taps} Taps</div>
-                <div className="text-[9px] text-gray-400">Speed: {speed}</div>
-            </div>
         </div>
     );
 }

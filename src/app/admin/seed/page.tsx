@@ -5,13 +5,13 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { seedOffers, seedOffersTV, seedAddOns, seedCarouselSlides, seedMyGamerPackages, seedParallelPackages } from '@/lib/seed';
+import { seedOffers, seedOffersTV, seedAddOns, seedCarouselSlides, seedMyGamerPackages, seedParallelPackages, seedSpeedRoastTemplates } from '@/lib/seed';
 import { Loader } from 'lucide-react';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
 
-type SeedOperation = 'offers' | 'offersTV' | 'addOns' | 'carousel' | 'myGamer' | 'parallel';
+type SeedOperation = 'offers' | 'offersTV' | 'addOns' | 'carousel' | 'myGamer' | 'parallel' | 'speedRoast';
 
 export default function SeedPage() {
   const [loading, setLoading] = useState<SeedOperation | null>(null);
@@ -39,6 +39,9 @@ export default function SeedPage() {
                 break;
             case 'parallel':
                 count = await seedParallelPackages();
+                break;
+            case 'speedRoast':
+                count = await seedSpeedRoastTemplates();
                 break;
         }
       toast({
@@ -178,6 +181,23 @@ export default function SeedPage() {
               className="w-full"
             >
               {loading === 'carousel' ? <Loader className="animate-spin" /> : 'Seed Carousel Slides'}
+            </Button>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Seed Speed Roast Templates</CardTitle>
+            <CardDescription>
+                Isi koleksi `speedRoastTemplates` dengan data untuk game.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              onClick={() => handleSeed('speedRoast')}
+              disabled={!!loading}
+              className="w-full"
+            >
+              {loading === 'speedRoast' ? <Loader className="animate-spin" /> : 'Seed Roasting Templates'}
             </Button>
           </CardContent>
         </Card>
