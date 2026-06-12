@@ -46,45 +46,45 @@ const myRepublicPackages = [
     }
 ];
 
-// Mock Roasting Database - Ditambah variasi agar tidak terasa berulang
+// Mock Roasting Database - Menggunakan placeholder [CITY] dan [SPEED]
 const MOCK_ROASTS = {
     siput: [
         {
-            roast: "Waduh! Internetmu apa obat tidur? Lemot banget! Ngetik 'P' di WhatsApp aja nunggunya kayak nunggu hilal. Pantesan tadi tap roketmu banyak yang sia-sia!",
+            roast: "Waduh! Internetmu di [CITY] cuma [SPEED] Mbps? Apa ini obat tidur? Lemot banget! Ngetik 'P' di WhatsApp aja nunggunya kayak nunggu hilal. Pantesan tadi tap roketmu banyak yang sia-sia!",
             diagnosis: "Terdeteksi gejala anemia jaringan kronis.",
             action: "Segera donor bandwidth dari MyRepublic."
         },
         {
-            roast: "Koneksi siput begini kok masih dipelihara? Download drama Korea satu episode aja bisa ganti presiden. Kasihan roketnya gak meluncur-meluncur!",
+            roast: "Koneksi siput [SPEED] Mbps begini kok masih dipelihara warga [CITY]? Download drama Korea satu episode aja bisa ganti presiden. Kasihan roketnya gak meluncur-meluncur!",
             diagnosis: "Kapasitas kabel sudah mencapai batas kesabaran manusia.",
             action: "Ganti ke MyRepublic biar hidup lebih berwarna."
         },
         {
-            roast: "Ini internet rumah atau dispenser? Kok putus-nyambung terus? Tadi tap roketmu banyak yang hang gara-gara ping yang setinggi gunung Semeru!",
+            roast: "Ini internet rumah di [CITY] atau dispenser? Kok cuma dapet [SPEED] Mbps dan putus-nyambung terus? Tadi tap roketmu banyak yang hang gara-gara ping yang setinggi gunung Semeru!",
             diagnosis: "Lag spike terdeteksi setiap 2 detik sekali.",
             action: "Instal MyRepublic sekarang juga."
         }
     ],
     kurakura: [
         {
-            roast: "Lumayan sih, tapi kalau dipake mabar sekeluarga langsung rebutan bandwidth kayak antre sembako. Roketmu meluncur tapi oleng ditiup angin!",
+            roast: "Lumayan sih dapet [SPEED] Mbps di [CITY], tapi kalau dipake mabar sekeluarga langsung rebutan bandwidth kayak antre sembako. Roketmu meluncur tapi oleng ditiup angin!",
             diagnosis: "Rasio upload dan download yang tidak seimbang.",
             action: "Butuh koneksi simetris 1:1 MyRepublic."
         },
         {
-            roast: "Cukup buat scroll TikTok, tapi buat upload konten? Bisa ditinggal tidur siang dulu. Kecepatan nanggung bikin darah tinggi naik pelan-pelan.",
+            roast: "Kecepatan [SPEED] Mbps di [CITY] emang cukup buat scroll TikTok, tapi buat upload konten? Bisa ditinggal tidur siang dulu. Kecepatan nanggung bikin darah tinggi naik pelan-pelan.",
             diagnosis: "Terkena kutukan asimetris provider lama.",
             action: "Pindah ke paket Neo MyRepublic."
         }
     ],
     kelinci: [
         {
-            roast: "Kecepatanmu stabil, tapi yakin kuotanya nggak kena FUP di akhir bulan? Jangan mau diphp-in provider lama yang ngakunya unlimited tapi bohong!",
+            roast: "Wah, warga [CITY] satu ini dapet [SPEED] Mbps, stabil sih. Tapi yakin kuotanya nggak kena FUP di akhir bulan? Jangan mau diphp-in provider lama yang ngakunya unlimited tapi bohong!",
             diagnosis: "Potensi kecepatan tinggi yang dibatasi aturan FUP kaku.",
             action: "Jadilah bebas tanpa batas dengan MyRepublic."
         },
         {
-            roast: "Wah, punya potensi refleks dewa nih! Ketukan jari kamu kencang, tapi sayang provider kamu pasti rawan gangguan cuaca kan? Yuk beralih ke full fiber sejati.",
+            roast: "Punya potensi refleks dewa nih! [SPEED] Mbps di [CITY] emang kenceng, tapi sayang provider kamu pasti rawan gangguan cuaca kan? Yuk beralih ke full fiber sejati.",
             diagnosis: "Jaringan saat ini rawan gangguan interferensi cuaca.",
             action: "Upgrade ke koneksi 100% fiber optic."
         }
@@ -216,7 +216,6 @@ export default function SpeedChallengePage() {
         // Use Refs for latest data to avoid displaying old results
         const finalSpeed = speedRef.current;
         const currentCity = cityRef.current;
-        const finalTaps = tapCountRef.current;
 
         setTimeout(() => setLoadingLogs(prev => [...prev, `> Menganalisis kecepatan ${finalSpeed} Mbps...`]), 600);
         setTimeout(() => setLoadingLogs(prev => [...prev, `> Menghitung rasio kompresi jaringan ${currentCity}...`]), 1200);
@@ -231,8 +230,13 @@ export default function SpeedChallengePage() {
             const pool = MOCK_ROASTS[category];
             const selected = pool[Math.floor(Math.random() * pool.length)];
 
+            // Injeksi nama kota dan kecepatan ke dalam kalimat roasting
+            const personalizedRoast = selected.roast
+                .replace(/\[CITY\]/g, currentCity)
+                .replace(/\[SPEED\]/g, finalSpeed.toString());
+
             setAiResult({
-                roast: selected.roast,
+                roast: personalizedRoast,
                 diagnosis: selected.diagnosis,
                 recommendedAction: selected.action
             });
