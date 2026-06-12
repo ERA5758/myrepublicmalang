@@ -18,11 +18,20 @@ import {
   MessageSquare,
   Trophy,
   ChevronDown,
-  Gift
+  Gift,
+  SearchCheck,
+  Wrench
 } from 'lucide-react';
 import { useFirestore } from '@/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import type { SpeedRoastTemplate } from '@/lib/definitions';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // Database Paket MyRepublic Fokus 2026
 const myRepublicPackages = [
@@ -82,6 +91,7 @@ export default function SpeedChallengePage() {
     const [selectedConn, setSelectedConn] = useState('WiFi Provider Lain');
     const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [aiResult, setAiResult] = useState<{ roast: string; diagnosis: string; recommendedAction: string } | null>(null);
     const [loadingLogs, setLoadingLogs] = useState<string[]>([]);
     const [selectedPromos, setSelectedPromos] = useState<string[]>([]);
@@ -175,7 +185,7 @@ export default function SpeedChallengePage() {
             const pool = roastTemplates.filter(t => t.category === category);
             const selected = pool.length > 0 
                 ? pool[Math.floor(Math.random() * pool.length)]
-                : { roast: `Waduh! Pake [CONN] di [CITY] cuma dapet [SPEED] Mbps? Pantesan tadi [TAPS] tap roketmu sia-sia! Ganti ke MyRepublic sekarang!`, diagnosis: "Jaringan tidak stabil.", action: "Pindah ke MyRepublic." };
+                : { roast: `Waduh! Pake [CONN] di [CITY] cuma dapet [SPEED] Mbps? Pantesan tadi [TAPS] tap roketmu sia-sia! Ganti ke MyRepublic sekarang!`, diagnosis: "Jaringan tidak stabil dan asimetris.", action: "Pindah ke jaringan Full Fiber Simetris MyRepublic." };
 
             const personalizedRoast = selected.roast
                 .replace(/\[CITY\]/g, currentCity)
@@ -454,11 +464,19 @@ export default function SpeedChallengePage() {
                             {/* AI Roast Box */}
                             <div className="relative mb-6 rounded-3xl bg-gradient-to-br from-[#622599]/40 via-[#e21a83]/5 to-transparent border border-red-500/20 p-6 shadow-xl">
                                 <div className="absolute -top-3 left-6 flex items-center gap-1.5 rounded-full bg-[#e21a83] px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white shadow-lg">
-                                    <Bot className="h-2.5 w-2.5" /> AI ROAST & DIAGNOSIS
+                                    <Bot className="h-2.5 w-2.5" /> AI ROAST
                                 </div>
                                 <p className="mt-2 text-sm italic leading-relaxed text-gray-100 font-medium">
                                     &quot;{aiResult.roast}&quot;
                                 </p>
+                                <div className="mt-4 flex justify-end">
+                                    <button 
+                                        onClick={() => setIsDetailOpen(true)}
+                                        className="text-[9px] font-black text-[#e21a83] uppercase tracking-widest flex items-center gap-1.5 py-1 px-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                                    >
+                                        <SearchCheck className="h-3 w-3" /> Lihat Detail Diagnosis
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Plan Card */}
@@ -481,7 +499,7 @@ export default function SpeedChallengePage() {
 
                                 <div className="flex items-center justify-between border-t border-white/10 pt-4">
                                     <div className="flex flex-col">
-                                        <span className="text-[8px] font-black uppercase text-gray-500">HARGA SPESIAL</span>
+                                        <span className="text-[8px] font-black uppercase text-gray-500">HARGA MULAI</span>
                                         <div className="flex items-baseline gap-0.5">
                                             <span className="text-xl font-black text-green-400">{recommendedPackage.price}</span>
                                             <span className="text-[9px] font-bold text-gray-400">/bln</span>
@@ -640,6 +658,56 @@ export default function SpeedChallengePage() {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Detail Diagnosis Dialog */}
+            {aiResult && (
+                <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+                    <DialogContent className="sm:max-w-md bg-[#0e081b] border-white/10 text-white rounded-[2rem]">
+                        <DialogHeader>
+                            <DialogTitle className="flex items-center gap-3 text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#622599] to-[#e21a83]">
+                                <SearchCheck className="h-6 w-6 text-[#e21a83]" /> LAPORAN DETAIL AI
+                            </DialogTitle>
+                            <DialogDescription className="text-gray-400 text-xs uppercase font-bold tracking-widest">
+                                Hasil Penyelidikan Infrastruktur
+                            </DialogDescription>
+                        </DialogHeader>
+                        
+                        <div className="space-y-6 py-4">
+                            <div className="rounded-2xl bg-white/5 border border-white/10 p-5 space-y-3">
+                                <div className="flex items-center gap-2 text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                    <Wrench className="h-3 w-3 text-[#622599]" /> Diagnosis Teknis
+                                </div>
+                                <p className="text-sm text-gray-200 leading-relaxed italic">
+                                    "{aiResult.diagnosis}"
+                                </p>
+                            </div>
+
+                            <div className="rounded-2xl bg-green-500/10 border border-green-500/20 p-5 space-y-3">
+                                <div className="flex items-center gap-2 text-[10px] font-black text-green-400 uppercase tracking-widest">
+                                    <Zap className="h-3 w-3" /> Rekomendasi Aksi
+                                </div>
+                                <p className="text-sm text-green-100 font-bold leading-relaxed">
+                                    {aiResult.recommendedAction}
+                                </p>
+                            </div>
+
+                            <div className="flex items-center gap-3 rounded-xl bg-white/5 p-4 border border-white/5 text-[10px] text-gray-400 leading-tight">
+                                <Info className="h-5 w-5 text-[#e21a83] shrink-0" />
+                                <span>Hasil diagnosis ini didasarkan pada perbandingan rasio kecepatan {selectedConn} di wilayah {selectedCity} dengan standar Full Fiber MyRepublic.</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-2">
+                            <button 
+                                onClick={() => setIsDetailOpen(false)}
+                                className="w-full rounded-xl bg-white/5 border border-white/10 p-4 text-xs font-black uppercase text-white hover:bg-white/10 transition-all"
+                            >
+                                Tutup Laporan
+                            </button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
             )}
 
             <style jsx global>{`
