@@ -12,3 +12,4 @@ config();
 import '@/ai/flows/personalized-offer-recommendations.ts';
 import '@/ai/flows/blog-post-generator.ts';
 import '@/ai/flows/internet-comparison-flow.ts';
+import '@/ai/flows/speed-challenge-roast.ts';
