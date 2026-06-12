@@ -20,16 +20,18 @@ import {
   Send,
   Zap,
   Gauge,
-  Loader2
+  Loader2,
+  CheckSquare,
+  Square
 } from 'lucide-react';
 import { generateSpeedRoast, type SpeedRoastOutput } from '@/ai/flows/speed-challenge-roast';
 
 // Database Paket MyRepublic 2026
 const myRepublicPackages = [
-    { name: "MyRepublic NEO 100 Mbps", price: "Rp 233.100", maxSpeed: 30, speedVal: 100 },
-    { name: "MyRepublic VELO 150 Mbps", price: "Rp 277.500", maxSpeed: 70, speedVal: 150 },
-    { name: "MyRepublic NEXUS 300 Mbps", price: "Rp 333.000", maxSpeed: 150, speedVal: 300 },
-    { name: "MyRepublic PRIME 500 Mbps", price: "Rp 555.000", maxSpeed: 9999, speedVal: 500 }
+    { name: "MyRepublic NEO 100 Mbps", price: "Rp 233.100", maxSpeed: 30, speedVal: 100, upgradeTarget: "200 Mbps" },
+    { name: "MyRepublic VELO 150 Mbps", price: "Rp 277.500", maxSpeed: 70, speedVal: 150, upgradeTarget: "300 Mbps" },
+    { name: "MyRepublic NEXUS 300 Mbps", price: "Rp 333.000", maxSpeed: 150, speedVal: 300, upgradeTarget: "400 Mbps" },
+    { name: "MyRepublic PRIME 500 Mbps", price: "Rp 555.000", maxSpeed: 9999, speedVal: 500, upgradeTarget: "Hingga 1 Gbps" }
 ];
 
 type Screen = 'start' | 'game' | 'loading' | 'result';
@@ -45,6 +47,7 @@ export default function SpeedChallengePage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [aiResult, setAiResult] = useState<SpeedRoastOutput | null>(null);
     const [loadingLogs, setLoadingLogs] = useState<string[]>([]);
+    const [selectedPromos, setSelectedPromos] = useState<string[]>([]);
     
     const gameTime = 5000;
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -132,6 +135,7 @@ export default function SpeedChallengePage() {
         setRealSpeed(0.0);
         setAiResult(null);
         setLoadingLogs([]);
+        setSelectedPromos([]);
         particles.current = [];
         setScreen('game');
 
@@ -229,6 +233,12 @@ export default function SpeedChallengePage() {
 
     const recommendedPackage = myRepublicPackages.find(pkg => realSpeed <= pkg.maxSpeed) || myRepublicPackages[myRepublicPackages.length - 1];
     const multiplier = (recommendedPackage.speedVal / (realSpeed || 1)).toFixed(1);
+
+    const togglePromo = (promo: string) => {
+        setSelectedPromos(prev => 
+            prev.includes(promo) ? prev.filter(p => p !== promo) : [...prev, promo]
+        );
+    };
 
     return (
         <div className="min-h-screen text-white flex flex-col items-center justify-center p-4 bg-[#080312] selection:bg-[#e21a83]/30">
@@ -389,7 +399,7 @@ export default function SpeedChallengePage() {
                 )}
 
                 {screen === 'result' && aiResult && (
-                    <div className="animate-in fade-in zoom-in duration-500">
+                    <div className="animate-in fade-in zoom-in duration-500 max-h-[75vh] overflow-y-auto pr-2 custom-scrollbar">
                         <div className="text-center mb-6">
                             <div className="w-12 h-12 bg-green-500/10 border border-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-2 text-xl shadow-lg">
                                 <CircleCheck className="w-6 h-6" />
@@ -458,7 +468,32 @@ export default function SpeedChallengePage() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3">
+                        {/* Promo Bonus Selection */}
+                        <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-6">
+                            <h3 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-[#e21a83] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <Star className="w-4 h-4 text-yellow-400" />
+                                Pilih Promo Bonus (Bisa &gt; 1)
+                            </h3>
+                            <div className="space-y-3">
+                                <PromoOption 
+                                    label="Jaminan Harga tetap selama 2 tahun" 
+                                    isSelected={selectedPromos.includes("Harga Tetap 2 Tahun")} 
+                                    onToggle={() => togglePromo("Harga Tetap 2 Tahun")} 
+                                />
+                                <PromoOption 
+                                    label="Jaminan Harga tetap selama 3 tahun" 
+                                    isSelected={selectedPromos.includes("Harga Tetap 3 Tahun")} 
+                                    onToggle={() => togglePromo("Harga Tetap 3 Tahun")} 
+                                />
+                                <PromoOption 
+                                    label={`Free Upgrade Kecepatan ke ${recommendedPackage.upgradeTarget} (1 Tahun)`} 
+                                    isSelected={selectedPromos.includes("Free Upgrade Speed 1 Tahun")} 
+                                    onToggle={() => togglePromo("Free Upgrade Speed 1 Tahun")} 
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 mb-4">
                             <button 
                                 onClick={() => setIsModalOpen(true)}
                                 className="bg-gradient-to-r from-[#622599] to-[#e21a83] hover:from-[#622599]/90 hover:to-[#e21a83]/90 text-white font-black text-sm py-3.5 px-4 rounded-xl shadow-[0_0_20px_rgba(226,26,131,0.5)] transition-all flex items-center justify-center gap-2"
@@ -541,7 +576,11 @@ export default function SpeedChallengePage() {
                                     const addr = (document.getElementById('lead-address') as HTMLInputElement).value;
                                     if(!name || !phone || !addr) return alert("Harap isi semua kolom!");
                                     
-                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}*. Mohon dibantu pengecekan jaringannya ya! Terima kasih.`;
+                                    const promoText = selectedPromos.length > 0 
+                                        ? `\n\n*Promo yang dipilih:* \n${selectedPromos.map(p => `- ${p}`).join('\n')}`
+                                        : '';
+
+                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Speed Asli: *${realSpeed} Mbps*).${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
                                     window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
                                     setIsModalOpen(false);
                                 }}
@@ -555,7 +594,35 @@ export default function SpeedChallengePage() {
             )}
             
             <p className="fixed bottom-6 text-[10px] text-white/20 uppercase tracking-[0.3em] font-bold">MyRepublic Speed Challenge 2026</p>
+
+            <style jsx global>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: rgba(255, 255, 255, 0.05);
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: rgba(226, 26, 131, 0.3);
+                    border-radius: 10px;
+                }
+            `}</style>
         </div>
+    );
+}
+
+function PromoOption({ label, isSelected, onToggle }: { label: string, isSelected: boolean, onToggle: () => void }) {
+    return (
+        <button 
+            onClick={onToggle}
+            className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${isSelected ? 'bg-[#e21a83]/20 border-[#e21a83] text-white' : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'}`}
+        >
+            <div className={`shrink-0 h-5 w-5 rounded-md flex items-center justify-center transition-colors ${isSelected ? 'bg-[#e21a83]' : 'bg-white/10'}`}>
+                {isSelected && <CircleCheck className="h-4 w-4 text-white" />}
+            </div>
+            <span className="text-xs font-semibold">{label}</span>
+        </button>
     );
 }
 
