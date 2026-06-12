@@ -157,6 +157,7 @@ export default function SpeedChallengePage() {
         
         const finalSpeed = speedRef.current;
         const currentCity = cityRef.current;
+        const finalTaps = tapCountRef.current;
 
         setTimeout(() => setLoadingLogs(prev => [...prev, `> Menganalisis kecepatan ${finalSpeed} Mbps...`]), 600);
         setTimeout(() => setLoadingLogs(prev => [...prev, `> Menghitung rasio kompresi jaringan ${currentCity}...`]), 1200);
@@ -171,11 +172,12 @@ export default function SpeedChallengePage() {
             const pool = roastTemplates.filter(t => t.category === category);
             const selected = pool.length > 0 
                 ? pool[Math.floor(Math.random() * pool.length)]
-                : { roast: `Waduh! Internetmu di [CITY] cuma [SPEED] Mbps? Ganti ke MyRepublic sekarang!`, diagnosis: "Jaringan tidak stabil.", action: "Pindah ke MyRepublic." };
+                : { roast: `Waduh! Internetmu di [CITY] cuma [SPEED] Mbps? Pantesan tadi [TAPS] tap roketmu sia-sia! Ganti ke MyRepublic sekarang!`, diagnosis: "Jaringan tidak stabil.", action: "Pindah ke MyRepublic." };
 
             const personalizedRoast = selected.roast
                 .replace(/\[CITY\]/g, currentCity)
-                .replace(/\[SPEED\]/g, finalSpeed.toString());
+                .replace(/\[SPEED\]/g, finalSpeed.toString())
+                .replace(/\[TAPS\]/g, finalTaps.toString());
 
             setAiResult({ roast: personalizedRoast, diagnosis: selected.diagnosis, recommendedAction: selected.action });
             setScreen('result');
@@ -276,7 +278,7 @@ export default function SpeedChallengePage() {
                         </div>
                         <div className="flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-bold text-[#e21a83]">
                             <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping"></span>
-                            AI LIVE DIAGNOSE
+                            <span>AI LIVE DIAGNOSE</span>
                         </div>
                     </div>
 
@@ -445,7 +447,7 @@ export default function SpeedChallengePage() {
                             </div>
 
                             {/* AI Roast Box */}
-                            <div className="relative mb-6 rounded-3xl bg-gradient-to-br from-brandPurple/40 via-[#e21a83]/5 to-transparent border border-red-500/20 p-6 shadow-xl">
+                            <div className="relative mb-6 rounded-3xl bg-gradient-to-br from-[#622599]/40 via-[#e21a83]/5 to-transparent border border-red-500/20 p-6 shadow-xl">
                                 <div className="absolute -top-3 left-6 flex items-center gap-1.5 rounded-full bg-[#e21a83] px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white shadow-lg">
                                     <Bot className="h-2.5 w-2.5" /> AI ROAST & DIAGNOSIS
                                 </div>
@@ -517,7 +519,7 @@ export default function SpeedChallengePage() {
 
                             <button 
                                 onClick={() => {
-                                    const msg = `Halo Sales MyRepublic! Saya ingin konsultasi gratis mengenai pemasangan wifi baru. Tadi saya coba Speed Challenge dan hasilnya ${speedRef.current} Mbps. Mohon dibantu pengecekan area ya! Terima kasih.`;
+                                    const msg = `Halo Sales MyRepublic! Saya ingin konsultasi gratis mengenai pemasangan wifi baru. Tadi saya coba Speed Challenge dan hasilnya ${speedRef.current} Mbps dengan ${tapCountRef.current} taps. Mohon dibantu pengecekan area ya! Terima kasih.`;
                                     window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
                                 }}
                                 className="flex w-full items-center justify-center gap-3 rounded-2xl border border-green-500/30 bg-green-500/5 p-4 text-xs font-black text-green-400 transition-all hover:bg-green-500/10 mb-2"
@@ -613,7 +615,7 @@ export default function SpeedChallengePage() {
                                     if(!name || !phone || !addr) return alert("Harap isi semua kolom!");
                                     
                                     const promoText = selectedPromos.length > 0 ? `\n\n*Promo yang dipilih:* \n${selectedPromos.map(p => `- ${p}`).join('\n')}` : '';
-                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Asli: *${speedRef.current} Mbps*).${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
+                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Asli: *${speedRef.current} Mbps*, *${tapCountRef.current} Taps*).${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
                                     window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
                                     setIsModalOpen(false);
                                 }}
