@@ -18,7 +18,6 @@ import {
   Loader,
   MessageSquare
 } from 'lucide-react';
-import { generateSpeedRoast, type SpeedRoastOutput } from '@/ai/flows/speed-challenge-roast';
 
 // Database Paket MyRepublic Fokus 2026
 const myRepublicPackages = [
@@ -47,6 +46,51 @@ const myRepublicPackages = [
         bonus: "Bonus Upgrade speed up to 300 Mbps selama 1 tahun" 
     }
 ];
+
+// Mock Roasting Database untuk keandalan 100%
+const MOCK_ROASTS = {
+    siput: [
+        {
+            roast: "Waduh! Internetmu apa obat tidur? Lemot banget! Ngetik 'P' di WhatsApp aja nunggunya kayak nunggu hilal. Pantesan tadi tap roketmu banyak yang sia-sia!",
+            diagnosis: "Terdeteksi gejala anemia jaringan kronis.",
+            action: "Segera donor bandwidth dari MyRepublic."
+        },
+        {
+            roast: "Koneksi siput begini kok masih dipelihara? Download drama Korea satu episode aja bisa ganti presiden. Kasihan roketnya gak meluncur-meluncur!",
+            diagnosis: "Kapasitas kabel sudah mencapai batas kesabaran manusia.",
+            action: "Ganti ke MyRepublic biar hidup lebih berwarna."
+        },
+        {
+            roast: "Ini internet rumah atau dispenser? Kok putus-nyambung terus? Tadi tap roketmu banyak yang hang gara-gara ping yang setinggi gunung Semeru!",
+            diagnosis: "Lag spike terdeteksi setiap 2 detik sekali.",
+            action: "Instal MyRepublic sekarang juga."
+        }
+    ],
+    kurakura: [
+        {
+            roast: "Lumayan sih, tapi kalau dipake mabar sekeluarga langsung rebutan bandwidth kayak antre sembako. Roketmu meluncur tapi oleng ditiup angin!",
+            diagnosis: "Rasio upload dan download yang tidak seimbang.",
+            action: "Butuh koneksi simetris 1:1 MyRepublic."
+        },
+        {
+            roast: "Cukup buat scroll TikTok, tapi buat upload konten? Bisa ditinggal tidur siang dulu. Kecepatan nanggung bikin darah tinggi naik pelan-pelan.",
+            diagnosis: "Terkena kutukan asimetris provider lama.",
+            action: "Pindah ke paket Neo MyRepublic."
+        }
+    ],
+    kelinci: [
+        {
+            roast: "Kecepatanmu stabil, tapi yakin kuotanya nggak kena FUP di akhir bulan? Jangan mau diphp-in provider lama yang ngakunya unlimited tapi bohong!",
+            diagnosis: "Potensi kecepatan tinggi yang dibatasi aturan FUP kaku.",
+            action: "Jadilah bebas tanpa batas dengan MyRepublic."
+        },
+        {
+            roast: "Wah, punya potensi refleks dewa nih! Ketukan jari kamu kencang, tapi sayang provider kamu pasti rawan gangguan cuaca kan? Yuk beralih ke full fiber sejati.",
+            diagnosis: "Jaringan saat ini rawan gangguan interferensi cuaca.",
+            action: "Upgrade ke koneksi 100% fiber optic."
+        }
+    ]
+};
 
 const CITY_LIST = [
   "Aceh", "Aceh Besar", "Badung", "Bali", "Balikpapan", "Bandung", "Bandung Barat", "Bangli", "Banjar", "Banjarmasin", 
@@ -78,7 +122,7 @@ export default function SpeedChallengePage() {
     const [selectedConn, setSelectedConn] = useState('WiFi Provider Lain');
     const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [aiResult, setAiResult] = useState<SpeedRoastOutput | null>(null);
+    const [aiResult, setAiResult] = useState<{ roast: string; diagnosis: string; recommendedAction: string } | null>(null);
     const [loadingLogs, setLoadingLogs] = useState<string[]>([]);
     const [selectedPromos, setSelectedPromos] = useState<string[]>([]);
     
@@ -203,25 +247,23 @@ export default function SpeedChallengePage() {
         
         setTimeout(() => setLoadingLogs(prev => [...prev, `> Menganalisis kecepatan ${realSpeed} Mbps...`]), 600);
         setTimeout(() => setLoadingLogs(prev => [...prev, `> Menghitung rasio kompresi jaringan ${selectedCity}...`]), 1200);
-        setTimeout(async () => {
-            setLoadingLogs(prev => [...prev, "> Memanggil Gemini AI Engine..."]);
-            try {
-                const roast = await generateSpeedRoast({
-                    speed: realSpeed,
-                    taps: tapCount,
-                    city: selectedCity,
-                    connectionType: selectedConn
-                });
-                setAiResult(roast);
-                setScreen('result');
-            } catch (e) {
-                setAiResult({
-                    roast: "Waduh! Internetmu lagi mode istirahat ya? Lambat banget kayak siput lagi sakit flu. Ganti ke MyRepublic sekarang biar ga darah tinggi tiap hari!",
-                    diagnosis: "Terdeteksi gejala kelebihan beban jaringan dan kurangnya simetri.",
-                    recommendedAction: "Beralih ke MyRepublic Velo sekarang."
-                });
-                setScreen('result');
-            }
+        setTimeout(() => {
+            setLoadingLogs(prev => [...prev, "> Konsultasi dengan Gemini AI Engine (Mock Mode)..."]);
+            
+            // Logika pemilihan Mock Roast
+            let category: 'siput' | 'kurakura' | 'kelinci' = 'siput';
+            if (realSpeed >= 15 && realSpeed < 40) category = 'kurakura';
+            else if (realSpeed >= 40) category = 'kelinci';
+
+            const pool = MOCK_ROASTS[category];
+            const selected = pool[Math.floor(Math.random() * pool.length)];
+
+            setAiResult({
+                roast: selected.roast,
+                diagnosis: selected.diagnosis,
+                recommendedAction: selected.action
+            });
+            setScreen('result');
         }, 1800);
     };
 
