@@ -34,6 +34,25 @@ const myRepublicPackages = [
     { name: "MyRepublic PRIME 500 Mbps", price: "Rp 555.000", maxSpeed: 9999, speedVal: 500, upgradeTarget: "Hingga 1 Gbps" }
 ];
 
+const CITY_LIST = [
+  "Aceh", "Aceh Besar", "Badung", "Bali", "Balikpapan", "Bandung", "Bandung Barat", "Bangli", "Banjar", "Banjarmasin", 
+  "Banyuasin", "Banyumas", "Banyuwangi", "Barito Kuala", "Batam", "Batanghari", "Bekasi", "Bengkulu", "Bengkulu Tengah", 
+  "Blitar", "Bogor", "Bojonegoro", "Boyolali", "Brebes", "Buleleng", "Ciamis", "Cianjur", "Cibubur", "Cilacap", "Cilegon", 
+  "Cirebon", "Deli Serdang", "Demak", "Depok", "Garut", "Gianyar", "Gowa", "Gresik", "Indramayu", "Jakarta Barat", 
+  "Jakarta Selatan", "Jambi", "Jember", "Jembrana", "Jepara", "Jombang", "Kampar", "Karanganyar", "Karangasem", "Karawang", 
+  "Kebumen", "Kediri", "Kendal", "Klaten", "Klungkung", "Jakarta Pusat", "Jakarta Timur", "Jakarta Utara", "Kota Bandung", 
+  "Kota Banjar", "Kota Banjarbaru", "Kota Batu", "Kota Bekasi", "Kota Binjai", "Kota Blitar", "Kota Bogor", "Kota Cimahi", 
+  "Kota Cirebon", "Kota Kediri", "Kota Madiun", "Kota Magelang", "Kota Malang", "Kota Metro", "Kota Mojokerto", "Kota Pasuruan", 
+  "Kota Pekalongan", "Kota Semarang", "Kota Sukabumi", "Kota Tangerang Selatan", "Kota Tegal", "Kuantan Singingi", "Kudus", 
+  "Kuningan", "Lamongan", "Lampung", "Lampung Selatan", "Lampung Tengah", "Lampung Timur", "Lombok Barat", "Lombok Tengah", 
+  "Madiun", "Magelang", "Majalengka", "Makassar", "Malang", "Manado", "Maros", "Mataram", "Medan", "Minahasa", "Mojokerto", 
+  "Muaro Jambi", "Nganjuk", "Ngawi", "Ogan Ilir", "Padang", "Palangkaraya", "Palembang", "Pasuruan", "Pati", "Pekalongan", 
+  "Pekanbaru", "Pemalang", "Pematang Siantar", "Pesawaran", "Ponorogo", "Pontianak", "Prabumulih", "Purbalingga", "Purwakarta", 
+  "Purwokerto", "Purworejo", "Salatiga", "Samarinda", "Semarang", "Serang", "Sidoarjo", "Singkawang", "Sleman", "Sragen", 
+  "Subang", "Sukabumi", "Sukoharjo", "Sumedang", "Surabaya", "Surakarta", "Tabanan", "Takalar", "Tangerang", "Tasikmalaya", 
+  "Tebing Tinggi", "Tegal", "Temanggung", "Tuban", "Tulungagung", "Yogyakarta"
+].sort();
+
 type Screen = 'start' | 'game' | 'loading' | 'result';
 
 export default function SpeedChallengePage() {
@@ -41,7 +60,7 @@ export default function SpeedChallengePage() {
     const [tapCount, setTapCount] = useState(0);
     const [timeLeft, setTimeLeft] = useState(5000); // 5 seconds
     const [realSpeed, setRealSpeed] = useState(0.0);
-    const [selectedCity, setSelectedCity] = useState('Jakarta');
+    const [selectedCity, setSelectedCity] = useState('Jakarta Selatan');
     const [selectedConn, setSelectedConn] = useState('WiFi Rumah');
     const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -285,7 +304,7 @@ export default function SpeedChallengePage() {
                                         value={selectedCity}
                                         onChange={(e) => setSelectedCity(e.target.value)}
                                     >
-                                        {['Jakarta', 'Surabaya', 'Bandung', 'Medan', 'Semarang', 'Denpasar', 'Palembang', 'Malang'].map(city => (
+                                        {CITY_LIST.map(city => (
                                             <option key={city} value={city} className="bg-[#0e081b]">{city}</option>
                                         ))}
                                     </select>
