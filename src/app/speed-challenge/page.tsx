@@ -89,6 +89,7 @@ export default function SpeedChallengePage() {
     const speedRef = useRef(0.0);
     const tapCountRef = useRef(0);
     const cityRef = useRef('Jakarta Selatan');
+    const connRef = useRef('WiFi Provider Lain');
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const particles = useRef<any[]>([]);
     const audioCtx = useRef<AudioContext | null>(null);
@@ -157,6 +158,7 @@ export default function SpeedChallengePage() {
         
         const finalSpeed = speedRef.current;
         const currentCity = cityRef.current;
+        const currentConn = connRef.current;
         const finalTaps = tapCountRef.current;
 
         setTimeout(() => setLoadingLogs(prev => [...prev, `> Menganalisis kecepatan ${finalSpeed} Mbps...`]), 600);
@@ -172,12 +174,13 @@ export default function SpeedChallengePage() {
             const pool = roastTemplates.filter(t => t.category === category);
             const selected = pool.length > 0 
                 ? pool[Math.floor(Math.random() * pool.length)]
-                : { roast: `Waduh! Internetmu di [CITY] cuma [SPEED] Mbps? Pantesan tadi [TAPS] tap roketmu sia-sia! Ganti ke MyRepublic sekarang!`, diagnosis: "Jaringan tidak stabil.", action: "Pindah ke MyRepublic." };
+                : { roast: `Waduh! Pake [CONN] di [CITY] cuma dapet [SPEED] Mbps? Pantesan tadi [TAPS] tap roketmu sia-sia! Ganti ke MyRepublic sekarang!`, diagnosis: "Jaringan tidak stabil.", action: "Pindah ke MyRepublic." };
 
             const personalizedRoast = selected.roast
                 .replace(/\[CITY\]/g, currentCity)
                 .replace(/\[SPEED\]/g, finalSpeed.toString())
-                .replace(/\[TAPS\]/g, finalTaps.toString());
+                .replace(/\[TAPS\]/g, finalTaps.toString())
+                .replace(/\[CONN\]/g, currentConn);
 
             setAiResult({ roast: personalizedRoast, diagnosis: selected.diagnosis, recommendedAction: selected.action });
             setScreen('result');
@@ -186,7 +189,8 @@ export default function SpeedChallengePage() {
 
     const initiateGame = () => {
         setTapCount(0); tapCountRef.current = 0; setTimeLeft(5000); setRealSpeed(0.0); speedRef.current = 0.0;
-        cityRef.current = selectedCity; setAiResult(null); setLoadingLogs([]); setSelectedPromos([]);
+        cityRef.current = selectedCity; connRef.current = selectedConn; 
+        setAiResult(null); setLoadingLogs([]); setSelectedPromos([]);
         particles.current = []; setScreen('game');
 
         const targetSpeed = Math.floor(Math.random() * 45) + 8;
@@ -615,7 +619,7 @@ export default function SpeedChallengePage() {
                                     if(!name || !phone || !addr) return alert("Harap isi semua kolom!");
                                     
                                     const promoText = selectedPromos.length > 0 ? `\n\n*Promo yang dipilih:* \n${selectedPromos.map(p => `- ${p}`).join('\n')}` : '';
-                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Asli: *${speedRef.current} Mbps*, *${tapCountRef.current} Taps*).${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
+                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\nKoneksi Saat Ini: ${selectedConn}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Asli: *${speedRef.current} Mbps*, *${tapCountRef.current} Taps*).${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
                                     window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
                                     setIsModalOpen(false);
                                 }}
