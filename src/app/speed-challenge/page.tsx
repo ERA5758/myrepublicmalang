@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -344,7 +343,7 @@ export default function SpeedChallengePage() {
                         <div className="flex flex-1 flex-col animate-in fade-in duration-300">
                             <div className="text-center mb-6">
                                 <h2 className="flex items-center justify-center gap-2 text-xl font-black text-white uppercase tracking-tighter">
-                                    <Zap className="h-5 w-5 text-yellow-400 animate-pulse" /> KETUK SECEPATNYA!
+                                    <Zap className="h-5 w-5 text-yellow-400 animate-pulse" /> KETUK SECEPAT NYA!
                                 </h2>
                                 <p className="text-[10px] text-gray-400 mt-1">Pompa roket sembari AI mendeteksi WiFi Anda...</p>
                             </div>
@@ -476,7 +475,10 @@ export default function SpeedChallengePage() {
                                         <div className="flex items-center gap-1.5 text-[10px] font-black text-green-400 uppercase tracking-widest">
                                             <CircleCheck className="h-3 w-3" /> GRATIS INSTALASI
                                         </div>
-                                        <span className="text-[8px] font-bold text-gray-500 mt-0.5 block uppercase tracking-wider">HEMAT RP 500.000</span>
+                                        <div className="mt-1">
+                                            <span className="text-[8px] font-black uppercase text-gray-500 block">KEUNGGULAN UTAMA</span>
+                                            <span className="text-[10px] font-bold text-white uppercase tracking-wider">Simetris 1:1 & No FUP</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -574,7 +576,7 @@ export default function SpeedChallengePage() {
             {/* Registration Modal Overlay */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="w-full max-w-sm rounded-[2.5rem] overflow-hidden bg-[#0e081b] border border-white/10 shadow-2xl animate-in zoom-in-95 duration-300">
+                    <div className="w-full max-sm rounded-[2.5rem] overflow-hidden bg-[#0e081b] border border-white/10 shadow-2xl animate-in zoom-in-95 duration-300">
                         <div className="flex items-center justify-between bg-gradient-to-r from-[#622599]/30 to-[#e21a83]/30 p-6 pb-4 border-b border-white/5">
                             <div>
                                 <h3 className="text-lg font-black text-white">KLAIM PROMO</h3>
