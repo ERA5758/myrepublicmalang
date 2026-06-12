@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
 import '../globals.css';
-import { Toaster } from '@/components/ui/toaster';
-import { FirebaseProvider } from '@/firebase/provider';
 
 export const metadata: Metadata = {
   title: 'MyRepublic Speed Challenge & AI Diagnostic',
@@ -18,21 +16,12 @@ export default function SpeedChallengeLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+    <div className="min-h-screen bg-[#080312] font-body antialiased">
         <link
           href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
-      </head>
-      <body className="min-h-screen bg-[#080312] font-body antialiased">
-        <FirebaseProvider>
-            <main>{children}</main>
-            <Toaster />
-        </FirebaseProvider>
-      </body>
-    </html>
+        {children}
+    </div>
   );
 }
