@@ -11,6 +11,7 @@ import {
   deleteDoc,
   query,
   orderBy,
+  writeBatch,
 } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,12 +29,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader, PlusCircle, Trash2, Edit, Info, Sparkles, MessageSquareQuote } from 'lucide-react';
+import { Loader, PlusCircle, Trash2, Edit, Info, Sparkles, Wand2, CheckCircle2, MessageSquareQuote } from 'lucide-react';
 import type { SpeedRoastTemplate } from '@/lib/definitions';
 import {
   AlertDialog,
@@ -48,7 +50,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { generateRoastContent } from '@/ai/flows/speed-roast-generator';
+import { generateBatchRoast } from '@/ai/flows/speed-roast-generator';
+import { Card, CardContent } from '@/components/ui/card';
 
 const AI_TOPICS = [
     { label: "Sarkas & Pedas", value: "Sarkasme tajam khas sosmed" },
@@ -62,6 +65,7 @@ export default function ManageSpeedRoastPage() {
   const [templates, setTemplates] = useState<SpeedRoastTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isBatchOpen, setIsBatchOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<SpeedRoastTemplate | null>(null);
   
   const firestore = useFirestore();
@@ -83,11 +87,6 @@ export default function ManageSpeedRoastPage() {
 
     return () => unsubscribe();
   }, [firestore]);
-
-  const handleOpenForm = (template: SpeedRoastTemplate | null) => {
-    setEditingTemplate(template);
-    setIsFormOpen(true);
-  };
 
   const handleDelete = async (id: string) => {
     if (!firestore) return;
@@ -122,10 +121,16 @@ export default function ManageSpeedRoastPage() {
                 <Link href="/admin">Kembali ke dasbor</Link>
             </Button>
         </div>
-        <Button onClick={() => handleOpenForm(null)} size="lg">
-            <PlusCircle className="mr-2 h-5 w-5" />
-            Tambah Kalimat Baru
-        </Button>
+        <div className="flex gap-2">
+            <Button onClick={() => setIsBatchOpen(true)} variant="outline" className="border-primary text-primary hover:bg-primary/5">
+                <Wand2 className="mr-2 h-5 w-5" />
+                Batch Generate AI
+            </Button>
+            <Button onClick={() => { setEditingTemplate(null); setIsFormOpen(true); }} size="default">
+                <PlusCircle className="mr-2 h-5 w-5" />
+                Tambah Manual
+            </Button>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
@@ -157,7 +162,7 @@ export default function ManageSpeedRoastPage() {
                             </TableCell>
                             <TableCell className="text-right">
                                  <div className="flex justify-end gap-2">
-                                    <Button variant="outline" size="sm" onClick={() => handleOpenForm(tpl)}>
+                                    <Button variant="outline" size="sm" onClick={() => { setEditingTemplate(tpl); setIsFormOpen(true); }}>
                                         <Edit className="h-4 w-4" />
                                     </Button>
                                     <AlertDialog>
@@ -183,7 +188,7 @@ export default function ManageSpeedRoastPage() {
                     )) : (
                         <TableRow>
                             <TableCell colSpan={3} className="text-center py-12 text-muted-foreground">
-                                Belum ada template roasting. Klik "Tambah Kalimat Baru".
+                                Belum ada template roasting. Gunakan "Batch Generate AI" untuk mengisi cepat.
                             </TableCell>
                         </TableRow>
                     )}
@@ -193,8 +198,124 @@ export default function ManageSpeedRoastPage() {
       </div>
       
       <RoastForm isOpen={isFormOpen} setIsOpen={setIsFormOpen} template={editingTemplate} />
+      <BatchRoastDialog isOpen={isBatchOpen} setIsOpen={setIsBatchOpen} />
     </div>
   );
+}
+
+function BatchRoastDialog({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (o: boolean) => void }) {
+    const [selectedTopic, setSelectedTopic] = useState(AI_TOPICS[0].value);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [batchResults, setBatchResults] = useState<any[] | null>(null);
+    
+    const firestore = useFirestore();
+    const { toast } = useToast();
+
+    const handleGenerate = async () => {
+        setIsGenerating(true);
+        setBatchResults(null);
+        try {
+            const result = await generateBatchRoast({ topic: selectedTopic });
+            setBatchResults(result.templates);
+            toast({ title: 'AI Selesai!', description: '3 Kategori kalimat telah dihasilkan.' });
+        } catch (error) {
+            console.error(error);
+            toast({ variant: 'destructive', title: 'Gagal', description: 'AI gagal menghasilkan kalimat batch.' });
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    const handleSaveAll = async () => {
+        if (!firestore || !batchResults) return;
+        setIsSaving(true);
+        try {
+            const batch = writeBatch(firestore);
+            batchResults.forEach(item => {
+                const docId = `roast-batch-${Date.now()}-${item.category}`;
+                const docRef = doc(firestore, 'speedRoastTemplates', docId);
+                batch.set(docRef, { ...item, id: docId });
+            });
+            await batch.commit();
+            toast({ title: 'Berhasil!', description: '3 Template baru telah ditambahkan ke database.' });
+            setIsOpen(false);
+            setBatchResults(null);
+        } catch (error) {
+            console.error(error);
+            toast({ variant: 'destructive', title: 'Gagal Menyimpan', description: 'Terjadi kesalahan saat menulis ke Firestore.' });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    return (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                        <Wand2 className="h-6 w-6 text-primary" />
+                        Magic Topic Generator (Batch 3-in-1)
+                    </DialogTitle>
+                    <DialogDescription>
+                        Sekali klik untuk menghasilkan template lengkap untuk semua kategori kecepatan (Siput, Kura-kura, Kelinci).
+                    </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-6 py-4">
+                    <div className="flex flex-col sm:flex-row gap-4 items-end bg-primary/5 p-4 rounded-xl border border-primary/10">
+                        <div className="flex-1 space-y-2">
+                            <Label>Pilih Topik / Gaya Bahasa</Label>
+                            <Select value={selectedTopic} onValueChange={setSelectedTopic}>
+                                <SelectTrigger className="bg-white">
+                                    <SelectValue placeholder="Pilih topik..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {AI_TOPICS.map(t => <SelectItem key={t.label} value={t.value}>{t.label}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <Button onClick={handleGenerate} disabled={isGenerating} size="lg" className="w-full sm:w-auto">
+                            {isGenerating ? <Loader className="animate-spin mr-2 h-5 w-5" /> : <Sparkles className="mr-2 h-5 w-5" />}
+                            Generate All
+                        </Button>
+                    </div>
+
+                    {batchResults && (
+                        <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                            <h3 className="font-bold text-lg border-b pb-2">Hasil Preview:</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {batchResults.map((item, idx) => (
+                                    <Card key={idx} className="border-primary/20 overflow-hidden">
+                                        <div className={`p-2 text-center text-[10px] font-black uppercase text-white ${
+                                            item.category === 'siput' ? 'bg-red-500' : item.category === 'kurakura' ? 'bg-yellow-500' : 'bg-green-600'
+                                        }`}>
+                                            {item.category}
+                                        </div>
+                                        <CardContent className="p-4 space-y-3">
+                                            <p className="text-xs italic leading-relaxed">"{item.roast}"</p>
+                                            <div className="text-[10px] space-y-1">
+                                                <div className="bg-muted p-1.5 rounded"><span className="font-bold">Diag:</span> {item.diagnosis}</div>
+                                                <div className="bg-primary/5 p-1.5 rounded text-primary"><span className="font-bold">Aksi:</span> {item.action}</div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <DialogFooter className="gap-2">
+                    <Button variant="ghost" onClick={() => setIsOpen(false)}>Batal</Button>
+                    <Button onClick={handleSaveAll} disabled={!batchResults || isSaving} className="bg-green-600 hover:bg-green-700">
+                        {isSaving ? <Loader className="animate-spin mr-2 h-4 w-4" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
+                        Simpan Semua ke Database
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
 }
 
 function RoastForm({ isOpen, setIsOpen, template }: { isOpen: boolean; setIsOpen: (o: boolean) => void; template: SpeedRoastTemplate | null; }) {
@@ -205,8 +326,6 @@ function RoastForm({ isOpen, setIsOpen, template }: { isOpen: boolean; setIsOpen
         action: ''
     });
     const [formLoading, setFormLoading] = useState(false);
-    const [aiLoading, setAiLoading] = useState(false);
-    const [selectedAiTopic, setSelectedAiTopic] = useState(AI_TOPICS[0].value);
     
     const firestore = useFirestore();
     const { toast } = useToast();
@@ -215,158 +334,63 @@ function RoastForm({ isOpen, setIsOpen, template }: { isOpen: boolean; setIsOpen
         if (template) {
             setFormData(template);
         } else {
-            setFormData({
-                category: 'siput',
-                roast: '',
-                diagnosis: '',
-                action: ''
-            });
+            setFormData({ category: 'siput', roast: '', diagnosis: '', action: '' });
         }
     }, [isOpen, template]);
-
-    const handleGenerateAI = async () => {
-        setAiLoading(true);
-        try {
-            const result = await generateRoastContent({
-                category: formData.category as any,
-                topic: selectedAiTopic
-            });
-            setFormData({
-                ...formData,
-                roast: result.roast,
-                diagnosis: result.diagnosis,
-                action: result.action
-            });
-            toast({ title: 'AI Berhasil!', description: 'Kalimat roasting baru telah dihasilkan.' });
-        } catch (error) {
-            console.error(error);
-            toast({ variant: 'destructive', title: 'Gagal', description: 'AI gagal menghasilkan kalimat. Silakan coba lagi.' });
-        } finally {
-            setAiLoading(false);
-        }
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!firestore) return;
         setFormLoading(true);
-        
         const docId = template?.id || `roast-${Date.now()}`;
-        const finalData = { ...formData, id: docId };
-
         try {
-            await setDoc(doc(firestore, 'speedRoastTemplates', docId), finalData);
+            await setDoc(doc(firestore, 'speedRoastTemplates', docId), { ...formData, id: docId });
             toast({ title: 'Sukses!', description: 'Kalimat roasting berhasil disimpan.' });
             setIsOpen(false);
         } catch (e) { 
-            console.error(e);
-            toast({ variant: 'destructive', title: 'Gagal', description: 'Error saat menyimpan ke Firestore.' }); 
-        } finally { 
-            setFormLoading(false); 
-        }
+            toast({ variant: 'destructive', title: 'Gagal', description: 'Error saat menyimpan.' }); 
+        } finally { setFormLoading(false); }
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogContent className="sm:max-w-xl">
                 <DialogHeader>
-                    <DialogTitle>{template ? 'Edit Kalimat Roasting' : 'Tambah Kalimat Roasting'}</DialogTitle>
-                    <DialogDescription>Gunakan AI untuk membuat kalimat sindiran secara otomatis atau tulis secara manual.</DialogDescription>
+                    <DialogTitle>{template ? 'Edit Kalimat' : 'Tambah Kalimat Manual'}</DialogTitle>
                 </DialogHeader>
-                
-                <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl mb-2">
-                    <div className="flex items-center justify-between mb-4">
-                        <Label className="flex items-center gap-2 text-primary">
-                            <Sparkles className="h-4 w-4" /> Hasilkan dengan AI
-                        </Label>
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                        <Select 
-                            value={selectedAiTopic} 
-                            onValueChange={setSelectedAiTopic}
-                        >
-                            <SelectTrigger className="sm:flex-1 bg-white">
-                                <SelectValue placeholder="Pilih topik AI..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {AI_TOPICS.map(t => (
-                                    <SelectItem key={t.label} value={t.value}>{t.label}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        <Button 
-                            type="button" 
-                            onClick={handleGenerateAI} 
-                            disabled={aiLoading}
-                            className="bg-primary hover:bg-primary/90"
-                        >
-                            {aiLoading ? <Loader className="animate-spin mr-2 h-4 w-4" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                            Generate
-                        </Button>
-                    </div>
-                </div>
-
                 <form onSubmit={handleSubmit} className="space-y-4 py-2">
                     <div className="space-y-2">
                         <Label>Kategori Kecepatan</Label>
-                        <Select 
-                            value={formData.category} 
-                            onValueChange={(val: any) => setFormData({...formData, category: val})}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Pilih kategori..." />
-                            </SelectTrigger>
+                        <Select value={formData.category} onValueChange={(val: any) => setFormData({...formData, category: val})}>
+                            <SelectTrigger><SelectValue placeholder="Pilih kategori..." /></SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="siput">Siput (Lemot Banget)</SelectItem>
+                                <SelectItem value="siput">Siput (Lemot)</SelectItem>
                                 <SelectItem value="kurakura">Kura-kura (Nanggung)</SelectItem>
-                                <SelectItem value="kelinci">Kelinci (Cepat tapi Butuh MyRep)</SelectItem>
+                                <SelectItem value="kelinci">Kelinci (Cepat)</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
-
                     <div className="space-y-2">
                         <Label>Kalimat Sindiran (Roast)</Label>
-                        <Textarea 
-                            value={formData.roast} 
-                            onChange={(e) => setFormData({...formData, roast: e.target.value})} 
-                            placeholder="Sebutkan sindiranmu di sini..."
-                            className="min-h-[100px]"
-                            required
-                        />
+                        <Textarea value={formData.roast} onChange={(e) => setFormData({...formData, roast: e.target.value})} placeholder="Sebutkan sindiranmu..." className="min-h-[100px]" required />
                         <div className="bg-blue-50 p-2 rounded text-[10px] text-blue-700 flex gap-2 items-start">
                             <Info className="h-3 w-3 shrink-0 mt-0.5" />
-                            <p>
-                                <strong>Gunakan Placeholder:</strong><br />
-                                <code>[CITY]</code> = Kota, <code>[SPEED]</code> = Mbps, <code>[TAPS]</code> = Ketukan, <code>[CONN]</code> = Jenis Koneksi.
-                            </p>
+                            <p>Placeholder: [CITY], [SPEED], [TAPS], [CONN].</p>
                         </div>
                     </div>
-
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label>Diagnosa Singkat</Label>
-                            <Input 
-                                value={formData.diagnosis} 
-                                onChange={(e) => setFormData({...formData, diagnosis: e.target.value})} 
-                                placeholder="cth: Jaringan anemia"
-                                required
-                            />
+                            <Label>Diagnosa</Label>
+                            <Input value={formData.diagnosis} onChange={(e) => setFormData({...formData, diagnosis: e.target.value})} required />
                         </div>
                         <div className="space-y-2">
-                            <Label>Rekomendasi Aksi</Label>
-                            <Input 
-                                value={formData.action} 
-                                onChange={(e) => setFormData({...formData, action: e.target.value})} 
-                                placeholder="cth: Segera ganti ke MyRep"
-                                required
-                            />
+                            <Label>Rekomendasi</Label>
+                            <Input value={formData.action} onChange={(e) => setFormData({...formData, action: e.target.value})} required />
                         </div>
                     </div>
-
                     <DialogFooter>
                         <Button type="submit" disabled={formLoading} className="w-full">
-                            {formLoading ? <Loader className="animate-spin mr-2 h-4 w-4" /> : null}
-                            Simpan Template
+                            {formLoading && <Loader className="animate-spin mr-2 h-4 w-4" />} Simpan Template
                         </Button>
                     </DialogFooter>
                 </form>
