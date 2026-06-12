@@ -5,7 +5,7 @@ import { useAuth, useUser } from "@/firebase";
 import { signOut } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Database } from "lucide-react";
+import { ArrowRight, MessageSquareQuote } from "lucide-react";
 
 export default function AdminDashboardPage() {
     const { user } = useUser();
@@ -84,6 +84,23 @@ export default function AdminDashboardPage() {
                         <CardContent>
                            <div className="flex items-center text-sm text-primary">
                                 Pergi ke Manajemen Ulasan
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </Link>
+                <Link href="/admin/speed-roast" passHref>
+                    <Card className="h-full border-primary/20 hover:border-primary transition-colors bg-primary/5">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <MessageSquareQuote className="h-5 w-5 text-primary" />
+                                Kelola Roasting AI
+                            </CardTitle>
+                            <CardDescription>Edit kalimat sindiran untuk Speed Challenge.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                           <div className="flex items-center text-sm text-primary font-semibold">
+                                Atur Kalimat Roasting
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </div>
                         </CardContent>
