@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { 
   Bolt, 
   ArrowRight, 
@@ -47,7 +46,7 @@ const myRepublicPackages = [
     }
 ];
 
-// Mock Roasting Database untuk keandalan 100%
+// Mock Roasting Database - Ditambah variasi agar tidak terasa berulang
 const MOCK_ROASTS = {
     siput: [
         {
@@ -126,7 +125,11 @@ export default function SpeedChallengePage() {
     const [loadingLogs, setLoadingLogs] = useState<string[]>([]);
     const [selectedPromos, setSelectedPromos] = useState<string[]>([]);
     
-    const gameTime = 5000;
+    // Refs for persistent values during game (prevents closure trap)
+    const speedRef = useRef(0.0);
+    const tapCountRef = useRef(0);
+    const cityRef = useRef('Jakarta Selatan');
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const particles = useRef<any[]>([]);
     const audioCtx = useRef<AudioContext | null>(null);
@@ -182,10 +185,11 @@ export default function SpeedChallengePage() {
                 particles.current.splice(i, 1);
             }
         }
-        if (timeLeft > 0 || particles.current.length > 0) {
+        // Use a continuous loop during game
+        if (particles.current.length > 0) {
             requestAnimationFrame(handleParticles);
         }
-    }, [timeLeft]);
+    }, []);
 
     const playSound = (freq: number, duration: number, type: OscillatorType = "sine") => {
         try {
@@ -205,27 +209,67 @@ export default function SpeedChallengePage() {
         } catch(e) {}
     };
 
+    const finishGame = useCallback(() => {
+        setScreen('loading');
+        setLoadingLogs(["> Memfinalisasi data latency..."]);
+        
+        // Use Refs for latest data to avoid displaying old results
+        const finalSpeed = speedRef.current;
+        const currentCity = cityRef.current;
+        const finalTaps = tapCountRef.current;
+
+        setTimeout(() => setLoadingLogs(prev => [...prev, `> Menganalisis kecepatan ${finalSpeed} Mbps...`]), 600);
+        setTimeout(() => setLoadingLogs(prev => [...prev, `> Menghitung rasio kompresi jaringan ${currentCity}...`]), 1200);
+        setTimeout(() => {
+            setLoadingLogs(prev => [...prev, "> Konsultasi dengan Gemini AI Engine (Mock Mode)..."]);
+            
+            // Logika pemilihan Mock Roast berdasarkan kecepatan terbaru
+            let category: 'siput' | 'kurakura' | 'kelinci' = 'siput';
+            if (finalSpeed >= 15 && finalSpeed < 40) category = 'kurakura';
+            else if (finalSpeed >= 40) category = 'kelinci';
+
+            const pool = MOCK_ROASTS[category];
+            const selected = pool[Math.floor(Math.random() * pool.length)];
+
+            setAiResult({
+                roast: selected.roast,
+                diagnosis: selected.diagnosis,
+                recommendedAction: selected.action
+            });
+            setScreen('result');
+        }, 1800);
+    }, []);
+
     const initiateGame = () => {
+        // Reset everything
         setTapCount(0);
-        setTimeLeft(gameTime);
+        tapCountRef.current = 0;
+        setTimeLeft(5000);
         setRealSpeed(0.0);
+        speedRef.current = 0.0;
+        cityRef.current = selectedCity;
         setAiResult(null);
         setLoadingLogs([]);
         setSelectedPromos([]);
         particles.current = [];
+        
         setScreen('game');
 
         const targetSpeed = Math.floor(Math.random() * 45) + 8;
         let currentSpeed = 0.0;
         
+        // Speed Test simulation logic
         setTimeout(() => {
             speedTestInterval.current = setInterval(() => {
                 currentSpeed += (targetSpeed - currentSpeed) * 0.15 + (Math.random() * 2 - 1);
                 if (currentSpeed < 0) currentSpeed = 0.1;
-                setRealSpeed(parseFloat(currentSpeed.toFixed(1)));
+                const rounded = parseFloat(currentSpeed.toFixed(1));
+                setRealSpeed(rounded);
+                speedRef.current = rounded; // Update ref for diagnosis logic
             }, 100);
         }, 1000);
 
+        // Timer Logic
         const intervalTime = 100;
         gameInterval.current = setInterval(() => {
             setTimeLeft((prev) => {
@@ -241,35 +285,12 @@ export default function SpeedChallengePage() {
         }, intervalTime);
     };
 
-    const finishGame = () => {
-        setScreen('loading');
-        setLoadingLogs(["> Memfinalisasi data latency..."]);
-        
-        setTimeout(() => setLoadingLogs(prev => [...prev, `> Menganalisis kecepatan ${realSpeed} Mbps...`]), 600);
-        setTimeout(() => setLoadingLogs(prev => [...prev, `> Menghitung rasio kompresi jaringan ${selectedCity}...`]), 1200);
-        setTimeout(() => {
-            setLoadingLogs(prev => [...prev, "> Konsultasi dengan Gemini AI Engine (Mock Mode)..."]);
-            
-            // Logika pemilihan Mock Roast
-            let category: 'siput' | 'kurakura' | 'kelinci' = 'siput';
-            if (realSpeed >= 15 && realSpeed < 40) category = 'kurakura';
-            else if (realSpeed >= 40) category = 'kelinci';
-
-            const pool = MOCK_ROASTS[category];
-            const selected = pool[Math.floor(Math.random() * pool.length)];
-
-            setAiResult({
-                roast: selected.roast,
-                diagnosis: selected.diagnosis,
-                recommendedAction: selected.action
-            });
-            setScreen('result');
-        }, 1800);
-    };
-
     const handleTap = (e: React.MouseEvent | React.TouchEvent) => {
         if (timeLeft <= 0) return;
-        setTapCount(prev => prev + 1);
+        
+        const newCount = tapCountRef.current + 1;
+        setTapCount(newCount);
+        tapCountRef.current = newCount;
         
         const canvas = canvasRef.current;
         if (canvas) {
@@ -288,7 +309,8 @@ export default function SpeedChallengePage() {
             }
         }
 
-        playSound(300 + (tapCount * 8), 0.1, "square");
+        playSound(300 + (newCount * 8), 0.1, "square");
+        requestAnimationFrame(handleParticles);
     };
 
     useEffect(() => {
@@ -297,12 +319,11 @@ export default function SpeedChallengePage() {
             if (canvas) {
                 canvas.width = canvas.parentElement?.clientWidth || 400;
                 canvas.height = canvas.parentElement?.clientHeight || 200;
-                requestAnimationFrame(handleParticles);
             }
         }
-    }, [screen, handleParticles]);
+    }, [screen]);
 
-    const recommendedPackage = myRepublicPackages.find(pkg => realSpeed <= pkg.maxSpeed) || myRepublicPackages[myRepublicPackages.length - 1];
+    const recommendedPackage = myRepublicPackages.find(pkg => speedRef.current <= pkg.maxSpeed) || myRepublicPackages[myRepublicPackages.length - 1];
     const multiplier = (recommendedPackage.speedVal / (realSpeed || 1)).toFixed(1);
 
     const togglePromo = (promo: string) => {
@@ -310,6 +331,8 @@ export default function SpeedChallengePage() {
             prev.includes(promo) ? prev.filter(p => p !== promo) : [...prev, promo]
         );
     };
+
+    const toggleLeaderboard = () => setIsLeaderboardOpen(!isLeaderboardOpen);
 
     return (
         <div className="min-h-screen text-white flex flex-col items-center justify-center p-4 bg-[#080312] selection:bg-[#e21a83]/30">
@@ -370,7 +393,7 @@ export default function SpeedChallengePage() {
                                     >
                                         <option value="WiFi Provider Lain" className="bg-[#0e081b]">WiFi Provider Lain</option>
                                         <option value="Paket Data Seluler" className="bg-[#0e081b]">Paket Data Seluler</option>
-                                        <option value="RT RW Net" className="bg-[#0e081b]">Pakai RT RW Net</option>
+                                        <option value="RT RW Net" className="bg-[#0e081b]">RT RW Net</option>
                                         <option value="Internet Tetangga" className="bg-[#0e081b]">Internet Tetangga 🤫</option>
                                     </select>
                                 </div>
@@ -440,7 +463,7 @@ export default function SpeedChallengePage() {
                                 <span className="font-extrabold text-[#e21a83]">{(timeLeft / 1000).toFixed(1)} Detik</span>
                             </div>
                             <div className="w-full bg-white/5 h-2.5 rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-[#622599] to-[#e21a83] transition-all duration-100" style={{ width: `${(timeLeft / gameTime) * 100}%` }}></div>
+                                <div className="h-full bg-gradient-to-r from-[#622599] to-[#e21a83] transition-all duration-100" style={{ width: `${(timeLeft / 5000) * 100}%` }}></div>
                             </div>
                         </div>
                     </div>
@@ -484,21 +507,21 @@ export default function SpeedChallengePage() {
                             <div className="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
                                 <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider block mb-1">Kecepatan Anda</span>
                                 <div className="text-2xl font-black text-[#e21a83] flex items-center justify-center gap-1">
-                                    <span>{realSpeed}</span>
+                                    <span>{speedRef.current}</span>
                                     <span className="text-xs font-normal text-gray-400">Mbps</span>
                                 </div>
-                                <span className={`inline-block mt-1 text-[9px] px-2 py-0.5 rounded font-black uppercase ${realSpeed < 15 ? 'bg-red-500/10 text-red-400' : realSpeed < 40 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
-                                    {realSpeed < 15 ? 'Kategori Siput 🐌' : realSpeed < 40 ? 'Kategori Kura-kura 🐢' : 'Kategori Kelinci 🐰'}
+                                <span className={`inline-block mt-1 text-[9px] px-2 py-0.5 rounded font-black uppercase ${speedRef.current < 15 ? 'bg-red-500/10 text-red-400' : speedRef.current < 40 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
+                                    {speedRef.current < 15 ? 'Kategori Siput 🐌' : speedRef.current < 40 ? 'Kategori Kura-kura 🐢' : 'Kategori Kelinci 🐰'}
                                 </span>
                             </div>
                             <div className="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
                                 <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider block mb-1">Ketukan Jari</span>
                                 <div className="text-2xl font-black text-yellow-400 flex items-center justify-center gap-1">
-                                    <span>{tapCount}</span>
+                                    <span>{tapCountRef.current}</span>
                                     <span className="text-xs font-normal text-gray-400">Taps</span>
                                 </div>
                                 <span className="inline-block mt-1 text-[9px] px-2 py-0.5 rounded font-black uppercase bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-                                    {tapCount < 20 ? 'Tukang Santuy ☕' : tapCount < 40 ? 'Pro Tapper ⚡' : 'Refleks Dewa 👑'}
+                                    {tapCountRef.current < 20 ? 'Tukang Santuy ☕' : tapCountRef.current < 40 ? 'Pro Tapper ⚡' : 'Refleks Dewa 👑'}
                                 </span>
                             </div>
                         </div>
@@ -518,7 +541,7 @@ export default function SpeedChallengePage() {
                             </div>
                             
                             <span className="text-[10px] text-[#e21a83] font-bold uppercase tracking-widest block mb-1">Paket Ultra-Fast Sesuai Kebutuhan</span>
-                            <h2 className="text-2xl font-black text-white mb-1" id="rec-package-name">{recommendedPackage.name}</h2>
+                            <h2 className="text-2xl font-black text-white mb-1">{recommendedPackage.name}</h2>
                             {recommendedPackage.bonus && (
                                 <p className="text-[10px] font-bold text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded inline-block mb-2 border border-yellow-400/20">
                                     🎁 {recommendedPackage.bonus}
@@ -582,7 +605,7 @@ export default function SpeedChallengePage() {
 
                         <button 
                             onClick={() => {
-                                const msg = `Halo Sales MyRepublic! Saya ingin konsultasi gratis mengenai pemasangan wifi baru di rumah saya. Tadi saya coba Speed Challenge dan hasilnya ${realSpeed} Mbps. Mohon dibantu pengecekan area ya! Terima kasih.`;
+                                const msg = `Halo Sales MyRepublic! Saya ingin konsultasi gratis mengenai pemasangan wifi baru di rumah saya. Tadi saya coba Speed Challenge dan hasilnya ${speedRef.current} Mbps. Mohon dibantu pengecekan area ya! Terima kasih.`;
                                 window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
                             }}
                             className="w-full bg-white/5 border border-white/20 hover:bg-white/10 text-white font-bold text-sm py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 mb-4"
@@ -595,7 +618,7 @@ export default function SpeedChallengePage() {
                 {/* Leaderboard */}
                 <div className="mt-6 border-t border-white/5 pt-6">
                     <button 
-                        onClick={() => setIsLeaderboardOpen(!isLeaderboardOpen)}
+                        onClick={toggleLeaderboard}
                         className="w-full flex items-center justify-between text-xs text-gray-400 font-bold uppercase tracking-widest hover:text-white transition-colors focus:outline-none"
                     >
                         <span className="flex items-center gap-2">
@@ -663,7 +686,7 @@ export default function SpeedChallengePage() {
 
                                     const bonusText = recommendedPackage.bonus ? `\n*Bonus:* ${recommendedPackage.bonus}` : '';
 
-                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Speed Asli: *${realSpeed} Mbps*).${bonusText}${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
+                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Speed Asli: *${speedRef.current} Mbps*).${bonusText}${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
                                     window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
                                     setIsModalOpen(false);
                                 }}
