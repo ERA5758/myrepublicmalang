@@ -13,7 +13,7 @@ import {
   MapPin, 
   Trophy, 
   ChevronDown, 
-  Robot, 
+  Bot, 
   CircleCheck, 
   Star, 
   Info,
@@ -370,7 +370,7 @@ export default function SpeedChallengePage() {
                             <div className="absolute inset-0 rounded-full border-4 border-[#622599]/20"></div>
                             <div className="absolute inset-0 rounded-full border-4 border-t-[#e21a83] animate-spin"></div>
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <Robot className="text-[#e21a83] w-8 h-8 animate-bounce" />
+                                <Bot className="text-[#e21a83] w-8 h-8 animate-bounce" />
                             </div>
                         </div>
                         <h2 className="text-xl font-black mb-2">Konsultasi dengan AI Engine...</h2>
@@ -423,7 +423,7 @@ export default function SpeedChallengePage() {
 
                         <div className="bg-gradient-to-r from-red-950/20 to-[#622599]/20 border border-red-500/20 rounded-2xl p-4 mb-4 relative">
                             <div className="absolute -top-2.5 left-4 bg-[#e21a83] text-[9px] text-white font-extrabold px-2 py-0.5 rounded-md tracking-wider uppercase shadow-md flex items-center gap-1">
-                                <Robot className="w-2.5 h-2.5" /> AI Roast & Diagnosis
+                                <Bot className="w-2.5 h-2.5" /> AI Roast & Diagnosis
                             </div>
                             <p className="text-sm italic leading-relaxed text-gray-200 mt-2">
                                 &quot;{aiResult.roast}&quot;
