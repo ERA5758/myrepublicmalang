@@ -240,13 +240,20 @@ export default function SpeedChallengePage() {
                 ? pool[Math.floor(Math.random() * pool.length)]
                 : { roast: `Waduh! Pake [CONN] di [CITY] cuma dapet [SPEED] Mbps? Pantesan tadi [TAPS] tap roketmu sia-sia! Ganti ke MyRepublic sekarang!`, diagnosis: "Jaringan tidak stabil dan asimetris.", action: "Pindah ke jaringan Full Fiber Simetris MyRepublic." };
 
-            const personalizedRoast = selected.roast
-                .replace(/\[CITY\]/g, currentCity)
-                .replace(/\[SPEED\]/g, finalSpeed.toString())
-                .replace(/\[TAPS\]/g, finalTaps.toString())
-                .replace(/\[CONN\]/g, currentConn);
+            // Helper function to replace all placeholders in a string
+            const personalizeString = (text: string) => {
+                return text
+                    .replace(/\[CITY\]/g, currentCity)
+                    .replace(/\[SPEED\]/g, finalSpeed.toString())
+                    .replace(/\[TAPS\]/g, finalTaps.toString())
+                    .replace(/\[CONN\]/g, currentConn);
+            };
 
-            setAiResult({ roast: personalizedRoast, diagnosis: selected.diagnosis, recommendedAction: selected.action });
+            setAiResult({ 
+                roast: personalizeString(selected.roast), 
+                diagnosis: personalizeString(selected.diagnosis), 
+                recommendedAction: personalizeString(selected.action) 
+            });
             setScreen('result');
         }, 1800);
     }, [roastTemplates]);
