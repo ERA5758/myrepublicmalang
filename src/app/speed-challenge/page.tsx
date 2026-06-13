@@ -80,12 +80,19 @@ const CITY_LIST = [
   "Tebing Tinggi", "Tegal", "Temanggung", "Tuban", "Tulungagung", "Yogyakarta"
 ].sort();
 
+// Sumber data untuk Real Speed Test (CDN Gambar Kualitas Tinggi)
+const DOWNLOAD_TARGETS = [
+    'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=2000',
+    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2000',
+    'https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=2000'
+];
+
 type Screen = 'start' | 'game' | 'loading' | 'result';
 
 export default function SpeedChallengePage() {
     const [screen, setScreen] = useState<Screen>('start');
     const [tapCount, setTapCount] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(5000);
+    const [timeLeft, setTimeLeft] = useState(10000); // 10 Detik
     const [realSpeed, setRealSpeed] = useState(0.0);
     const [selectedCity, setSelectedCity] = useState('Jakarta Selatan');
     const [selectedConn, setSelectedConn] = useState('WiFi Provider Lain');
@@ -105,7 +112,7 @@ export default function SpeedChallengePage() {
     const particles = useRef<any[]>([]);
     const audioCtx = useRef<AudioContext | null>(null);
     const gameInterval = useRef<NodeJS.Timeout | null>(null);
-    const speedTestInterval = useRef<NodeJS.Timeout | null>(null);
+    const abortControllerRef = useRef<AbortController | null>(null);
     const firestore = useFirestore();
 
     // Fetch roasting templates from Firestore
@@ -163,7 +170,53 @@ export default function SpeedChallengePage() {
         } catch(e) {}
     };
 
+    // Fungsi Utama Real Speed Test (Download)
+    const runRealSpeedTest = async () => {
+        const controller = new AbortController();
+        abortControllerRef.current = controller;
+        let totalBytes = 0;
+        let startTime = performance.now();
+        let displaySpeed = 0.0;
+
+        try {
+            // Loop download selama game berjalan
+            while (!controller.signal.aborted) {
+                const target = DOWNLOAD_TARGETS[Math.floor(Math.random() * DOWNLOAD_TARGETS.length)];
+                const response = await fetch(`${target}&cb=${Date.now()}`, { 
+                    signal: controller.signal,
+                    cache: 'no-store' 
+                });
+                
+                if (!response.body) break;
+                const reader = response.body.getReader();
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done || controller.signal.aborted) break;
+                    
+                    totalBytes += value.length;
+                    const currentTime = performance.now();
+                    const durationSec = (currentTime - startTime) / 1000;
+                    
+                    if (durationSec > 0.1) {
+                        const currentMbps = (totalBytes * 8) / (durationSec * 1000000);
+                        // Smoothing: 70% nilai lama, 30% nilai baru untuk estetika UI
+                        displaySpeed = (displaySpeed * 0.7) + (currentMbps * 0.3);
+                        const rounded = parseFloat(displaySpeed.toFixed(1));
+                        setRealSpeed(rounded);
+                        speedRef.current = rounded;
+                    }
+                }
+            }
+        } catch (e) {
+            // Abaikan error Abort
+        }
+    };
+
     const finishGame = useCallback(() => {
+        // Hentikan Real Speed Test
+        if (abortControllerRef.current) abortControllerRef.current.abort();
+
         setScreen('loading');
         setLoadingLogs(["> Memfinalisasi data latency..."]);
         
@@ -172,16 +225,15 @@ export default function SpeedChallengePage() {
         const currentConn = connRef.current;
         const finalTaps = tapCountRef.current;
 
-        setTimeout(() => setLoadingLogs(prev => [...prev, `> Menganalisis kecepatan ${finalSpeed} Mbps...`]), 600);
+        setTimeout(() => setLoadingLogs(prev => [...prev, `> Menganalisis kecepatan nyata: ${finalSpeed} Mbps...`]), 600);
         setTimeout(() => setLoadingLogs(prev => [...prev, `> Menghitung rasio kompresi jaringan ${currentCity}...`]), 1200);
         setTimeout(() => {
-            setLoadingLogs(prev => [...prev, "> Konsultasi dengan AI Engine (Firestore Mode)..."]);
+            setLoadingLogs(prev => [...prev, "> Sinkronisasi dengan Database Roasting..."]);
             
             let category: 'siput' | 'kurakura' | 'kelinci' = 'siput';
-            if (finalSpeed >= 15 && finalSpeed < 40) category = 'kurakura';
-            else if (finalSpeed >= 40) category = 'kelinci';
+            if (finalSpeed >= 15 && finalSpeed < 45) category = 'kurakura';
+            else if (finalSpeed >= 45) category = 'kelinci';
 
-            // Filter templates from Firestore state
             const pool = roastTemplates.filter(t => t.category === category);
             const selected = pool.length > 0 
                 ? pool[Math.floor(Math.random() * pool.length)]
@@ -199,29 +251,19 @@ export default function SpeedChallengePage() {
     }, [roastTemplates]);
 
     const initiateGame = () => {
-        setTapCount(0); tapCountRef.current = 0; setTimeLeft(5000); setRealSpeed(0.0); speedRef.current = 0.0;
+        setTapCount(0); tapCountRef.current = 0; setTimeLeft(10000); setRealSpeed(0.0); speedRef.current = 0.0;
         cityRef.current = selectedCity; connRef.current = selectedConn; 
         setAiResult(null); setLoadingLogs([]); setSelectedPromos([]);
         particles.current = []; setScreen('game');
 
-        const targetSpeed = Math.floor(Math.random() * 45) + 8;
-        let currentSpeed = 0.0;
-        
-        setTimeout(() => {
-            speedTestInterval.current = setInterval(() => {
-                currentSpeed += (targetSpeed - currentSpeed) * 0.15 + (Math.random() * 2 - 1);
-                if (currentSpeed < 0) currentSpeed = 0.1;
-                const rounded = parseFloat(currentSpeed.toFixed(1));
-                setRealSpeed(rounded); speedRef.current = rounded;
-            }, 100);
-        }, 1000);
+        // Jalankan Real Speed Test
+        runRealSpeedTest();
 
         const intervalTime = 100;
         gameInterval.current = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= intervalTime) {
                     if (gameInterval.current) clearInterval(gameInterval.current);
-                    if (speedTestInterval.current) clearInterval(speedTestInterval.current);
                     playSound(150, 0.4, "sawtooth");
                     finishGame();
                     return 0;
@@ -293,7 +335,7 @@ export default function SpeedChallengePage() {
                         </div>
                         <div className="flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-bold text-[#e21a83]">
                             <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping"></span>
-                            <span>AI LIVE DIAGNOSE</span>
+                            <span>REAL-TIME TEST</span>
                         </div>
                     </div>
 
@@ -304,8 +346,8 @@ export default function SpeedChallengePage() {
                                 WiFi Rumah Sering <br />
                                 <span className="bg-gradient-to-r from-yellow-400 to-red-500 bg-clip-text text-transparent">Lemot Kayak Siput? 🐌</span>
                             </h1>
-                            <p className="mb-8 text-center text-xs font-medium text-gray-400">
-                                Bantu Roket MyRepublic meluncur sembari AI memindai kecepatan internet Anda!
+                            <p className="mb-8 text-center text-xs font-medium text-gray-400 px-2">
+                                Pompa roket sekuat tenaga sembari MyRepublic melakukan uji kecepatan internet asli Anda selama 10 detik!
                             </p>
 
                             <div className="mb-8 space-y-4 rounded-3xl bg-white/5 border border-white/10 p-5 backdrop-blur-sm">
@@ -349,7 +391,7 @@ export default function SpeedChallengePage() {
                                 onClick={initiateGame}
                                 className="group relative mt-auto flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-[#622599] to-[#e21a83] p-5 text-sm font-black text-white shadow-[0_15px_30px_rgba(226,26,131,0.3)] transition-all hover:scale-[1.02] active:scale-95"
                             >
-                                MULAI TANTANGAN
+                                MULAI TANTANGAN (10S)
                                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                             </button>
                         </div>
@@ -362,7 +404,7 @@ export default function SpeedChallengePage() {
                                 <h2 className="flex items-center justify-center gap-2 text-xl font-black text-white uppercase tracking-tighter">
                                     <Zap className="h-5 w-5 text-yellow-400 animate-pulse" /> KETUK SECEPAT NYA!
                                 </h2>
-                                <p className="text-[10px] text-gray-400 mt-1">Pompa roket sembari AI mendeteksi WiFi Anda...</p>
+                                <p className="text-[10px] text-gray-400 mt-1">Mengukur kecepatan internet asli di latar belakang...</p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 mb-6">
@@ -371,8 +413,8 @@ export default function SpeedChallengePage() {
                                     <div className="text-4xl font-black text-yellow-400">{tapCount}</div>
                                 </div>
                                 <div className="relative flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md overflow-hidden">
-                                    <div className="absolute top-1 right-2 rounded bg-red-500/20 px-1.5 py-0.5 text-[8px] font-black uppercase text-red-400 animate-pulse">Scanning</div>
-                                    <span className="text-[9px] font-black uppercase tracking-wider text-gray-500 mb-1">Speed Internet</span>
+                                    <div className="absolute top-1 right-2 rounded bg-green-500/20 px-1.5 py-0.5 text-[8px] font-black uppercase text-green-400 animate-pulse">Live Test</div>
+                                    <span className="text-[9px] font-black uppercase tracking-wider text-gray-500 mb-1">Download Speed</span>
                                     <div className="flex items-baseline gap-0.5 text-4xl font-black text-[#e21a83]">
                                         {realSpeed.toFixed(1)}<span className="text-xs font-medium text-gray-400 ml-1">Mbps</span>
                                     </div>
@@ -388,17 +430,17 @@ export default function SpeedChallengePage() {
                                 >
                                     <div className="mb-4 text-8xl transition-transform duration-75 group-active:scale-110 group-active:-translate-y-4">🚀</div>
                                     <h3 className="text-2xl font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500 animate-pulse">TAP DISINI!</h3>
-                                    <p className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Multi-finger Power!</p>
+                                    <p className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest text-center">Jangan berhenti sebelum waktu habis!</p>
                                 </div>
                             </div>
 
                             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 mb-2">
                                 <div className="flex justify-between items-center text-[10px] font-black uppercase mb-1.5 tracking-wider">
-                                    <span className="text-gray-400">Waktu Tersisa</span>
+                                    <span className="text-gray-400">Durasi Uji Kecepatan</span>
                                     <span className="text-[#e21a83]">{(timeLeft / 1000).toFixed(1)} Detik</span>
                                 </div>
                                 <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
-                                    <div className="h-full bg-gradient-to-r from-[#622599] to-[#e21a83] transition-all duration-100" style={{ width: `${(timeLeft / 5000) * 100}%` }}></div>
+                                    <div className="h-full bg-gradient-to-r from-[#622599] to-[#e21a83] transition-all duration-100" style={{ width: `${(timeLeft / 10000) * 100}%` }}></div>
                                 </div>
                             </div>
                         </div>
@@ -414,12 +456,12 @@ export default function SpeedChallengePage() {
                                     <Bot className="h-12 w-12 text-[#e21a83] animate-bounce" />
                                 </div>
                             </div>
-                            <h2 className="text-2xl font-black text-white mb-2">Konsultasi AI...</h2>
-                            <p className="text-center text-xs text-gray-400 max-w-[200px] mb-8">Gemini AI sedang mendiagnosis jaringan internet rumah Anda.</p>
+                            <h2 className="text-2xl font-black text-white mb-2">Kalkulasi Selesai...</h2>
+                            <p className="text-center text-xs text-gray-400 max-w-[200px] mb-8">Data kecepatan asli sedang diproses untuk mendapatkan sindiran terbaik.</p>
                             
                             <div className="w-full max-w-[280px] rounded-2xl border border-white/10 bg-white/5 p-4 text-left backdrop-blur-md">
                                 <div className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-500 mb-3 tracking-widest">
-                                    <Zap className="h-3 w-3 text-yellow-400" /> PROSES KOMPUTASI
+                                    <Zap className="h-3 w-3 text-yellow-400" /> PROSES DATA NYATA
                                 </div>
                                 <div className="space-y-1.5 font-mono text-[10px] text-gray-500">
                                     {loadingLogs.map((log, i) => <div key={i}>{log}</div>)}
@@ -435,19 +477,19 @@ export default function SpeedChallengePage() {
                                 <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-green-500/10 border border-green-500/30 text-green-400 shadow-[0_0_30px_rgba(34,197,94,0.2)]">
                                     <CircleCheck className="h-8 w-8" />
                                 </div>
-                                <h1 className="text-3xl font-black text-white tracking-tight">Analisis AI Selesai!</h1>
-                                <p className="text-[11px] text-gray-400 mt-1 uppercase font-bold tracking-wider">Laporan Diagnosis MyRepublic</p>
+                                <h1 className="text-3xl font-black text-white tracking-tight">Analisis Selesai!</h1>
+                                <p className="text-[11px] text-gray-400 mt-1 uppercase font-bold tracking-wider">Laporan Kecepatan MyRepublic</p>
                             </div>
 
                             {/* Stat Grid */}
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                 <div className="flex flex-col items-center rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md text-center">
-                                    <span className="text-[9px] font-black uppercase text-gray-500 mb-2 tracking-widest">KECEPATAN ANDA</span>
+                                    <span className="text-[9px] font-black uppercase text-gray-500 mb-2 tracking-widest">KECEPATAN ASLI</span>
                                     <div className="text-3xl font-black text-[#e21a83] flex items-baseline gap-1">
                                         {speedRef.current}<span className="text-xs font-normal text-gray-400">Mbps</span>
                                     </div>
-                                    <div className={`mt-3 rounded-lg px-2 py-1 text-[8px] font-black uppercase tracking-wider ${speedRef.current < 15 ? 'bg-red-500/10 text-red-400' : speedRef.current < 40 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
-                                        {speedRef.current < 15 ? 'KATEGORI SIPUT 🐌' : speedRef.current < 40 ? 'KATEGORI KURA-KURA 🐢' : 'KATEGORI KELINCI 🐰'}
+                                    <div className={`mt-3 rounded-lg px-2 py-1 text-[8px] font-black uppercase tracking-wider ${speedRef.current < 15 ? 'bg-red-500/10 text-red-400' : speedRef.current < 45 ? 'bg-yellow-500/10 text-yellow-400' : 'bg-green-500/10 text-green-400'}`}>
+                                        {speedRef.current < 15 ? 'KATEGORI SIPUT 🐌' : speedRef.current < 45 ? 'KATEGORI KURA-KURA 🐢' : 'KATEGORI KELINCI 🐰'}
                                     </div>
                                 </div>
                                 <div className="flex flex-col items-center rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md text-center">
@@ -456,7 +498,7 @@ export default function SpeedChallengePage() {
                                         {tapCountRef.current}<span className="text-xs font-normal text-gray-400">Taps</span>
                                     </div>
                                     <div className="mt-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 px-2 py-1 text-[8px] font-black uppercase tracking-wider text-yellow-400">
-                                        {tapCountRef.current < 40 ? 'PEMULA' : tapCountRef.current < 80 ? 'JARI KILAT' : 'REFLEKS DEWA 👑'}
+                                        {tapCountRef.current < 100 ? 'PEMULA' : tapCountRef.current < 180 ? 'JARI KILAT' : 'REFLEKS DEWA 👑'}
                                     </div>
                                 </div>
                             </div>
@@ -486,10 +528,13 @@ export default function SpeedChallengePage() {
                                 <h2 className="text-2xl font-black text-white mb-2">{recommendedPackage.name}</h2>
                                 
                                 {/* Bonus Info for Neo & Velo */}
-                                {recommendedPackage.bonus && (
+                                {(recommendedPackage.id === 'neo-100' || recommendedPackage.id === 'velo-150') && (
                                     <div className="mb-4 flex items-center gap-2 rounded-xl bg-green-500/20 border border-green-500/30 p-3 text-[11px] font-black text-green-400 animate-pulse">
                                         <Gift className="h-4 w-4 shrink-0" />
-                                        <span>{recommendedPackage.bonus}</span>
+                                        <span>
+                                            Gratis Upgrade speed selama 1 tahun 
+                                            {recommendedPackage.id === 'neo-100' ? ' Up to 200 Mbps' : ' Up to 300 Mbps'}
+                                        </span>
                                     </div>
                                 )}
 
@@ -517,23 +562,6 @@ export default function SpeedChallengePage() {
                                 </div>
                             </div>
 
-                            {/* Promo Multi Select */}
-                            <div className="mb-8 rounded-3xl border border-white/10 bg-white/5 p-6">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <Star className="h-4 w-4 text-yellow-400" />
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-[#e21a83]">PILIH PROMO BONUS (BISA &gt; 1)</h4>
-                                </div>
-                                <button 
-                                    onClick={() => togglePromo("Jaminan Harga Tetap 2/3 Tahun")}
-                                    className={`flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all ${selectedPromos.includes("Jaminan Harga Tetap 2/3 Tahun") ? 'border-[#e21a83] bg-[#e21a83]/20 shadow-[0_0_20px_rgba(226,26,131,0.2)]' : 'border-white/10 bg-white/5 hover:border-white/20'}`}
-                                >
-                                    <div className={`flex h-6 w-6 items-center justify-center rounded-lg border transition-colors ${selectedPromos.includes("Jaminan Harga Tetap 2/3 Tahun") ? 'bg-[#e21a83] border-[#e21a83]' : 'border-gray-600 bg-black/40'}`}>
-                                        {selectedPromos.includes("Jaminan Harga Tetap 2/3 Tahun") && <CircleCheck className="h-4 w-4 text-white" />}
-                                    </div>
-                                    <span className="text-xs font-bold text-white leading-tight">Jaminan Harga Tetap Selama 2 atau 3 Tahun</span>
-                                </button>
-                            </div>
-
                             <div className="mt-auto grid grid-cols-1 gap-4 mb-4">
                                 <button 
                                     onClick={() => setIsModalOpen(true)}
@@ -551,7 +579,7 @@ export default function SpeedChallengePage() {
 
                             <button 
                                 onClick={() => {
-                                    const msg = `Halo Sales MyRepublic! Saya ingin konsultasi gratis mengenai pemasangan wifi baru. Tadi saya coba Speed Challenge dan hasilnya ${speedRef.current} Mbps dengan ${tapCountRef.current} taps. Mohon dibantu pengecekan area ya! Terima kasih.`;
+                                    const msg = `Halo Sales MyRepublic! Saya ingin konsultasi gratis mengenai pemasangan wifi baru. Tadi saya coba Real Speed Challenge dan hasilnya asli ${speedRef.current} Mbps dengan ${tapCountRef.current} taps. Mohon dibantu pengecekan area ya! Terima kasih.`;
                                     window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
                                 }}
                                 className="flex w-full items-center justify-center gap-3 rounded-2xl border border-green-500/30 bg-green-500/5 p-4 text-xs font-black text-green-400 transition-all hover:bg-green-500/10 mb-2"
@@ -585,8 +613,8 @@ export default function SpeedChallengePage() {
                                     </div>
                                 </div>
                                 <div className="text-right leading-tight">
-                                    <div className="font-black text-yellow-400">154 TAPS</div>
-                                    <div className="text-[8px] font-bold text-gray-500 uppercase">SPEED: 4.2 MBPS</div>
+                                    <div className="font-black text-yellow-400">214 TAPS</div>
+                                    <div className="text-[8px] font-bold text-gray-500 uppercase">SPEED: 18.2 MBPS</div>
                                 </div>
                             </div>
                             <div className="flex items-center justify-between rounded-xl bg-white/5 p-3 text-[10px]">
@@ -598,7 +626,7 @@ export default function SpeedChallengePage() {
                                     </div>
                                 </div>
                                 <div className="text-right leading-tight">
-                                    <div className="font-black text-yellow-400">148 TAPS</div>
+                                    <div className="font-black text-yellow-400">198 TAPS</div>
                                     <div className="text-[8px] font-bold text-gray-500 uppercase">SPEED: 12.8 MBPS</div>
                                 </div>
                             </div>
@@ -647,7 +675,7 @@ export default function SpeedChallengePage() {
                                     if(!name || !phone || !addr) return alert("Harap isi semua kolom!");
                                     
                                     const promoText = selectedPromos.length > 0 ? `\n\n*Promo yang dipilih:* \n${selectedPromos.map(p => `- ${p}`).join('\n')}` : '';
-                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\nKoneksi Saat Ini: ${selectedConn}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Asli: *${speedRef.current} Mbps*, *${tapCountRef.current} Taps*).${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
+                                    const msg = `Halo Sales MyRepublic! Saya telah mencoba tantangan "Real Speed Challenge".\n\nNama: ${name}\nNo. WhatsApp: ${phone}\nAlamat Pemasangan: ${addr}\nKota: ${selectedCity}\nKoneksi Saat Ini: ${selectedConn}\n\nSaya ingin berkonsultasi mengenai paket: *${recommendedPackage.name}* (Asli: *${speedRef.current} Mbps*, *${tapCountRef.current} Taps*).${promoText}\n\nMohon dibantu pengecekan jaringannya ya! Terima kasih.`;
                                     window.open(`https://wa.me/6285184000800?text=${encodeURIComponent(msg)}`, '_blank');
                                     setIsModalOpen(false);
                                 }}
@@ -669,7 +697,7 @@ export default function SpeedChallengePage() {
                                 <SearchCheck className="h-6 w-6 text-[#e21a83]" /> LAPORAN DETAIL AI
                             </DialogTitle>
                             <DialogDescription className="text-gray-400 text-xs uppercase font-bold tracking-widest">
-                                Hasil Penyelidikan Infrastruktur
+                                Hasil Penyelidikan Infrastruktur Nyata
                             </DialogDescription>
                         </DialogHeader>
                         
@@ -679,7 +707,7 @@ export default function SpeedChallengePage() {
                                     <Wrench className="h-3 w-3 text-[#622599]" /> Diagnosis Teknis
                                 </div>
                                 <p className="text-sm text-gray-200 leading-relaxed italic">
-                                    "{aiResult.diagnosis}"
+                                    &quot;{aiResult.diagnosis}&quot;
                                 </p>
                             </div>
 
@@ -694,7 +722,7 @@ export default function SpeedChallengePage() {
 
                             <div className="flex items-center gap-3 rounded-xl bg-white/5 p-4 border border-white/5 text-[10px] text-gray-400 leading-tight">
                                 <Info className="h-5 w-5 text-[#e21a83] shrink-0" />
-                                <span>Hasil diagnosis ini didasarkan pada perbandingan rasio kecepatan {selectedConn} di wilayah {selectedCity} dengan standar Full Fiber MyRepublic.</span>
+                                <span>Hasil diagnosis ini didasarkan pada pengujian download nyata ke server CDN global di wilayah {selectedCity}.</span>
                             </div>
                         </div>
 
