@@ -496,7 +496,7 @@ export default function SpeedChallengePage() {
                                     </div>
                                 </div>
                                 <div className="flex flex-col items-center rounded-2xl bg-white/5 border border-white/10 p-5 backdrop-blur-md text-center">
-                                    <span className="text-[9px] font-black uppercase text-gray-500 mb-2 tracking-widest">KETUKAN JARI</span>
+                                    <span className="text-[9px] font-black uppercase text-gray-500 mb-2 tracking-widest">KECEPATAN JARI</span>
                                     <div className="text-3xl font-black text-yellow-400 flex items-baseline gap-1">
                                         {tapCountRef.current}<span className="text-xs font-normal text-gray-400">Taps</span>
                                     </div>
@@ -589,6 +589,19 @@ export default function SpeedChallengePage() {
                             >
                                 <MessageSquare className="h-4 w-4" /> KONSULTASI GRATIS (WHATSAPP)
                             </button>
+                        </div>
+                    )}
+
+                    {/* Disclaimer Section */}
+                    {(screen === 'start' || screen === 'result') && (
+                        <div className="mt-12 border-t border-white/5 pt-8 pb-4 text-center">
+                            <p className="text-[10px] font-bold text-gray-500 leading-relaxed uppercase tracking-widest">
+                                © 2026 MyRepublic. Sales Executive khusus pasang baru.
+                            </p>
+                            <p className="text-[9px] text-gray-600 mt-3 leading-relaxed px-6 italic">
+                                Website ini dikelola oleh Sales/Mitra Resmi MyRepublic, bukan website resmi perusahaan pusat. 
+                                Seluruh materi promosi mengacu pada kebijakan resmi MyRepublic.
+                            </p>
                         </div>
                     )}
 
