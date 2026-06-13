@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import { 
   Bolt, 
   ArrowRight, 
@@ -324,14 +325,16 @@ export default function SpeedChallengePage() {
                     
                     {/* Header */}
                     <div className="flex items-center justify-between mb-8 mt-2">
-                        <div className="flex items-center gap-2">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#622599] to-[#e21a83] shadow-lg shadow-purple-500/20">
-                                <Bolt className="h-5 w-5 text-white" />
-                            </div>
-                            <div className="leading-none">
-                                <h3 className="text-sm font-black tracking-widest text-white">MYREPUBLIC</h3>
-                                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Speed Challenge</p>
-                            </div>
+                        <div className="flex items-center gap-3">
+                            <Image 
+                                src="https://i.ibb.co/7MP29XK/Picsart-25-11-28-12-55-53-228.png"
+                                alt="MyRepublic Logo"
+                                width={120}
+                                height={32}
+                                className="object-contain"
+                            />
+                            <div className="h-4 w-px bg-white/10 hidden xs:block"></div>
+                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 hidden xs:block">Challenge</p>
                         </div>
                         <div className="flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-bold text-[#e21a83]">
                             <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping"></span>
