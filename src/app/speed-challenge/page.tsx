@@ -323,8 +323,8 @@ export default function SpeedChallengePage() {
                 {/* Main Content Area */}
                 <div className="flex h-full w-full flex-col p-6 sm:p-8 overflow-y-auto custom-scrollbar">
                     
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-8 mt-2">
+                    {/* Header - LIGHT THEME for Logo Visibility */}
+                    <div className="flex items-center justify-between mb-8 mt-2 bg-white/95 p-3.5 rounded-2xl shadow-lg border border-white/20 backdrop-blur-md">
                         <div className="flex items-center gap-3">
                             <Image 
                                 src="https://i.ibb.co/7MP29XK/Picsart-25-11-28-12-55-53-228.png"
@@ -333,10 +333,10 @@ export default function SpeedChallengePage() {
                                 height={32}
                                 className="object-contain"
                             />
-                            <div className="h-4 w-px bg-white/10 hidden xs:block"></div>
-                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 hidden xs:block">Challenge</p>
+                            <div className="h-4 w-px bg-slate-200 hidden xs:block"></div>
+                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 hidden xs:block">Challenge</p>
                         </div>
-                        <div className="flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-bold text-[#e21a83]">
+                        <div className="flex items-center gap-1.5 rounded-full bg-slate-100 border border-slate-200 px-3 py-1 text-[10px] font-bold text-[#e21a83]">
                             <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping"></span>
                             <span>REAL-TIME TEST</span>
                         </div>
